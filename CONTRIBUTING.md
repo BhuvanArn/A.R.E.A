@@ -55,8 +55,7 @@ Branch names should be concise and descriptive, using two or more English words 
 - **Title:** Use an emoji (gitmoji rule) followed by a short title.
 - **Description:** Include bullet points for:
     - What you have done
-    - What remains to be done
-    - How to check that what you have done is working
+    - How to check that what you have done is working (if needed)
 
 ### Example Pull Request
 **Title:** ✨ Add user authentication
