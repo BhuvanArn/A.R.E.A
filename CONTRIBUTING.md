@@ -49,7 +49,7 @@ Branch names should be concise and descriptive, using two or more English words 
 
 ## Pull Requests
 ### Requirements
-- **Review:** At least 1 review is required before merging to the main branch.
+- **Review:** At least 2 reviews is required before merging to the main branch.
 - **CI:** All GitHub Actions must pass successfully.
 ### Naming
 - **Title:** Use an emoji (gitmoji rule) followed by a short title.
