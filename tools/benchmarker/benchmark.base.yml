@@ -1,0 +1,19 @@
+benchmarks:
+  - name: "benchmarks http servers"
+    iterations: 1000000
+    timeout: -1
+    threads: 1
+    workers:
+      - name: "python server"
+        code: |
+          from requests import get
+
+          r = get("127.0.0.1:7777")
+          r.close()
+
+      - name: "rust server"
+        code: |
+            from requests import get
+
+            r = get("127.0.0.1:8080")
+            r.close()
