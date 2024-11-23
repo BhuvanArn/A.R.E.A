@@ -28,5 +28,14 @@ services:
     networks:
       - server-tier
 
+  csharp_server:
+    build:
+      context: ./csharp_router
+      dockerfile: Dockerfile
+    ports:
+      - "6969:6969"
+    networks:
+      - server-tier
+
 networks:
   server-tier:

@@ -25,3 +25,8 @@ benchmarks:
             r = get("http://127.0.0.1:8888")
             r.close()
 
+      - name: "csharp server"
+        code: |
+            from requests import get
+            r = get("http://127.0.0.1:6969")
+            r.close()
