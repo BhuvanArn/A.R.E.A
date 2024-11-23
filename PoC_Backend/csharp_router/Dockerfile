@@ -1,18 +1,18 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /usr/src/app
 
-COPY *.csproj ./
+COPY router.sln ./
+COPY router ./router
+
 RUN dotnet restore
 
-COPY . ./
+RUN dotnet publish router.sln -c Release -o /usr/src/app/out
 
-RUN dotnet publish -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/runtime:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/out ./
+COPY --from=build /usr/src/app/out .
 
-CMD ["dotnet", "Program.dll"]
+CMD ["dotnet", "router.dll"]
