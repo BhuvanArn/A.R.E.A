@@ -129,7 +129,7 @@ def main() -> int:
         workers = []
 
         for worker in item["workers"]:
-            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec("\ndef test():\n    " + worker["code"].replace('\n', '\n    ') + "\n")))
+            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec("\ndef test():\n    " + worker["code"].replace('\n', '\n    ') + "\ntest()")))
 
         display: UIDisplay = UIDisplay()
         bm: BenchMarker = BenchMarker(*workers)
