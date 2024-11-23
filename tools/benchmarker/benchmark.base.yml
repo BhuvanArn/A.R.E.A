@@ -17,3 +17,11 @@ benchmarks:
 
             r = get("http://127.0.0.1:8080")
             r.close()
+
+      - name: "cpp server"
+        code: |
+            from requests import get
+
+            r = get("http://127.0.0.1:8888")
+            r.close()
+

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  rust_server:
+    build:
+      context: ./services/router
+      dockerfile: Dockerfile
+    ports:
+      - "${EXPOSE_PORT_SERVER}:80"
+    networks:
+      - server-tier
+
+  python_server:
+    build:
+      context: ./python_router
+      dockerfile: Dockerfile
+    ports:
+      - "7777:80"
+    networks:
+      - server-tier
+
+  cpp_server:
+    build:
+      context: ./cpp_router
+      dockerfile: Dockerfile
+    ports:
+      - "8888:80"
+    networks:
+      - server-tier
+
+networks:
+  server-tier:
