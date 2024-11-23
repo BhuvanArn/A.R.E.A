@@ -28,13 +28,15 @@ class UIDisplay(object):
                 self._lines[i] = f"{item.name} [{"TIMEOUT" if (item.timeout >= 0 and item.elapsed_time > item.timeout) else "FINISH"}]"
 
     def _writer(self):
+        esc_seq: str = '\x1b'
+
         if (not self._lines):
             return
 
         stdout.write(
-            (f"\x1b[{len(self._old_lines)}A" if (self._old_lines) else '') +
+            (f"{esc_seq}[{len(self._old_lines)}A" if (self._old_lines) else '') +
             (''.join((len(item) * ' ') + '\n' for item in self._old_lines)) +
-            (f"\x1b[{len(self._old_lines)}A" if (self._old_lines) else '') +
+            (f"{esc_seq}[{len(self._old_lines)}A" if (self._old_lines) else '') +
             (''.join(item + '\n' for item in self._lines))
         )
 
@@ -127,7 +129,7 @@ def main() -> int:
         workers = []
 
         for worker in item["workers"]:
-            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec(f"\ndef test():\n    {worker["code"].replace('\n', '\n    ')}\n")))
+            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec("\ndef test():\n    " + worker["code"].replace('\n', '\n    ') + "\n")))
 
         display: UIDisplay = UIDisplay()
         bm: BenchMarker = BenchMarker(*workers)
@@ -142,11 +144,13 @@ def main() -> int:
 
         benchmarks_results[name] = {"iterations": iterations, "datas": bm.get_results()}
 
+    backslash: str = "\\"
+
     stdout.write("\nResults:\n")
     for item in benchmarks_results:
         stdout.write(f"  * {item} ({benchmarks_results[item]["iterations"]}):\n")
         for item in benchmarks_results[item]["datas"]:
-            stdout.write(f"    . {item.name.ljust(40)}\n    |- Elapsed: {item.elapsed_time}\n    |- Avg. dt: {item.average_dt}\n    \\ Status: {"FINISH" if not item.timed_out else "TIMEOUT"}\n")
+            stdout.write(f"    . {item.name.ljust(40)}\n    |- Elapsed: {item.elapsed_time}\n    |- Avg. dt: {item.average_dt}\n    {backslash} Status: {"FINISH" if not item.timed_out else "TIMEOUT"}\n")
             stdout.write('\n')
 
         stdout.write('\n')
