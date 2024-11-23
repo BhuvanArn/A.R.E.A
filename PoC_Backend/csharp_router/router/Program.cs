@@ -35,7 +35,7 @@ class Program
         listener.Bind(endpoint);
         listener.Listen(1000);
 
-        Console.WriteLine("Server is listening on port 80");
+        Console.WriteLine("Server is listening on port 6969");
 
         while (true)
         {
