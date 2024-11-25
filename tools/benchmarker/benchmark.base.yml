@@ -36,3 +36,9 @@ benchmarks:
             from requests import get
             r = get("http://127.0.0.1:8082")
             r.close()
+
+      - name: "elixir server"
+        code: |
+            from requests import get
+            r = get("http://127.0.0.1:6970")
+            r.close()
