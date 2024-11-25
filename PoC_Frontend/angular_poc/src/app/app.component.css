@@ -1,81 +1,3 @@
-/* Wrapper to position menu and button */
-.menu-wrapper {
-    position: fixed;
-    /* Keep the menu fixed at the side */
-    top: 0;
-    left: 0;
-    height: 100%;
-    background-color: #f0f0f0;
-    z-index: 999;
-    /* Make sure it stays on top of other elements */
-}
-
-/* Sliding menu styles */
-.menu {
-    position: absolute;
-    top: 0;
-    left: -250px;
-    /* Hidden off-screen initially */
-    width: 250px;
-    height: 100%;
-    background-color: #333;
-    /* Dark grey background */
-    color: white;
-    transition: left 0.3s ease;
-    /* Smooth slide-in/out effect */
-    padding: 20px 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-}
-
-.menu.open {
-    left: 0;
-    /* Slide in */
-}
-
-/* Menu item styles */
-.menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu li {
-    margin: 15px 0;
-}
-
-.menu li a {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-}
-
-.menu li a:hover {
-    color: #ff9900;
-    /* Highlight color on hover */
-}
-
-/* Toggle button styles */
-.menu-toggle {
-    position: fixed;
-    /* Position it fixed on the top-left */
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #b0b0b0;
-    /* Light grey */
-    color: white;
-    cursor: pointer;
-    z-index: 1000;
-}
-
-.menu-toggle:hover {
-    background-color: #8a8a8a;
-    /* Darker grey */
-}
-
 /* Center container styles */
 .center-container {
     display: flex;
@@ -102,7 +24,7 @@ input {
     width: 250px;
 }
 
-button {
+.send-input {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
@@ -112,6 +34,6 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.send-input:hover {
     background-color: #8a8a8a;
 }
