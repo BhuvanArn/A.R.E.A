@@ -46,5 +46,14 @@ services:
     networks:
       - server-tier
 
+  elixir_server:
+    build:
+      context: ./elixir_router
+      dockerfile: Dockerfile
+    ports:
+      - "6970:6970"
+    networks:
+      - server-tier
+
 networks:
   server-tier:
