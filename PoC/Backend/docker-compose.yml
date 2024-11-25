@@ -37,5 +37,14 @@ services:
     networks:
       - server-tier
 
+  javascript_server:
+    build:
+      context: ./javascript_router
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - server-tier
+
 networks:
   server-tier:
