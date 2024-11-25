@@ -25,7 +25,7 @@ class UIDisplay(object):
             if (item.alive):
                 self._lines[i] = f"Benching {item.name.ljust(40)} ({str(item.iteration_count).ljust(len(str(item.iterations)))}) {round(item.elapsed_time, 1):<4}"
             else:
-                self._lines[i] = f"{item.name} [{"TIMEOUT" if (item.timeout >= 0 and item.elapsed_time > item.timeout) else "FINISH"}]"
+                self._lines[i] = f"{item.name} [{'TIMEOUT' if (item.timeout >= 0 and item.elapsed_time > item.timeout) else 'FINISH'}]"
 
     def _writer(self):
         esc_seq: str = '\x1b'
@@ -129,7 +129,7 @@ def main() -> int:
         workers = []
 
         for worker in item["workers"]:
-            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec("\ndef test():\n    " + worker["code"].replace('\n', '\n    ') + "\n")))
+            workers.append(WorkerDescriptor(worker["name"] if worker["name"] else sha1(worker["code"], usedforsecurity=False).hexdigest(), lambda: exec("\ndef test():\n    " + worker["code"].replace('\n', '\n    ') + "\ntest()")))
 
         display: UIDisplay = UIDisplay()
         bm: BenchMarker = BenchMarker(*workers)
@@ -148,9 +148,9 @@ def main() -> int:
 
     stdout.write("\nResults:\n")
     for item in benchmarks_results:
-        stdout.write(f"  * {item} ({benchmarks_results[item]["iterations"]}):\n")
+        stdout.write(f"  * {item} ({benchmarks_results[item]['iterations']}):\n")
         for item in benchmarks_results[item]["datas"]:
-            stdout.write(f"    . {item.name.ljust(40)}\n    |- Elapsed: {item.elapsed_time}\n    |- Avg. dt: {item.average_dt}\n    {backslash} Status: {"FINISH" if not item.timed_out else "TIMEOUT"}\n")
+            stdout.write(f"    . {item.name.ljust(40)}\n    |- Elapsed: {item.elapsed_time}\n    |- Avg. dt: {item.average_dt}\n    {backslash} Status: {'FINISH' if not item.timed_out else 'TIMEOUT'}\n")
             stdout.write('\n')
 
         stdout.write('\n')
