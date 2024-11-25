@@ -1,3 +1,6 @@
 <div class="center-container">
-  <button (click)="onButtonClick()">Click Me!</button>
+  <div class="input-container">
+    <input [(ngModel)]="userInput" placeholder="Enter some text" />
+    <button (click)="onButtonClick()">Alert Text</button>
+  </div>
 </div>
