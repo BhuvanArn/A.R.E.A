@@ -1,3 +1,16 @@
+<div class="menu-wrapper">
+  <div class="menu" [class.open]="menuOpen">
+    <ul>
+      <li><a href="#">Option 1</a></li>
+      <li><a href="#">Option 2</a></li>
+      <li><a href="#">Option 3</a></li>
+    </ul>
+  </div>
+  <button class="menu-toggle" (click)="toggleMenu()">
+    {{ menuOpen ? 'Close Menu' : 'Open Menu' }}
+  </button>
+</div>
+
 <div class="center-container">
   <div class="input-container">
     <input [(ngModel)]="userInput" placeholder="Enter some text" />

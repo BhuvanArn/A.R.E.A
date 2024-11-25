@@ -12,6 +12,11 @@ import { FormsModule } from '@angular/forms';
 export class AppComponent {
   title = 'angular_poc';
   userInput: string = '';
+  menuOpen: boolean = false; // Tracks menu state
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
 
   onButtonClick() {
     alert(this.userInput || 'Please enter some text!');
