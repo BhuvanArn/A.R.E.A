@@ -30,3 +30,9 @@ benchmarks:
             from requests import get
             r = get("http://127.0.0.1:6969")
             r.close()
+
+      - name: "javascript server"
+        code: |
+            from requests import get
+            r = get("http://127.0.0.1:8082")
+            r.close()
