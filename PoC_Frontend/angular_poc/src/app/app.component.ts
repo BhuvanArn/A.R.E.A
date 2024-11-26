@@ -37,10 +37,10 @@ export class AppComponent {
       // const response = this.http.get(url);
       // console.log('GET response:', response);
       // alert('Success! Check the console for the response.' + response);
-      const response = this.http.get(url, {headers: {"Access-Control-Allow-Origin": "*"}});
+      const response = this.http.get(url);
       response.subscribe(
         (data) => {
-          alert('GET response: ' + data);
+          // alert('GET response: ' + data);
           console.log('GET response: ', data);
           console.log(data); // Process the response data here
         },
