@@ -20,5 +20,8 @@
   <div class="input-container">
     <input [(ngModel)]="userInput" placeholder="Enter some text" />
     <button class="send-input" (click)="onButtonClick()">Alert Text</button>
+
+    <h2>Response Data</h2>
+    <textarea [value]="responseData" rows="20" cols="80" readonly></textarea>
   </div>
 </div>

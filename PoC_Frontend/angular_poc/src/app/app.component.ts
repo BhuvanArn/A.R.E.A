@@ -15,6 +15,7 @@ export class AppComponent {
   title = 'angular_poc';
   userInput: string = '';
   menuOpen: boolean = false;
+  responseData: string = '';
 
   constructor(private http: HttpClient) {}
 
@@ -41,11 +42,13 @@ export class AppComponent {
       response.subscribe(
         (data) => {
           // alert('GET response: ' + data);
+          this.responseData = JSON.stringify(data, null, 2);
           console.log('GET response: ', data);
-          console.log(data); // Process the response data here
+          console.log(data);
         },
         (error) => {
-          console.error('Error occurred:', error); // Handle errors here
+          console.error('Error occurred:', error);
+          this.responseData = 'Error: Unable to fetch data. Check the console for details.';
         }
       );
 
