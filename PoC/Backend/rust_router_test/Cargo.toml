@@ -1,0 +1,12 @@
+[package]
+name = "router"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4.4.0"
+serde = { version = "1.0", features = ["derive"] }
+rand = "0.8.4"
+tokio = { version = "1.0", features = ["full"] }
+tokio-postgres = "0.7"
+actix-cors = "0.6.5"
