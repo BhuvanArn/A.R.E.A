@@ -3,13 +3,13 @@
         <nav>
             <div v-show="sideMenu" class="side-menu">
                 <ul class="side-menu-list">
-                    <li class="li-style">Page 1</li>
+                    <li class="li-style" @click="goTo('/')">Page 1</li>
                     <hr class="hr-style">
-                    <li class="li-style">Page 2</li>
+                    <li class="li-style" @click="goTo('/response-table')">Page 2</li>
                     <hr class="hr-style">
-                    <li class="li-style">Page 3</li>
+                    <li class="li-style" @click="goTo('/')">Page 3</li>
                     <hr class="hr-style">
-                    <li class="li-style">Page 4</li>
+                    <li class="li-style" @click="goTo('/')">Page 4</li>
                 </ul>
             </div>
             <div class="navbar-container">
@@ -34,6 +34,10 @@ export default {
     methods: {
         toggleSideMenu() {
             this.sideMenu = !this.sideMenu;
+        },
+
+        goTo(route) {
+            this.$router.push(route);
         }
     }
 };
