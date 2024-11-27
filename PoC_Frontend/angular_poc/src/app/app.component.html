@@ -1,0 +1,27 @@
+<div class="menu-wrapper">
+  <button class="menu-toggle" (click)="toggleMenu()">
+    <div class="hamburger-lines">
+      <span class="line line1"></span>
+      <span class="line line2"></span>
+      <span class="line line3"></span>
+    </div>
+    <!-- {{ menuOpen ? 'Close Menu' : 'Open Menu' }} -->
+  </button>
+  <div class="menu" [class.open]="menuOpen">
+    <ul>
+      <li><a href="#">Option 1</a></li>
+      <li><a href="#">Option 2</a></li>
+      <li><a href="#">Option 3</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="center-container">
+  <div class="input-container">
+    <input [(ngModel)]="userInput" placeholder="Enter some text" />
+    <button class="send-input" (click)="onButtonClick()">Alert Text</button>
+
+    <h2>Response Data</h2>
+    <textarea [value]="responseData" rows="20" cols="80" readonly></textarea>
+  </div>
+</div>
