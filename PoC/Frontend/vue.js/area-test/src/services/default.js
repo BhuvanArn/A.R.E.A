@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const sendRequest = async (request, data) => {
     try {
-        const response = await axios.get(`/`, {
+        const response = await axios.get(`http://localhost:8000/`, {
             params: {
                 request,
                 data
