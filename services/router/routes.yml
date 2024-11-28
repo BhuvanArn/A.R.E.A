@@ -1,0 +1,5 @@
+routes:
+  - name: "about"
+    host: "service-about"
+    port: 80
+    condition: "^*$"

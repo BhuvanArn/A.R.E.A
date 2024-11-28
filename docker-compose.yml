@@ -19,13 +19,22 @@ services:
 
   server:
     build:
-      context: ./server
+      context: ./services/router
       dockerfile: Dockerfile
     ports:
       - "${EXPOSE_PORT_SERVER}:80"
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - server-tier
+
+  service-about:
+    build:
+      context: ./services/about
+      dockerfile: Dockerfile
+    depends_on:
+      - server
     networks:
       - server-tier
 
