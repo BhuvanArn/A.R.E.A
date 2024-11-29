@@ -7,7 +7,7 @@ use super::request::*;
 
 pub fn collect_request(mut stream: &TcpStream) -> Request {
     let mut buf_reader = BufReader::new(&mut stream);
-    let mut req = create_request();
+    let mut req = Request::new();
     let mut index = 0;
 
     for item in buf_reader.by_ref().lines().into_iter().map(|line| line.unwrap()) {
@@ -42,4 +42,3 @@ pub fn collect_request(mut stream: &TcpStream) -> Request {
 
     return req;
 }
-

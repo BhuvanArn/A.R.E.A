@@ -5,13 +5,18 @@ use std::{
 };
 
 mod request;
+mod response;
 mod parser;
 
-fn handle_connection(mut stream: TcpStream) {
-    let req = parser::collect_request(&stream);
-    let response = "HTTP/1.1 200 OK\r\nContent-Length: 21\r\n\r\nhello from the server\r\n";
+use response::Response;
 
-    stream.write_all(response.as_bytes()).unwrap();
+fn handle_connection(mut stream: TcpStream) {
+    let _req = parser::collect_request(&stream);
+    let mut response = Response::new();
+
+    response.set_body("hello from the server");
+
+    stream.write_all(&response.build_request()).unwrap();
 }
 
 fn main()
