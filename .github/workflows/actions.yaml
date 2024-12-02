@@ -16,14 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Load environment variables
-        uses: cardinalby/export-env-action@v1
+      # Create .env file from Secret
+      - name: get environment variables
+        id: import-env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" >> .env
+      - uses: cardinalby/export-env-action@v2
+        id: export-env
         with:
+          mask: true
           envFile: '.env'
-          expand: 'true'
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
 
       - name: Start Docker Compose services
         run: docker compose up -d --build
+        env:
+          POSTGRES_DB: ${{ steps.export-env.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.export-env.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.export-env.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.export-env.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.export-env.outputs.EXPOSE_PORT_SERVER }}
 
       - name: Check service health
         uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
