@@ -23,6 +23,8 @@ fn main()
 {
     let listener = TcpListener::bind("0.0.0.0:80").unwrap();
 
+    println!("Server started at port 80");
+
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
