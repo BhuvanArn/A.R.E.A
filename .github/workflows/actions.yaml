@@ -32,6 +32,7 @@ jobs:
         run: docker-compose down -v --remove-orphans
 
   push_to_mirror:
+    needs: check_health
     runs-on: ubuntu-latest
 
     if: ${{ github.event_name == 'push' }}
