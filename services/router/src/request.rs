@@ -24,4 +24,17 @@ impl Request {
             body: Vec::new(),
         };
     }
+
+    pub fn build_request(&mut self) -> Vec<u8> {
+        let mut request_base = format!("{} {} {}/{}.{}\r\n", self.method, self.route, self.protocol, self.http_version[0], self.http_version[1]);
+        for (key, value) in &self.headers {
+            request_base.push_str(&mut format!("{}: {}\r\n", key, value));
+        }
+        request_base.push_str("\r\n");
+
+        let mut bytes = request_base.as_bytes().to_vec();
+        bytes.append(&mut self.body);
+
+        return bytes;
+    }
 }
