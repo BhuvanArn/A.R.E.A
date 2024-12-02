@@ -27,10 +27,6 @@ jobs:
           mask: true
           envFile: '.env'
 
-      # Remove .env file for security reasons
-      - name: remove .env file
-        run: rm -f .env
-
       - name: Start Docker Compose services
         run: docker compose up -d --build
         env:
@@ -39,6 +35,10 @@ jobs:
           POSTGRES_PASSWORD: ${{ steps.export-env.outputs.POSTGRES_PASSWORD }}
           EXPOSE_PORT_CLIENT: ${{ steps.export-env.outputs.EXPOSE_PORT_CLIENT }}
           EXPOSE_PORT_SERVER: ${{ steps.export-env.outputs.EXPOSE_PORT_SERVER }}
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
 
       - name: Check service health
         uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
