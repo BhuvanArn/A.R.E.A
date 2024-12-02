@@ -49,9 +49,6 @@ jobs:
           skip-exited: "true"
           skip-no-healthcheck: "true"
 
-      - name: Stop Docker Compose services
-        if: always()
-        run: docker compose down -v --remove-orphans
       - name: Print Docker Compose logs
         if: failure()
         run: docker compose logs
@@ -59,6 +56,10 @@ jobs:
       - name: Print area-db-1 logs
         if: failure()
         run: docker logs area-db-1
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: docker compose down -v --remove-orphans
 
   push_to_mirror:
     needs: check_health
