@@ -16,6 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Load environment variables
+        uses: cardinalby/export-env-action@v1
+        with:
+          envFile: '.env'
+          expand: 'true'
+
       - name: Start Docker Compose services
         run: docker compose up -d --build
 
@@ -30,7 +36,7 @@ jobs:
 
       - name: Stop Docker Compose services
         if: always()
-        run: docker-compose down -v --remove-orphans
+        run: docker compose down -v --remove-orphans
       - name: Print Docker Compose logs
         if: failure()
         run: docker compose logs
