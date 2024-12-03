@@ -62,7 +62,7 @@ jobs:
         if: failure()
         run: docker logs area-server-1
 
-      - name: Print area-client-web-1 logs
+      - name: Print area-client_web-1 logs
         if: failure()
         run: docker logs area-client-web-1
 
