@@ -22,19 +22,20 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" >> .env
       - uses: cardinalby/export-env-action@v2
-        id: export-env
+        id: exportEnv
         with:
           mask: true
+          export: false
           envFile: '.env'
 
       - name: Start Docker Compose services
         run: docker compose up -d --build
         env:
-          POSTGRES_DB: ${{ steps.export-env.outputs.POSTGRES_DB }}
-          POSTGRES_USER: ${{ steps.export-env.outputs.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ steps.export-env.outputs.POSTGRES_PASSWORD }}
-          EXPOSE_PORT_CLIENT: ${{ steps.export-env.outputs.EXPOSE_PORT_CLIENT }}
-          EXPOSE_PORT_SERVER: ${{ steps.export-env.outputs.EXPOSE_PORT_SERVER }}
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
 
       # Remove .env file for security reasons
       - name: remove .env file
