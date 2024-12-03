@@ -29,10 +29,9 @@ fn handle_connection(mut stream: TcpStream) {
 
             socket.write_all(&req.build_request());
 
-            let mut response = Vec::<u8>::new();
-            socket.read(&mut response);
+            let mut response = parser::collect_response(&socket);
 
-            stream.write_all(&response).unwrap();
+            stream.write_all(&response.build_request()).unwrap();
         },
         _ => {
             response.set_body("Not found");
@@ -47,6 +46,8 @@ fn handle_connection(mut stream: TcpStream) {
 fn main()
 {
     let listener = TcpListener::bind("0.0.0.0:80").unwrap();
+
+    println!("[RUST (service-router)] - listening on: 0.0.0.0:80");
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();

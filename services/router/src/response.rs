@@ -38,6 +38,19 @@ impl Response {
         self.headers.insert("content-length".to_owned(), self.body.len().to_string());
     }
 
+    pub fn set_body_as_vec(&mut self, text: &Vec<u8>) {
+        self.body = text.to_vec();
+
+        match self.headers.get("content-length") {
+            Some(_) => {
+                self.headers.remove("content-length");
+            },
+            _ => {},
+        }
+
+        self.headers.insert("content-length".to_owned(), self.body.len().to_string());
+    }
+
     pub fn get_body(&mut self) -> &Vec<u8> {
         return &self.body;
     }
