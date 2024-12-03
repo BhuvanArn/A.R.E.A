@@ -58,6 +58,14 @@ jobs:
         if: failure()
         run: docker logs area-db-1
 
+      - name: Print area-server-1 logs
+        if: failure()
+        run: docker logs area-server-1
+
+      - name: Print area-client-web-1 logs
+        if: failure()
+        run: docker logs area-client-web-1
+
       - name: Stop Docker Compose services
         if: always()
         run: docker compose down -v --remove-orphans
