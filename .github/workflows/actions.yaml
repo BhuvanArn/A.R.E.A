@@ -64,7 +64,7 @@ jobs:
 
       - name: Print area-client_web-1 logs
         if: failure()
-        run: docker logs area-client-web-1
+        run: docker logs area-client_web-1
 
       - name: Stop Docker Compose services
         if: always()
