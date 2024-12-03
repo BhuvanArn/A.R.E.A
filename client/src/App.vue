@@ -1,33 +1,37 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
   <div id="app">
-    <DisplayText text="Hello, Vue.js! feur" />
+    <SectionList :sections="sectionNames" />
+    <div class="content">
+      <h1>Welcome to My Page</h1>
+      <p>Content goes here...</p>
+    </div>
   </div>
-  <router-view />
-  <p>this is a text</p>
 </template>
 
 <script>
-import DisplayText from './components/DisplayText.vue';
+import SectionList from './components/SectionList.vue';
 
 export default {
   name: "App",
   components: {
-    DisplayText,
+    SectionList,
+  },
+  data() {
+    return {
+      sectionNames: ["Introduction", "Features", "Pricing", "Contact Us", "FAQ"],
+    };
   },
 };
 </script>
 
 <style>
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+#app {
+  display: flex;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+.content {
+  margin-left: 220px;
+  /* Offset for the fixed section list */
+  padding: 20px;
 }
 </style>
