@@ -6,6 +6,6 @@ COPY . .
 
 RUN npm i
 
-EXPOSE $PORT
+EXPOSE 80
 
 CMD ["npm", "run", "serve"]

@@ -21,7 +21,6 @@ jobs:
         id: import-env
         run: |
           echo "${{ secrets.ENV_FILE }}" >> .env
-          cat .env
       - uses: cardinalby/export-env-action@v2
         id: exportEnv
         with:
@@ -46,7 +45,7 @@ jobs:
       - name: Check service health
         uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
         with:
-          max-retries: 30
+          max-retries: 10
           retry-interval: 5
           compose-file: "docker-compose.yml"
           skip-exited: "true"
