@@ -20,8 +20,8 @@ jobs:
       - name: get environment variables
         id: import-env
         run: |
-          echo "${{ secrets.ENV_FILE }}"
           echo "${{ secrets.ENV_FILE }}" >> .env
+          cat .env
       - uses: cardinalby/export-env-action@v2
         id: exportEnv
         with:
