@@ -38,3 +38,6 @@ target "service-about" {
     "type=gha,scope=service-about"
   ]
 }
+group "default" {
+  targets = ["client_web", "server", "db", "client_mobile", "service-about"]
+}
