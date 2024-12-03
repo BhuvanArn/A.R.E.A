@@ -1,4 +1,6 @@
 target "client_web" {
+  context = "./client"
+  dockerfile = "Dockerfile"
   cache-to = [
     "type=gha,ignore-error=true,mode=max,scope=client_web"
   ]
@@ -7,6 +9,8 @@ target "client_web" {
   ]
 }
 target "server" {
+  context = "./services/router"
+  dockerfile = "Dockerfile"
   cache-to = [
     "type=gha,ignore-error=true,mode=max,scope=server"
   ]
@@ -15,6 +19,8 @@ target "server" {
   ]
 }
 target "db" {
+  context = "."
+  dockerfile = "Dockerfile"
   cache-to = [
     "type=gha,ignore-error=true,mode=max,scope=db"
   ]
@@ -23,6 +29,8 @@ target "db" {
   ]
 }
 target "client_mobile" {
+  context = "./mobile"
+  dockerfile = "Dockerfile"
   cache-to = [
     "type=gha,ignore-error=true,mode=max,scope=client_mobile"
   ]
@@ -31,6 +39,8 @@ target "client_mobile" {
   ]
 }
 target "service-about" {
+  context = "./services/about"
+  dockerfile = "Dockerfile"
   cache-to = [
     "type=gha,ignore-error=true,mode=max,scope=service-about"
   ]
