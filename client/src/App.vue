@@ -1,10 +1,6 @@
 <template>
   <div id="app">
     <SectionList :sections="sectionNames" />
-    <div class="content">
-      <h1>Welcome to My Page</h1>
-      <p>Content goes here...</p>
-    </div>
   </div>
 </template>
 
@@ -18,20 +14,14 @@ export default {
   },
   data() {
     return {
-      sectionNames: ["Introduction", "Features", "Pricing", "Contact Us", "FAQ"],
+      sectionNames: ["Google", "Gmail", "Discord", "Timer", "Outlook"],
     };
   },
 };
 </script>
 
 <style>
-#app {
+.app {
   display: flex;
-}
-
-.content {
-  margin-left: 220px;
-  /* Offset for the fixed section list */
-  padding: 20px;
 }
 </style>

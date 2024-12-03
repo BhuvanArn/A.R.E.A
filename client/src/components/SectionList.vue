@@ -1,8 +1,9 @@
 <template>
-    <div class="section-list">
+    <div class="service-list">
+        <h1>Services</h1>
         <ul>
-            <li v-for="(section, index) in sections" :key="index">
-                {{ section }}
+            <li v-for="(section, index) in sections" class=" section-item">
+                <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
             </li>
         </ul>
     </div>
@@ -17,20 +18,41 @@ export default {
             required: true,
         },
     },
+    methods: {
+        getColor(index) {
+            const colors = ["#77cbda", "#ff9e99", "#dbcc79", "#8cbd8c"];  //["blue", "red", "yellow", "green"]
+            return colors[index % colors.length];
+        },
+    },
 };
 </script>
 
 <style scoped>
-.section-list {
+.service-list {
     position: fixed;
     left: 0;
     top: 0;
-    width: 200px;
+    width: 300px;
     height: 100vh;
     overflow-y: auto;
     background-color: #f4f4f4;
     border-right: 1px solid #ccc;
-    padding: 10px;
+    /* padding: 10px; */
+}
+
+.service-section-name {
+    /* height: 35px; */
+    line-height: 45px;
+    padding-left: 30px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0px 3px rgb(126, 126, 126);
+}
+
+h1 {
+    text-align: center;
 }
 
 ul {
@@ -42,8 +64,8 @@ li {
     padding: 10px;
     cursor: pointer;
     font-size: 16px;
-    color: #333;
-    border-bottom: 1px solid #ddd;
+    /* color: #333; */
+    /* border-bottom: 1px solid #ddd; */
 }
 
 li:hover {
