@@ -1,0 +1,88 @@
+name: Area
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-**'
+  pull_request:
+    branches-ignore:
+      - 'ga-ignore-**'
+env:
+  MIRROR_URL: "git@github.com:EpitechPromo2027/B-DEV-500-NAN-5-2-area-toavina.andriamanampisoa.git"
+
+jobs:
+  check_health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Create .env file from Secret
+      - name: get environment variables
+        id: import-env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" >> .env
+      - uses: cardinalby/export-env-action@v2
+        id: exportEnv
+        with:
+          mask: true
+          export: false
+          envFile: '.env'
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      # bake action is used to build the docker containers from the docker-bake.hcl file
+      # The docker-bake.hcl file is used to define the build targets for the docker containers
+      # it is used to build the docker containers in parallel to save time
+      # then when we'll run the docker compose up command, the containers will be already built
+      - name: Build docker containers
+        uses: docker/bake-action@v3
+        with:
+          files: docker-bake.hcl
+          targets: default
+          load: true
+
+      - name: Start Docker Compose services
+        run: docker compose up -d
+        continue-on-error: true
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
+
+      - name: Check service health
+        uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
+        with:
+          max-retries: 10
+          retry-interval: 5
+          compose-file: "docker-compose.yml"
+          skip-exited: "true"
+          skip-no-healthcheck: "true"
+
+      - name: Print Docker Compose logs
+        if: failure()
+        run: docker compose logs
+
+      - name: Print area-db-1 logs
+        if: failure()
+        run: docker logs area-db-1
+
+      - name: Print area-server-1 logs
+        if: failure()
+        run: docker logs area-server-1
+
+      - name: Print area-client_web-1 logs
+        if: failure()
+        run: docker logs area-client_web-1
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: docker compose down -v --remove-orphans
+
