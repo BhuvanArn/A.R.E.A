@@ -32,7 +32,7 @@ export default {
     position: fixed;
     left: 0;
     top: 0;
-    width: 300px;
+    width: 35vh;
     height: 100vh;
     overflow-y: auto;
     background-color: #f4f4f4;
@@ -49,6 +49,11 @@ export default {
     color: white;
     border-radius: 15px;
     box-shadow: 0px 3px rgb(126, 126, 126);
+    cursor: pointer;
+}
+
+.service-section-name:hover {
+    color: black;
 }
 
 h1 {
@@ -62,13 +67,5 @@ ul {
 
 li {
     padding: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    /* color: #333; */
-    /* border-bottom: 1px solid #ddd; */
-}
-
-li:hover {
-    background-color: #eaeaea;
 }
 </style>

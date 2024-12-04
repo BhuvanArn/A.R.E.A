@@ -14,9 +14,19 @@ export default {
   },
   data() {
     return {
-      sectionNames: ["Google", "Gmail", "Discord", "Timer", "Outlook"],
+      sectionNames: [],
     };
   },
+  mounted() {
+    this.fetchSections();
+  },
+  methods: {
+    fetchSections() {
+      // TODO Fetch services from server here
+      this.sectionNames = ["Google", "Gmail", "Discord", "Timer", "Outlook"];
+    },
+  },
+
 };
 </script>
 
