@@ -127,8 +127,8 @@ export default {
     },
 
     navigateToLogin(event) {
-/*       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'login' }).href; */
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'login' }).href;
     },
 
     navigateToRegister(event) {
