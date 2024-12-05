@@ -17,6 +17,17 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, string>, UserCreatedEventHandler>();
         builder.Services.AddScoped<UserService>();
         
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
+        
         var app = builder.Build();
 
         app.UseRouting();
