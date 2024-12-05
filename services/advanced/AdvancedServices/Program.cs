@@ -39,6 +39,14 @@ public static class Program
         });
         
         var app = builder.Build();
+        
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<DatabaseContext>();
+
+            await context.Database.MigrateAsync();
+        }
 
         app.UseRouting();
         app.UseEndpoints(endpoints =>
