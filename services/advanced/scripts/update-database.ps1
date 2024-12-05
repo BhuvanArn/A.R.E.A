@@ -1,0 +1,1 @@
+dotnet ef database update $Args[0] --project .\Database --startup-project .\Database

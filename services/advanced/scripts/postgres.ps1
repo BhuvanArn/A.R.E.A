@@ -1,0 +1,1 @@
+docker run -p 5432:5432 --name postgres-SQL -e POSTGRES_PASSWORD=VaNOSilla2022 --restart always -d postgres:13
