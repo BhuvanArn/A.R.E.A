@@ -22,7 +22,7 @@ public class UserService
         await _userDao.SaveChangesAsync();
     }
 
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User> GetUserByIdAsync(Guid id)
     {
         return await _userDao.GetByIdAsync(id);
     }
@@ -41,7 +41,7 @@ public class UserService
         await _userDao.SaveChangesAsync();
     }
 
-    public async Task DeleteUserAsync(int id)
+    public async Task DeleteUserAsync(Guid id)
     {
         var user = await _userDao.GetByIdAsync(id);
         if (user == null)
