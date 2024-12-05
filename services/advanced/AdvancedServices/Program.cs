@@ -1,10 +1,13 @@
-﻿using Database;
+﻿using System.Text;
+using Database;
 using Database.Dao;
 using Database.Service;
 using EventBus;
 using EventBus.Event;
 using LoginService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AdvancedServices;
 
@@ -18,6 +21,28 @@ public static class Program
         
         builder.Services.AddDbContext<DatabaseContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        
+        var jwtSettings = configuration.GetSection("JwtSettings");
+        var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
+
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+                };
+            });
         
         builder.Services.AddControllers();
         builder.Services.AddLogging(configure => configure.AddConsole());
