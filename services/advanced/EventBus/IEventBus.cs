@@ -2,7 +2,7 @@
 
 public interface IEventBus
 {
-    Task PublishAsync<TEvent>(TEvent @event);
-    void Subscribe<TEvent>(IIntegrationEventHandler<TEvent> handler);
-    void Unsubscribe<TEvent>(IIntegrationEventHandler<TEvent> handler);
+    void Subscribe<TEvent, TResponse>(IIntegrationEventHandler<TEvent, TResponse> handler);
+    Task<IEnumerable<TResponse>> PublishAsync<TEvent, TResponse>(TEvent @event);
+    void Unsubscribe<TEvent, TResponse>(IIntegrationEventHandler<TEvent, TResponse> handler);
 }

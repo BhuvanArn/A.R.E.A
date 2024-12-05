@@ -1,6 +1,6 @@
 ﻿namespace EventBus;
 
-public interface IIntegrationEventHandler<TEvent>
+public interface IIntegrationEventHandler<TEvent, TResponse>
 {
-    Task HandleAsync(TEvent @event);
+    Task<TResponse> HandleAsync(TEvent @event);
 }
