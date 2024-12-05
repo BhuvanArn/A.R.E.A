@@ -31,7 +31,27 @@ public class AuthController : ControllerBase
         
         return Ok(new
         {
-            Message = "User creation event published successfully.",
+            Message = "User login event published successfully.",
+            Responses = responses.Select(s => s.Item1)
+        });
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    {
+        _logger.LogInformation("Register event triggered.");
+
+        var responses = await _eventBus.PublishAsync<UserRegisteredEvent, (string, ResultType)>(new UserRegisteredEvent
+        {
+            Email = request.Email,
+            ConfirmedPassword = request.ConfirmedPassword,
+            Password = request.Password,
+            Username = request.Username
+        });
+
+        return Ok(new
+        {
+            Message = "User registration event published successfully.",
             Responses = responses.Select(s => s.Item1)
         });
     }

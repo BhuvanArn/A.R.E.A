@@ -7,7 +7,6 @@ using EventBus;
 using EventBus.Event;
 using Extension;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LoginService;

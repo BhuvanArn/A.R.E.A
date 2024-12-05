@@ -8,6 +8,7 @@ using LoginService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RegisterService;
 
 namespace AdvancedServices;
 
@@ -48,6 +49,7 @@ public static class Program
         builder.Services.AddLogging(configure => configure.AddConsole());
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
         
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
@@ -80,8 +82,12 @@ public static class Program
         });
         
         var eventBus = app.Services.GetRequiredService<IEventBus>();
-        var userCreatedHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>>();
-        eventBus.Subscribe(userCreatedHandler);
+        
+        var userLoginHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>>();
+        eventBus.Subscribe(userLoginHandler);
+        
+        var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
+        eventBus.Subscribe(userRegisteredHandler);
 
         await app.RunAsync();
     }
