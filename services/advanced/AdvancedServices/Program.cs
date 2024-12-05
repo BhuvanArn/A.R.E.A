@@ -10,22 +10,25 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        var services = new ServiceCollection();
+        var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Services.AddControllers();
+        builder.Services.AddLogging(configure => configure.AddConsole());
+        builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
+        builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
+        
+        var app = builder.Build();
 
-        services.AddLogging(configure => configure.AddConsole());
-
-        services.AddSingleton<IEventBus, EventBus.EventBus>();
-
-        services.AddTransient<IIntegrationEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
-
-        var serviceProvider = services.BuildServiceProvider();
-
-        var eventBus = serviceProvider.GetRequiredService<IEventBus>();
-
-        var userCreatedHandler = serviceProvider.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent>>();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+        
+        var eventBus = app.Services.GetRequiredService<IEventBus>();
+        var userCreatedHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent>>();
         eventBus.Subscribe(userCreatedHandler);
 
-        await eventBus.PublishAsync(new UserCreatedEvent { Username = "test1" });
-        await eventBus.PublishAsync(new UserCreatedEvent { Username = "test2" });
+        await app.RunAsync();
     }
 }
