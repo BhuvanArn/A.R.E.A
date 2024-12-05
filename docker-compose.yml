@@ -38,6 +38,23 @@ services:
       timeout: 5s
       retries: 5
 
+  csharp_service:
+    build:
+      context: ./services/advanced
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - server-tier
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   service-about:
     build:
       context: ./services/about
