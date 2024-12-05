@@ -1,12 +1,8 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Database;
 using Database.Dao;
 using Database.Entities;
 using Database.Service;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace DatabaseTests
 {
@@ -69,7 +65,6 @@ namespace DatabaseTests
         [Fact]
         public async Task GetAllUsersAsync_ReturnsAllUsers()
         {
-            // Arrange
             var user1 = new User
             {
                 Username = "User1",
