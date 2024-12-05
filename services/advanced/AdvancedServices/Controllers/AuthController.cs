@@ -1,4 +1,5 @@
-﻿using EventBus;
+﻿using AdvancedServices.Request;
+using EventBus;
 using EventBus.Event;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,20 +18,21 @@ public class AuthController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("login")]
-    public async Task<IActionResult> Login()
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         _logger.LogInformation("Login event triggered.");
-        var responses = await _eventBus.PublishAsync<UserCreatedEvent, string>(new UserCreatedEvent
+        
+        var responses = await _eventBus.PublishAsync<UserCreatedEvent, (string, ResultType)>(new UserCreatedEvent
         {
-            Email = "test@gmail.com",
-            Username = "test"
+            Email = request.Email,
+            Password = request.Password
         });
         
         return Ok(new
         {
             Message = "User creation event published successfully.",
-            Responses = responses
+            Responses = responses.Select(s => s.Item1)
         });
     }
 }

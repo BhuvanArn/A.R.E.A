@@ -8,7 +8,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\EventBus\EventBus.csproj" />
+      <ProjectReference Include="..\Extension\Extension.csproj" />
       <ProjectReference Include="..\LoginService\LoginService.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

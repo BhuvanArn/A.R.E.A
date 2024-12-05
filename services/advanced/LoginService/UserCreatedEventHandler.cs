@@ -1,12 +1,13 @@
-﻿using Database.Migrations;
+﻿using Database.Entities;
 using Database.Service;
 using EventBus;
 using EventBus.Event;
+using Extension;
 using Microsoft.Extensions.Logging;
 
 namespace LoginService;
 
-public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent, string>
+public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>
 {
     private readonly ILogger<UserCreatedEventHandler> _logger;
     private readonly UserService _userService;
@@ -17,12 +18,22 @@ public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent
         _userService = userService;
     }
     
-    public Task<string> HandleAsync(UserCreatedEvent @event)
+    public async Task<(string, ResultType)> HandleAsync(UserCreatedEvent @event)
     {
-        _logger.LogInformation(@event.Username);
+        User? user = (await _userService.FindUsersAsync(s => s.Email == @event.Email)).FirstOrDefault();
+
+        if (user == null)
+        {
+            return ("Invalid credentials", ResultType.Fail);
+        }
+
+        bool validPassword = @event.Password.VerifyPassword(user.Salt, user.Password);
+
+        if (!validPassword)
+        {
+            return ("Invalid credentials", ResultType.Fail);
+        }
         
-        // Todo : database insert
-        
-        return Task.FromResult("...");
+        return ("todo jwt", ResultType.Success);
     }
 }

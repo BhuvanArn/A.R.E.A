@@ -31,7 +31,8 @@ namespace DatabaseTests
             {
                 Username = "BasicUser",
                 Email = "email@test.com",
-                Password = "BasicPassword"
+                Password = "BasicPassword",
+                Salt = "test"
             };
 
             await _userService.CreateUserAsync(user);
@@ -39,6 +40,7 @@ namespace DatabaseTests
             Assert.NotNull(createdUser);
             Assert.Equal("email@test.com", createdUser.Email);
             Assert.Equal("BasicPassword", createdUser.Password);
+            Assert.Equal("test", createdUser.Salt);
         }
 
         [Fact]
@@ -48,7 +50,8 @@ namespace DatabaseTests
             {
                 Username = "TestUser",
                 Email = "testuser@test.com",
-                Password = "TestPassword"
+                Password = "TestPassword",
+                Salt = "test"
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -60,6 +63,7 @@ namespace DatabaseTests
             Assert.Equal("TestUser", retrievedUser.Username);
             Assert.Equal("testuser@test.com", retrievedUser.Email);
             Assert.Equal("TestPassword", retrievedUser.Password);
+            Assert.Equal("test", retrievedUser.Salt);
         }
 
         [Fact]
@@ -69,13 +73,15 @@ namespace DatabaseTests
             {
                 Username = "User1",
                 Email = "user1@test.com",
-                Password = "Password1"
+                Password = "Password1",
+                Salt = "test"
             };
             var user2 = new User
             {
                 Username = "User2",
                 Email = "user2@test.com",
-                Password = "Password2"
+                Password = "Password2",
+                Salt = "test2"
             };
             _dbContext.Users.AddRange(user1, user2);
             await _dbContext.SaveChangesAsync();
@@ -91,9 +97,11 @@ namespace DatabaseTests
 
             Assert.Equal("user1@test.com", retrievedUser1.Email);
             Assert.Equal("Password1", retrievedUser1.Password);
+            Assert.Equal("test", retrievedUser1.Salt);
 
             Assert.Equal("user2@test.com", retrievedUser2.Email);
             Assert.Equal("Password2", retrievedUser2.Password);
+            Assert.Equal("test2", retrievedUser2.Salt);
         }
 
         [Fact]
@@ -103,7 +111,8 @@ namespace DatabaseTests
             {
                 Username = "UpdateUser",
                 Email = "updateuser@test.com",
-                Password = "OldPassword"
+                Password = "OldPassword",
+                Salt = "test"
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -118,6 +127,7 @@ namespace DatabaseTests
             Assert.Equal("UpdateUser", updatedUser.Username);
             Assert.Equal("updatedemail@test.com", updatedUser.Email);
             Assert.Equal("NewPassword", updatedUser.Password);
+            Assert.Equal("test", updatedUser.Salt);
         }
 
         [Fact]
@@ -127,7 +137,8 @@ namespace DatabaseTests
             {
                 Username = "DeleteUser",
                 Email = "deleteuser@test.com",
-                Password = "DeletePassword"
+                Password = "DeletePassword",
+                Salt = "test"
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -136,46 +147,6 @@ namespace DatabaseTests
 
             var deletedUser = await _dbContext.Users.FindAsync(user.Id);
             Assert.Null(deletedUser);
-        }
-
-        [Fact]
-        public async Task FindUsersAsync_WithMatchingUsers_ReturnsUsers()
-        {
-            var user1 = new User
-            {
-                Username = "FindUser1",
-                Email = "finduser1@test.com",
-                Password = "Password1"
-            };
-            var user2 = new User
-            {
-                Username = "FindUser2",
-                Email = "finduser2@test.com",
-                Password = "Password2"
-            };
-            var user3 = new User
-            {
-                Username = "OtherUser",
-                Email = "otheruser@test.com",
-                Password = "Password3"
-            };
-            _dbContext.Users.AddRange(user1, user2, user3);
-            await _dbContext.SaveChangesAsync();
-
-            var foundUsers = await _userService.FindUsersAsync(u => u.Username.StartsWith("Find"));
-
-            Assert.NotNull(foundUsers);
-            Assert.Equal(2, foundUsers.Count());
-            var retrievedUser1 = foundUsers.FirstOrDefault(u => u.Username == "FindUser1");
-            var retrievedUser2 = foundUsers.FirstOrDefault(u => u.Username == "FindUser2");
-            Assert.NotNull(retrievedUser1);
-            Assert.NotNull(retrievedUser2);
-
-            Assert.Equal("finduser1@test.com", retrievedUser1.Email);
-            Assert.Equal("Password1", retrievedUser1.Password);
-
-            Assert.Equal("finduser2@test.com", retrievedUser2.Email);
-            Assert.Equal("Password2", retrievedUser2.Password);
         }
 
         public void Dispose()

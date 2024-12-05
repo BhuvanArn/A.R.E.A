@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Database\Database.csproj" />
       <ProjectReference Include="..\EventBus\EventBus.csproj" />
+      <ProjectReference Include="..\Extension\Extension.csproj" />
     </ItemGroup>
 
 </Project>
