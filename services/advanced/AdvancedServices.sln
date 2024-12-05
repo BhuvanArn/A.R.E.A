@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedServices", "AdvancedServices\AdvancedServices.csproj", "{5D7C5CE9-7D11-4E88-91D5-68DEB637A144}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "srcs", "srcs", "{65259CE4-7AAE-47A7-858F-8D9AF49209D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executables", "Executables", "{56157B66-105C-4D0A-9E14-CF6DF1816AEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{0A90B3BA-5DF5-433E-80F4-46ADC5877C81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{93A31298-2B14-4D6C-8313-FFBB98013BDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D7C5CE9-7D11-4E88-91D5-68DEB637A144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D7C5CE9-7D11-4E88-91D5-68DEB637A144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D7C5CE9-7D11-4E88-91D5-68DEB637A144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D7C5CE9-7D11-4E88-91D5-68DEB637A144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93A31298-2B14-4D6C-8313-FFBB98013BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93A31298-2B14-4D6C-8313-FFBB98013BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93A31298-2B14-4D6C-8313-FFBB98013BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93A31298-2B14-4D6C-8313-FFBB98013BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{56157B66-105C-4D0A-9E14-CF6DF1816AEC} = {65259CE4-7AAE-47A7-858F-8D9AF49209D5}
+		{5D7C5CE9-7D11-4E88-91D5-68DEB637A144} = {56157B66-105C-4D0A-9E14-CF6DF1816AEC}
+		{0A90B3BA-5DF5-433E-80F4-46ADC5877C81} = {65259CE4-7AAE-47A7-858F-8D9AF49209D5}
+		{93A31298-2B14-4D6C-8313-FFBB98013BDE} = {0A90B3BA-5DF5-433E-80F4-46ADC5877C81}
+	EndGlobalSection
+EndGlobal
