@@ -35,8 +35,8 @@
                         <img src="@/assets/oauth/discord_logo.png" class="img-style2">
                     </div>
                 </div>
-                <RouterLink class="link" @click="navigateToRegister">Register</RouterLink>
-                <RouterLink class="link" @click="">Forgot password ?</RouterLink>
+                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
+                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Forgot password ?</h4></router-link>
             </div>
         </div>
     </body>
@@ -335,6 +335,14 @@ body {
 
 .oauth-ind-container-dc:active {
     background-color: rgb(25, 65, 107);
+}
+
+.txt-link {
+    font-family: 'inter', sans-serif;
+    font-weight: 300;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
 }
 
 </style>
