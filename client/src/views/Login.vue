@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Forgot password ?</h4></router-link>
+                <router-link class="link"><h4 class="txt-link" @click="">Forgot password ?</h4></router-link>
             </div>
         </div>
     </body>
