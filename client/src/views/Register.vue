@@ -15,7 +15,7 @@
                     <img src="@/assets/key.png" class="img-style1">
                     <input type="password" class="input-style1" placeholder="Password">
                 </div>
-                <button class="login-btn">REGISTER</button>
+                <button @click="registerClient" class="login-btn">REGISTER</button>
                 <div class="filler02"></div>
                 <router-link class="link"><h4 class="txt-link" @click="navigateToLogin">Already have an account ?</h4></router-link>
             </div>
@@ -50,6 +50,9 @@ export default {
                 this.mobile = false;
             }
         },
+        async registerClient() {
+            // Register client
+        }
     }
 }
 </script>
