@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <header>
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
       <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
       <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
@@ -24,12 +24,12 @@
         <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
       </div>
     </div>
-  </nav>
-  <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
-    <ul v-show="isActiveMenu">
-      <!-- <li v-show="isRotated"><router-link class="link" :to="{name: 'home'}"><button @click="navigateToHome" class="navbar-button">Home</button></router-link></li> -->
-    </ul>
-  </div>
+  </header>
+    <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
+      <ul v-show="isActiveMenu">
+        <!-- <li v-show="isRotated"><router-link class="link" :to="{name: 'home'}"><button @click="navigateToHome" class="navbar-button">Home</button></router-link></li> -->
+      </ul>
+    </div>
 </template>
   
 <script>
@@ -277,6 +277,8 @@ li {
   flex-direction: row;
   border-bottom: 1px solid #000000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  background-color: #bcc1ba;
+  color: white;
 }
 
 .navbar-container-mobile-active {
