@@ -1,14 +1,16 @@
 <template>
     <NavBar></NavBar>
+
     <body>
         <div>
-
+            <ServicePage />
         </div>
     </body>
 </template>
 
 <script>
 import NavBar from '../components/MainNavBar.vue';
+import ServicePage from '@/components/ServicePage.vue';
 
 export default {
     name: 'AreaHome',
@@ -18,7 +20,8 @@ export default {
         }
     },
     components: {
-        NavBar
+        NavBar,
+        ServicePage,
     },
     methods: {
         // methods
@@ -26,5 +29,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
