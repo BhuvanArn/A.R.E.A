@@ -12,15 +12,6 @@ services:
       timeout: 5s
       retries: 5
 
-  client_mobile:
-    build:
-      context: ./mobile
-      dockerfile: Dockerfile
-    depends_on:
-      client_web:
-        condition: service_healthy
-    restart: on-failure
-
   server:
     build:
       context: ./services/router
