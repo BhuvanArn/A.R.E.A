@@ -130,8 +130,8 @@ export default {
     },
 
     navigateToRegister(event) {
-/*       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'register' }).href; */
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'register' }).href;
     },
 
     displayMenu() {
