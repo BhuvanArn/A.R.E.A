@@ -15,7 +15,7 @@
                     <img src="@/assets/key.png" class="img-style1">
                     <input type="password" class="input-style1" placeholder="Password">
                 </div>
-                <button class="login-btn">LOGIN</button>
+                <button @click="loginClient" class="login-btn">LOGIN</button>
                 <div class="or-filler">
                     <hr class="or-hr">
                     <p class="or-txt">or</p>
@@ -69,6 +69,9 @@ export default {
                 this.mobile = false;
             }
         },
+        async loginClient() {
+            // Login client
+        }
     }
 }
 </script>
