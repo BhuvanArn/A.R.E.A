@@ -3,3 +3,13 @@ routes:
     host: service-about
     port: 80
     condition: ^*$
+
+  - name: auth-login
+    host: csharp_service
+    port: 5000
+    condition: ^/auth/login$
+
+  - name: auth-register
+    host: csharp_service
+    port: 5000
+    condition: ^/auth/register$
