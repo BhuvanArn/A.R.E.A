@@ -32,7 +32,7 @@ export default {
     position: fixed;
     left: 0;
     top: 0;
-    width: 35vh;
+    width: 20vw;
     height: 100vh;
     overflow-y: auto;
     background-color: #f4f4f4;
