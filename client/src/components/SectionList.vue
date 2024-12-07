@@ -29,19 +29,14 @@ export default {
 
 <style scoped>
 .service-list {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 20vw;
     height: 100vh;
     overflow-y: auto;
     background-color: #f4f4f4;
     border-right: 1px solid #ccc;
-    /* padding: 10px; */
 }
 
 .service-section-name {
-    /* height: 35px; */
     line-height: 45px;
     padding-left: 30px;
     font-size: 25px;

@@ -1,5 +1,5 @@
 <template>
-    <div id="services-page">
+    <div class="services-page">
         <SectionList :sections="sectionNames" />
         <WidgetList />
     </div>
@@ -34,8 +34,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .services-page {
     display: flex;
+    flex-direction: row;
 }
 </style>

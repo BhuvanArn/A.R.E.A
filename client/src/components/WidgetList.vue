@@ -35,10 +35,6 @@ export default {
 <style scoped>
 .widget-list {
     display: flex;
-    flex-direction: column;
-    position: fixed;
-    right: 0;
-    top: 0;
     width: 80vw;
     height: 100vh;
     overflow-y: auto;
@@ -48,7 +44,6 @@ export default {
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
-    justify-content: start;
     padding: 20px;
     overflow-y: auto;
 }
@@ -59,7 +54,7 @@ export default {
     justify-content: center;
     font-size: 18px;
     font-weight: bold;
-    width: 200px;
+    width: 400px;
     height: 200px;
     color: #fff;
     background-color: #007BFF;
