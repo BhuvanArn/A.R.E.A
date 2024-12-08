@@ -2,7 +2,7 @@
     <body>
         <div class="main-container" :class="{ 'mobile-container': mobile }">
             <div class="main-container-top">
-                <h2 class="login-title-txt">Login</h2>
+                <h2 class="login-title-txt">Register</h2>
                 <div class="filler01"></div>
                 <img src="@/assets/logo.png" class="logo">
             </div>
@@ -15,28 +15,9 @@
                     <img src="@/assets/key.png" class="img-style1">
                     <input type="password" class="input-style1" placeholder="Password">
                 </div>
-                <button @click="loginClient" class="login-btn">LOGIN</button>
-                <div class="or-filler">
-                    <hr class="or-hr">
-                    <p class="or-txt">or</p>
-                    <hr class="or-hr">
-                </div>
-                <div class="oauth-container">
-                    <div class="oauth-ind-container-fk">
-                        <img src="@/assets/oauth/facebook_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-gg">
-                        <img src="@/assets/oauth/google_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-mc">
-                        <img src="@/assets/oauth/microsoft_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-dc">
-                        <img src="@/assets/oauth/discord_logo.png" class="img-style2">
-                    </div>
-                </div>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
-                <router-link class="link"><h4 class="txt-link" @click="">Forgot password ?</h4></router-link>
+                <button @click="registerClient" class="login-btn">REGISTER</button>
+                <div class="filler02"></div>
+                <router-link class="link"><h4 class="txt-link" @click="navigateToLogin">Already have an account ?</h4></router-link>
             </div>
         </div>
     </body>
@@ -45,7 +26,7 @@
 <script>
 
 export default {
-    name: 'Login',
+    name: 'Register',
     data() {
         return {
             windowWidth: false,
@@ -57,9 +38,9 @@ export default {
         this.checkScreen();
     },
     methods: {
-        navigateToRegister(event) {
+        navigateToLogin(event) {
             event.preventDefault()
-            window.location.href = this.$router.resolve({ name: 'register' }).href;
+            window.location.href = this.$router.resolve({ name: 'login' }).href;
         },
         checkScreen() {
             this.windowWidth = window.innerWidth;
@@ -69,8 +50,8 @@ export default {
                 this.mobile = false;
             }
         },
-        async loginClient() {
-            // Login client
+        async registerClient() {
+            // Register client
         }
     }
 }
@@ -154,6 +135,12 @@ body {
 .filler01 {
     width: 100%;
     height: 100%;
+    background-color: transparent;
+}
+
+.filler02 {
+    width: 100%;
+    height: 3rem;
     background-color: transparent;
 }
 
