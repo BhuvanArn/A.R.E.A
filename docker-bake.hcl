@@ -18,16 +18,6 @@ target "server" {
     "type=gha,scope=server"
   ]
 }
-target "client_mobile" {
-  context = "./mobile"
-  dockerfile = "Dockerfile"
-  cache-to = [
-    "type=gha,ignore-error=true,mode=max,scope=client_mobile"
-  ]
-  cache-from = [
-    "type=gha,scope=client_mobile"
-  ]
-}
 target "service-about" {
   context = "./services/about"
   dockerfile = "Dockerfile"
@@ -39,5 +29,5 @@ target "service-about" {
   ]
 }
 group "default" {
-  targets = ["client_web", "server", "client_mobile", "service-about"]
+  targets = ["client_web", "server", "service-about"]
 }
