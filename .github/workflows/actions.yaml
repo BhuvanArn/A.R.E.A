@@ -44,6 +44,7 @@ jobs:
           load: true
 
       - name: Start Docker Compose services
+        id: startServices
         run: docker compose up -d
         continue-on-error: true
         env:
@@ -52,6 +53,11 @@ jobs:
           POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
           EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
           EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+
+      # Check if error code is 17, which means docker-compose up failed to start services
+      - name: check error start
+        if: steps.startServices.outputs.exit-code == 17
+        run: exit 1
 
       # Remove .env file for security reasons
       - name: remove .env file
