@@ -1,0 +1,1 @@
+dotnet ef migrations add $Args[0] --project .\Database --startup-project .\Database
