@@ -45,8 +45,7 @@ jobs:
 
       - name: Start Docker Compose services
         id: startServices
-        run: docker compose up -d
-        continue-on-error: true
+        run: docker compose up -d --wait
         env:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
@@ -54,23 +53,9 @@ jobs:
           EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
           EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
 
-      # Check if error code is 17, which means docker-compose up failed to start services
-      - name: check error start
-        if: steps.startServices.outputs.exit-code == 17
-        run: exit 1
-
       # Remove .env file for security reasons
       - name: remove .env file
         run: rm -f .env
-
-      - name: Check service health
-        uses: jaracogmbh/docker-compose-health-check-action@v1.0.0
-        with:
-          max-retries: 10
-          retry-interval: 5
-          compose-file: "docker-compose.yml"
-          skip-exited: "true"
-          skip-no-healthcheck: "true"
 
       - name: Print Docker Compose logs
         if: failure()
