@@ -24,7 +24,7 @@ services:
     networks:
       - server-tier
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:80"]
+      test: ["CMD-SHELL", "curl -f http://localhost:80/health"]
       interval: 10s
       timeout: 5s
       retries: 5
