@@ -1,11 +1,18 @@
-﻿using Database.Entities;
+using Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using Action = System.Action;
 
 namespace Database;
 
 public class DatabaseContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    
+    public DbSet<Entities.Service> Services { get; set; }
+    
+    public DbSet<Action> Actions { get; set; }
+    
+    public DbSet<Reaction> Reactions { get; set; }
     
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
@@ -16,5 +23,17 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Id)
             .IsUnique();
+        
+        modelBuilder.Entity<Entities.Service>()
+            .HasMany(s => s.Actions)
+            .WithOne(a => a.Service)
+            .HasForeignKey(a => a.ServiceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Entities.Service>()
+            .HasMany(s => s.Reactions)
+            .WithOne(r => r.Service)
+            .HasForeignKey(r => r.ServiceId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
