@@ -11,6 +11,9 @@
         <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
         <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
       </div>
+      <div v-show="isLogged && !mobile">
+        <router-link><button @click="navigateToPanel" class="access-btn-style">Your panel</button></router-link>
+      </div>
       <hr v-show="!mobile" class="vertical-hr">
     </div>
     <div v-show="mobileNav" class="mobile-menu-container">
@@ -22,6 +25,9 @@
       <div v-show="!isLogged" class="nv-btn-container-mobile">
         <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
         <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+      </div>
+      <div v-show="isLogged">
+        <router-link><button @click="navigateToPanel" class="access-btn-style">Your panel</button></router-link>
       </div>
     </div>
     <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
@@ -129,6 +135,11 @@ export default {
     navigateToRegister(event) {
       event.preventDefault()
       window.location.href = this.$router.resolve({ name: 'register' }).href;
+    },
+
+    navigateToPanel(event) {
+/*       event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'panel' }).href; */
     },
 
     displayMenu() {
