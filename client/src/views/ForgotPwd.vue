@@ -2,7 +2,7 @@
     <body>
         <div class="main-container" :class="{ 'mobile-container': mobile }">
             <div class="main-container-top">
-                <h2 class="reset-pwd-title-txt" :class="{ 'mobile-title': mobile }">Reset Password</h2>
+                <h2 class="reset-pwd-title-txt" :class="{ 'mobile-title': mobile }">Forgot Password</h2>
                 <div class="filler01"></div>
                 <img src="@/assets/logo.png" class="logo">
             </div>
