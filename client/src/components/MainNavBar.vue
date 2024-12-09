@@ -24,14 +24,11 @@
         <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
       </div>
     </div>
-  </header>
     <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
-      <ul v-show="isActiveMenu">
-        <!-- <li v-show="isRotated"><router-link class="link" :to="{name: 'home'}"><button @click="navigateToHome" class="navbar-button">Home</button></router-link></li> -->
-      </ul>
     </div>
+  </header>
 </template>
-  
+
 <script>
 
 export default {
@@ -157,10 +154,10 @@ export default {
 }
 
 header {
-  background-color: #bcc1ba;
   z-index: 99;
   width: 100%;
   color: white;
+  background-color: #bcc1ba;
 
   nav {
     display: flex;
@@ -168,7 +165,9 @@ header {
     flex-direction: row;
     padding: 12px 0;
     width: 90%;
-    margin: auto;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 
     @media(min-width: 1080px) {
       max-width: 1080px;
@@ -443,6 +442,7 @@ li {
 }
 
 .activeMenu {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -451,7 +451,6 @@ li {
   background-color: #bcc1ba;
   border: 1px solid black;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  
 }
 </style>
   
