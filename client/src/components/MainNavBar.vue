@@ -1,39 +1,34 @@
 <template>
-    <header>
-      <nav>
-        <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
-          <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
-          <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-          <img src="@/assets/logo.png" class="logo">
-          <h2 class="title">Area</h2>
-          <div class="filler01">
-          </div>
-          <div v-show="!isLogged && !mobile" class="nv-btn-container">
-            <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
-            <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
-          </div>
-          <hr v-show="!mobile" class="vertical-hr">
-        </div>
-        <div v-show="mobileNav" class="mobile-menu-container">
-          <button>Sample</button> <!-- To replace with the correct links/buttons -->
-          <button>Sample</button> <!-- To replace with the correct links/buttons -->
-          <button>Sample</button> <!-- To replace with the correct links/buttons -->
-          <button>Sample</button> <!-- To replace with the correct links/buttons -->
-          <hr class="horizontal-hr">
-          <div v-show="!isLogged" class="nv-btn-container-mobile">
-            <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
-            <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
-          </div>
-        </div>
-      </nav>
-    </header>
-      <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
-        <ul v-show="isActiveMenu">
-          <!-- <li v-show="isRotated"><router-link class="link" :to="{name: 'home'}"><button @click="navigateToHome" class="navbar-button">Home</button></router-link></li> -->
-        </ul>
+  <header>
+    <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
+      <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
+      <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
+      <img src="@/assets/logo.png" class="logo">
+      <h2 class="title">Area</h2>
+      <div class="filler01">
       </div>
-  </template>
-  
+      <div v-show="!isLogged && !mobile" class="nv-btn-container">
+        <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
+        <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+      </div>
+      <hr v-show="!mobile" class="vertical-hr">
+    </div>
+    <div v-show="mobileNav" class="mobile-menu-container">
+      <button>Sample</button> <!-- To replace with the correct links/buttons -->
+      <button>Sample</button> <!-- To replace with the correct links/buttons -->
+      <button>Sample</button> <!-- To replace with the correct links/buttons -->
+      <button>Sample</button> <!-- To replace with the correct links/buttons -->
+      <hr class="horizontal-hr">
+      <div v-show="!isLogged" class="nv-btn-container-mobile">
+        <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
+        <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+      </div>
+    </div>
+    <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
+    </div>
+  </header>
+</template>
+
 <script>
 
 export default {
@@ -127,13 +122,13 @@ export default {
     },
 
     navigateToLogin(event) {
-/*       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'login' }).href; */
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'login' }).href;
     },
 
     navigateToRegister(event) {
-/*       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'register' }).href; */
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'register' }).href;
     },
 
     displayMenu() {
@@ -159,10 +154,10 @@ export default {
 }
 
 header {
-  background-color: #bcc1ba;
   z-index: 99;
   width: 100%;
   color: white;
+  background-color: #bcc1ba;
 
   nav {
     display: flex;
@@ -170,7 +165,9 @@ header {
     flex-direction: row;
     padding: 12px 0;
     width: 90%;
-    margin: auto;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 
     @media(min-width: 1080px) {
       max-width: 1080px;
@@ -200,7 +197,7 @@ li {
     background-color: transparent;
     transition: box-shadow 0.35s ease;
     border-radius: 1rem;
-  font-family: 'bold', sans-serif;
+  font-family: 'inter', sans-serif;
   color: rgba(14, 91, 199, 0.7);
   font-size: large;
 }
@@ -279,6 +276,8 @@ li {
   flex-direction: row;
   border-bottom: 1px solid #000000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  background-color: #bcc1ba;
+  color: white;
 }
 
 .navbar-container-mobile-active {
@@ -419,7 +418,7 @@ li {
   border: 1px solid rgba(0, 0, 0, 0.7);
   transition: box-shadow 0.35s ease;
   border-radius: 10px;
-  font-family: 'bold', sans-serif;
+  font-family: 'inter', sans-serif;
   color: rgba(0, 0, 0, 0.7);
   font-size: large;
 }
@@ -436,13 +435,14 @@ li {
 .title {
   font-size: 3rem;
   font-weight: 400;
-  font-family: 'bold', sans-serif;
+  font-family: 'inter', sans-serif;
   color: rgba(0, 0, 0, 0.7);
   margin-left: 1rem;
   margin-right: 1rem;
 }
 
 .activeMenu {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -451,7 +451,6 @@ li {
   background-color: #bcc1ba;
   border: 1px solid black;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  
 }
 </style>
   

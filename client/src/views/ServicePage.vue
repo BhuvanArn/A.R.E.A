@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import SectionList from './SectionList.vue';
-import WidgetList from './WidgetList.vue';
+import SectionList from '@/components/SectionList.vue';
+import WidgetList from '@/components/WidgetList.vue';
 
 export default {
     name: "ServicePage",
