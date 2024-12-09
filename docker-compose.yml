@@ -62,6 +62,10 @@ services:
       - server
     networks:
       - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
 
   service-reaction:
     build:
@@ -71,6 +75,10 @@ services:
       - server
     networks:
       - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
 
   db:
     image: "postgres:15"
@@ -96,3 +104,10 @@ networks:
 
 volumes:
   postgres-data:
+
+  services-storage:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: 'data/service_storage'
