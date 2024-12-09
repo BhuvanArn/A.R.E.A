@@ -1,4 +1,4 @@
-using Database.Entities;
+﻿using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Action = System.Action;
 
@@ -10,7 +10,7 @@ public class DatabaseContext : DbContext
     
     public DbSet<Entities.Service> Services { get; set; }
     
-    public DbSet<Action> Actions { get; set; }
+    public DbSet<Entities.Action> Actions { get; set; }
     
     public DbSet<Reaction> Reactions { get; set; }
     
