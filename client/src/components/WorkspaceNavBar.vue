@@ -16,6 +16,13 @@
         </div>
       </div>
       <div v-show="mobileNav" class="mobile-menu-container">
+        <div class="user-info-container">
+            <h2 class="username-txt">{{ username }}</h2>
+            <span @click="goToProfilePage" class="user-avatar-img-container">
+                <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
+            </span>
+        </div>
+        <hr class="horizontal-hr">
         <button>Sample</button> <!-- To replace with the correct links/buttons -->
         <button>Sample</button> <!-- To replace with the correct links/buttons -->
         <button>Sample</button> <!-- To replace with the correct links/buttons -->
