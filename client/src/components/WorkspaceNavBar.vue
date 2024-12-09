@@ -10,8 +10,8 @@
         <hr v-show="!mobile" class="vertical-hr">
         <div class="user-info-container" v-show="!mobile">
             <h2 class="username-txt">{{ username }}</h2>
-            <span class="user-avatar-img">
-
+            <span @click="goToProfilePage" class="user-avatar-img-container">
+                <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
             </span>
         </div>
       </div>
@@ -117,6 +117,11 @@ export default {
         if (this.windowWidth <= 300) {
           window.resizeTo(300, window.innerHeight);
         }
+      },
+
+      goToProfilePage(event) {
+/*         event.preventDefault()
+        this.$router.push('/profile'); */ // To replace with the correct route to the profile page
       },
 
       displayMenu() {
@@ -441,13 +446,23 @@ export default {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   }
 
-.user-avatar-img {
+.user-avatar-img-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
     background-color: #9fb7b9;
     border: 1px solid #969696;
     margin-left: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.user-avatar-img {
+    width: 4rem;
+    height: 4rem;
 }
 
 .username-txt {
