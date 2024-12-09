@@ -32,6 +32,12 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
+      # Generate docker-bake.hcl file
+      - name: Generate docker-bake.hcl
+        run: |
+          pip install pyyaml
+          python ./tools/generate-docker-bake.py
+
       # bake action is used to build the docker containers from the docker-bake.hcl file
       # The docker-bake.hcl file is used to define the build targets for the docker containers
       # it is used to build the docker containers in parallel to save time
