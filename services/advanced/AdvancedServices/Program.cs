@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Database;
 using Database.Dao;
 using Database.Service;
@@ -53,6 +53,9 @@ public static class Program
         
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<ActionService>();
+        builder.Services.AddScoped<ReactionService>();
+        builder.Services.AddScoped<ServiceService>();
         
         builder.Services.AddCors(options =>
         {
