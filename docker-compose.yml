@@ -54,6 +54,24 @@ services:
     networks:
       - server-tier
 
+  service-action:
+    build:
+      context: ./services/action
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    networks:
+      - server-tier
+
+  service-reaction:
+    build:
+      context: ./services/reaction
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    networks:
+      - server-tier
+
   db:
     image: "postgres:15"
     networks:
