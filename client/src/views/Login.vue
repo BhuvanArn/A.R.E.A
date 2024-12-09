@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
-                <router-link class="link"><h4 class="txt-link" @click="">Forgot password ?</h4></router-link>
+                <router-link class="link"><h4 class="txt-link" @click="navigateToForgotPwd">Forgot password ?</h4></router-link>
             </div>
         </div>
     </body>
@@ -60,6 +60,10 @@ export default {
         navigateToRegister(event) {
             event.preventDefault()
             window.location.href = this.$router.resolve({ name: 'register' }).href;
+        },
+        navigateToForgotPwd(event) {
+            event.preventDefault()
+            window.location.href = this.$router.resolve({ name: 'forgot-password' }).href;
         },
         checkScreen() {
             this.windowWidth = window.innerWidth;
