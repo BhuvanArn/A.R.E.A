@@ -65,6 +65,10 @@ export default {
 
 <style>
 
+body {
+    background-color: #efefef;
+}
+
 .page-container {
     display: flex;
     flex-direction: column;
@@ -73,8 +77,6 @@ export default {
     height: auto;
     margin: 0;
     padding: 0;
-    background-color: #efefef;
-    z-index: 1;
 }
 
 .img-01-style {
