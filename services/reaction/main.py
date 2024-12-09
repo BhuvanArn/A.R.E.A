@@ -3,9 +3,6 @@ from select import select
 from protocol import *
 from time import sleep
 
-class Reaction(object):
-    pass
-
 def main() -> int:
     print(f"[PYTHON (service-reaction)] - starting...", flush=True)
     connected = False
@@ -35,10 +32,16 @@ def main() -> int:
 
             if (read_ready_sockets):
                 message = connection.get_message()
+
+                if (message.type == INVM):
+                    print(f"[PYTHON (service-reaction)] - action disconnected, closing", flush=True)
+                    connection.close_client()
+                    return (0)
         except KeyboardInterrupt:
             break
         except Exception as e:
-            print(e)
+            print(f"[PYTHON (service-reaction)] - {e}", flush=True)
+            return (84)
 
     return (0)
 

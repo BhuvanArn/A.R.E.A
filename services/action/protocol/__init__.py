@@ -68,11 +68,13 @@ class AreaConnect(object):
             self.connected.sendall(message.to_bytes() + (b"\0" * (1024 - len(message.to_bytes()))))
 
     def get_message(self) -> Message:
-        message: bytes = self.connected.recv(1024)
+        if (self.connected):
+            message: bytes = self.connected.recv(1024)
 
-        if (Message.from_byte(message) == INVM):
-            return (Message(INVM))
-        return (Message.from_byte(message))
+            if (Message.from_byte(message) == INVM):
+                return (Message(INVM))
+            return (Message.from_byte(message))
+        return (None)
 
     def accept(self):
         self.connected = self.socket.accept()[0]
