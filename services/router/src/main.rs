@@ -34,6 +34,14 @@ fn handle_connection(mut stream: TcpStream) {
             stream.write_all(&response.build_request()).unwrap();
         },
         _ => {
+            if req.route == "/health" {
+                response.set_body("OK");
+                response.code = 200;
+                response.message = String::from("OK");
+
+                stream.write_all(&response.build_request()).unwrap();
+                return ();
+            }
             response.set_body("Not found");
             response.code = 404;
             response.message = String::from("NOT FOUND");
