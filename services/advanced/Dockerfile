@@ -7,6 +7,7 @@ COPY ../../AdvancedServices/AdvancedServices.csproj ./AdvancedServices/
 COPY ../../Database/Database.csproj ./Database/
 COPY ../../EventBus/EventBus.csproj ./EventBus/
 COPY ../../LoginService/LoginService.csproj ./LoginService/
+COPY ../../RegisterService/RegisterService.csproj ./RegisterService/
 COPY ../../Extension/Extension.csproj ./Extension/
 COPY ../../DatabaseTests/DatabaseTests.csproj ./DatabaseTests/
 
@@ -21,6 +22,8 @@ RUN dotnet publish -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y curl
 
 COPY --from=publish /app/publish .
 
