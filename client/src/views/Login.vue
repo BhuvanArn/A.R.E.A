@@ -9,13 +9,16 @@
             <div class="main-container-bottom">
                 <div class="email-container">
                     <img src="@/assets/user.png" class="img-style1">
-                    <input type="text" class="input-style1" placeholder="Email">
+                    <input type="text" class="input-style1" placeholder="Email" v-model="email">
                 </div>
                 <div class="pwd-container">
                     <img src="@/assets/key.png" class="img-style1">
-                    <input type="password" class="input-style1" placeholder="Password">
+                    <input type="password" class="input-style1" placeholder="Password" v-model="password">
                 </div>
                 <button @click="loginClient" class="login-btn">LOGIN</button>
+                <div v-if="errorMessage" class="error-message">
+                    <span>{{ errorMessage }}</span>
+                </div>
                 <div class="or-filler">
                     <hr class="or-hr">
                     <p class="or-txt">or</p>
@@ -50,6 +53,9 @@ export default {
         return {
             windowWidth: false,
             mobile: false,
+            email: '',
+            password: '',
+            errorMessage: ''
         }
     },
     mounted() {
@@ -60,6 +66,10 @@ export default {
         navigateToRegister(event) {
             event.preventDefault()
             window.location.href = this.$router.resolve({ name: 'register' }).href;
+        },
+        navigateToHome(event) {
+            event.preventDefault()
+            window.location.href = this.$router.resolve({ name: 'home' }).href;
         },
         navigateToForgotPwd(event) {
             event.preventDefault()
@@ -73,8 +83,33 @@ export default {
                 this.mobile = false;
             }
         },
-        async loginClient() {
-            // Login client
+        async loginClient(event) {
+            if (!this.email || !this.password) {
+                this.errorMessage = 'Please fill all the fields';
+                return;
+            }
+            if (!this.email.includes('@') || !this.email.includes('.')) {
+                this.errorMessage = 'Please enter a valid email';
+                return;
+            }
+            this.errorMessage = '';
+            try {
+                const response = await this.$axios.post('/auth/login', {
+                    Email: this.email,
+                    Password: this.password
+                });
+                if (!response.data || !response.data.responses || response.data.responses.length === 0) {
+                    this.errorMessage = 'Invalid email or password';
+                    return;
+                }
+                const token = response.data.responses[0];
+                console.log(token);
+                localStorage.setItem('token', token);
+                this.navigateToHome(event);
+            } catch (error) {
+                console.error(error);
+                this.errorMessage = 'An error occurred';
+            }
         }
     }
 }
@@ -350,6 +385,13 @@ body {
     cursor: pointer;
     margin: 0;
     padding: 0;
+}
+
+.error-message {
+    color: red;
+    font-family: 'inter', sans-serif;
+    font-size: medium;
+    margin-bottom: -1rem;
 }
 
 </style>
