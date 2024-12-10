@@ -17,12 +17,12 @@ public static class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         var configuration = builder.Configuration;
-        
+
         builder.Services.AddDbContext<DatabaseContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-        
+
         var jwtSettings = configuration.GetSection("JwtSettings");
         var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
 
@@ -44,48 +44,46 @@ public static class Program
                     IssuerSigningKey = new SymmetricSecurityKey(secretKey)
                 };
             });
-        
+
         builder.Services.AddControllers();
         builder.Services.AddLogging(configure => configure.AddConsole());
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
-        
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
-        
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
-                builder =>
+                corsBuilder =>
                 {
-                    builder.AllowAnyOrigin()
+                    corsBuilder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
         });
-        
+
         var app = builder.Build();
-        
+
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<DatabaseContext>();
-
             await context.Database.MigrateAsync();
         }
 
         app.UseRouting();
+        app.UseCors("AllowAll");
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
-        
+
         var eventBus = app.Services.GetRequiredService<IEventBus>();
-        
         var userLoginHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>>();
         eventBus.Subscribe(userLoginHandler);
-        
         var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
         eventBus.Subscribe(userRegisteredHandler);
 

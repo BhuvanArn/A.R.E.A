@@ -22,6 +22,7 @@ fn handle_connection(mut stream: TcpStream) {
     response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
     response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
     response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
+    response.headers.insert("Access-Control-Allow-Credentials".to_string(), "true".to_string());
 
     if req.method == "OPTIONS" {
         response.code = 204;
