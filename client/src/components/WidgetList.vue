@@ -37,15 +37,15 @@
                         <div>
                             <label for="service">Service:</label>
                             <select id="service" v-model="selectedServiceId">
-                                <option v-for="(service, id) in services" :key="id" :value="id">
-                                    {{ service }}
+                                <option v-for="service in all_widgets" :key="service.id" :value="service.id">
+                                    {{ service.name }}
                                 </option>
                             </select>
                         </div>
                         <div v-if="selectedServiceId">
                             <label for="action">Action:</label>
                             <select id="action" v-model="selectedAction">
-                                <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
+                                <option v-for="action in all_widgets[selectedServiceId - 1]?.actions || []" :key="action.id"
                                     :value="action">
                                     {{ action.name }}
                                 </option>
@@ -54,7 +54,7 @@
                         <div v-if="selectedServiceId">
                             <label for="reaction">Reaction:</label>
                             <select id="reaction" v-model="selectedReaction">
-                                <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []"
+                                <option v-for="reaction in all_widgets[selectedServiceId - 1]?.reactions || []"
                                     :key="reaction.id" :value="reaction">
                                     {{ reaction.name }}
                                 </option>
@@ -109,45 +109,15 @@ export default {
                     },
                 },
             ],
-            all_widgets: {
-                "1": {
-                    actions: [
-                        {
-                            id: "1",
-                            name: "Action 1 discord",
-                            description: "Description de l'action 1",
-                        },
-                    ],
-                    reactions: [
-                        {
-                            id: "1",
-                            name: "Reaction 1 discord",
-                            description: "Description de la reaction 1",
-                        },
-                    ],
-                },
-                "2": {
-                    actions: [
-                        {
-                            id: "1",
-                            name: "Action 1 google",
-                            description: "Description de l'action 1",
-                        },
-                    ],
-                    reactions: [
-                        {
-                            id: "1",
-                            name: "Reaction 1 google",
-                            description: "Description de la reaction 1",
-                        },
-                    ],
-                },
-            },
+            all_widgets: [],
             showForm: false,
             selectedServiceId: null,
             selectedAction: null,
             selectedReaction: null,
         };
+    },
+    async mounted() {
+        await this.fetchAbout();
     },
     methods: {
         createWidget() {
@@ -176,6 +146,26 @@ export default {
             this.selectedAction = null;
             this.selectedReaction = null;
         },
+        async fetchAbout() {
+            try {
+                const response = await this.$axios.get('/about.json');
+                console.log(response);
+
+                const newRes = response.data.server.services;
+                let index = 1;
+
+                newRes.map((service) => {
+                    service.id = index;
+                    index++;
+                });
+
+                this.all_widgets = newRes;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        // get component already subscribed from user
+        async fetchAlreadyCreated() {}
     },
 };
 </script>
