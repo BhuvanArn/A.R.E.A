@@ -59,6 +59,42 @@ services:
       - server
     networks:
       - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/about.json"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-action:
+    build:
+      context: ./services/action
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    networks:
+      - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
+
+  service-reaction:
+    build:
+      context: ./services/reaction
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    networks:
+      - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
 
   db:
     image: "postgres:15"
@@ -84,3 +120,10 @@ networks:
 
 volumes:
   postgres-data:
+
+  services-storage:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: 'data/service_storage'
