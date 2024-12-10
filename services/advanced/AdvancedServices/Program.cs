@@ -72,6 +72,7 @@ public static class Program
             await context.Database.MigrateAsync();
         }
 
+        app.UseMiddleware<ResponseBufferingMiddleware>();
         app.UseRouting();
         app.UseCors("AllowAll");
         app.UseAuthentication();
