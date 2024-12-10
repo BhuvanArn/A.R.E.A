@@ -4,6 +4,8 @@ from protocol import *
 from time import sleep
 from serviceconf import *
 from service_mod import *
+from requests import get
+from json import dumps
 
 class RegisteredReaction(object):
     def __init__(self, service_id, reaction_id, linked_to, service, name, _vars = {}):
@@ -64,6 +66,8 @@ class Handler(object):
         self.registered_reactions = []
         self.connection = connection
 
+        self.failed_update = False
+
         self.mods_middleware = GenericModRegister()
 
         self.load_module_middleware("endpoint", "base.endpoint_base_handler")
@@ -85,6 +89,31 @@ class Handler(object):
 
     def register_reaction(self, reaction):
         self.registered_reactions.append(reaction)
+
+    def from_request(self, url):
+        self.failed_update = True
+
+        self.registered_reactions.clear()
+
+        req = get(url)
+
+        if (req.status_code not in (200, 201)):
+            raise RuntimeError("cannot update datas")
+
+        json = req.json()
+
+        for item in json["message"]:
+            for action in item["Reactions"]:
+                _vars = {}
+
+                for var_name, var_value in {**dumps(item["ExecutionConfig"]), **dumps(item["Auth"])}.items():
+                    _vars[var_name, var_value]
+
+                self.register_action(RegisteredReaction(item["Id"], action["Id"], item["ActionId"], item["Name"], action["Name"], _vars))
+
+        req.close()
+
+        self.failed_update = False
 
 def main() -> int:
     print(f"[PYTHON (service-reaction)] - starting...", flush=True)
@@ -110,6 +139,10 @@ def main() -> int:
     print(f"[PYTHON (service-reaction)] - connected to service-action on port 2727", flush=True)
 
     handler = Handler(connection)
+    try:
+        handler.from_request("csharp_service:8080/area")
+    except Exception as e:
+        print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
     #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1303739948171526246", "message": "test reaction from reaction-service.", "token": ""}))
 
     while 1:
@@ -137,6 +170,16 @@ def main() -> int:
 
                 if (connection.get_message() == UPDT):
                     print(f"[PYTHON (service-reaction)] - receive update request from action", flush=True)
+                    try:
+                        handler.from_request("csharp_service:8080/area")
+                    except Exception as e:
+                        print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
+
+            if (handler.failed_update):
+                try:
+                    handler.from_request("csharp_service:8080/area")
+                except Exception as e:
+                    print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
         except KeyboardInterrupt:
             break
         except Exception as e:

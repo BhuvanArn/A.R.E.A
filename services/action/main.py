@@ -4,6 +4,8 @@ from protocol import *
 from serviceconf import *
 from time import time
 from service_mod import *
+from requests import get
+from json import dumps
 
 class RegisteredAction(object):
     def __init__(self, service_id, action_id, service, name, _vars = {}):
@@ -121,6 +123,8 @@ class Watcher(object):
         self.mods_strategy = GenericModRegister()
         self.mods_middleware = GenericModRegister()
 
+        self.failed_update = False
+
         self.load_module_strategy("hash", "base.hash_strategy_base_handler")
         self.load_module_middleware("endpoint", "base.endpoint_base_handler")
         self.load_module_middleware("log", "base.log_middelware_exemple")
@@ -142,6 +146,31 @@ class Watcher(object):
             self.mods_middleware.load_module(name, name)
         else:
             return (self.mods_middleware.get_module(name))
+
+    def from_request(self, url):
+        self.failed_update = True
+
+        self.registered_actions.clear()
+
+        req = get(url)
+
+        if (req.status_code not in (200, 201)):
+            raise RuntimeError("cannot update datas")
+
+        json = req.json()
+
+        for item in json["message"]:
+            for action in item["Actions"]:
+                _vars = {}
+
+                for var_name, var_value in {**dumps(item["TriggerConfig"]), **dumps(item["Auth"])}.items():
+                    _vars[var_name, var_value]
+
+                self.register_action(RegisteredAction(item["Id"], action["Id"], item["Name"], action["Name"], _vars))
+
+        req.close()
+
+        self.failed_update = False
 
     def update(self, name_id):
         for item in self.registered_actions:
@@ -167,10 +196,14 @@ def main() -> int:
     connection = AreaConnect()
     connection.set_listen()
 
-    db_connect = AreaConnect(2728)
+    db_connect = AreaConnect(port=2728)
     db_connect.set_listen()
 
     watcher = Watcher(connection)
+    try:
+        watcher.from_request("csharp_service:8080/area")
+    except Exception as e:
+        print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
     #watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
@@ -214,11 +247,20 @@ def main() -> int:
 
                 if (db_connect.get_message() == UPDT):
                     print(f"[PYTHON (service-action)] - db requested data update", flush=True)
+                    try:
+                        watcher.from_request("csharp_service:8080/area")
+                    except Exception as e:
+                        print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
                     db_connect.close_client()
                     print(f"[PYTHON (service-action)] - closing db connect", flush=True)
                     connection.send_message(Message(UPDT))
                     print(f"[PYTHON (service-action)] - forwading to reaction", flush=True)
 
+            if (watcher.failed_update):
+                try:
+                    watcher.from_request("csharp_service:8080/area")
+                except Exception as e:
+                    print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
         except KeyboardInterrupt:
             break
         except Exception as e:
