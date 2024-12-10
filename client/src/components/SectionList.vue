@@ -117,6 +117,122 @@ export default {
             this.selectedServiceId = null;
         },
     },
+    mounted() {
+        const about_data = {
+            client: {
+                host: "10.101.53.35"
+            },
+            server: {
+                current_time: 1531680780,
+                services: [
+                {
+                    name: "facebook",
+                    credentials: ["email", "password"],
+                    actions: [
+                        {
+                            name: "new_message_in_group",
+                            description: "A new message is posted in the group",
+                            inputs: ["Group Link", "Username"]
+                        },
+                        {
+                            name: "new_message_inbox",
+                            description: "A new private message is received by the user",
+                            inputs: ["Profile"]
+                        }
+                    ],
+                    reactions: [
+                        {
+                            name: "like_message",
+                            description: "The user likes a message",
+                            inputs: ["Profile"]
+                        }
+                    ]
+                },
+                {
+                    "name": "Discord",
+                    "credentials": [
+                        "token",
+                    ],
+                    actions: [
+                        {
+                            name: "new_message_in_group",
+                            description: "A new message is posted in the group",
+                            inputs: ["Group Link", "Username"]
+                        },
+                        {
+                            name: "ping_everyone",
+                            description: "You were pinged by a @everyone",
+                            inputs: ["Profile"]
+                        }
+                    ],
+                    reactions: [
+                        {
+                            name: "send_message",
+                            description: "The user sends a message",
+                            inputs: ["Message"]
+                        }
+                    ]
+                },
+                ]
+            }
+        };
+        localStorage.setItem("available_services", JSON.stringify(about_data.server.services));
+        this.available_services = about_data.server.services;
+
+        // GET /users/{user_token}/services
+        const user_services = {
+            services: [
+                "Discord",
+                "Google",
+            ]
+        }
+        localStorage.setItem("user_services", JSON.stringify(user_services));
+
+        for (let i = 0; i < user_services.services.length; i++) {
+            // GET /users/{user_token}/services/{service_name}/actions_reactions
+            // fetched_data = ...
+            // user_actions_reactions[user_services.services[i]] = fetched_data
+        }
+
+        const user_actions_reactions =
+        {
+            "facebook": {
+                actions: [
+                    {
+                        name: "new_message_in_group",
+                        description: "A new message is posted in the group",
+                        inputs: ["Group Link", "Username"]
+                    },
+                ],
+                reactions: [
+                    {
+                        name: "like_message",
+                        action: "new_message_in_group",
+                        description: "The user likes a message",
+                        inputs: ["Profile"]
+                    }
+                ]
+            },
+            "discord": {
+                actions: [
+                    {
+                        name: "ping_everyone",
+                        description: "You were pinged by a @everyone",
+                        inputs: ["Profile"]
+                    }
+                ],
+                reactions: [
+                    {
+                        name: "send_message",
+                        action: "ping_everyone",
+                        description: "The user sends a message",
+                        inputs: ["Message"]
+                    }
+                ]
+            }
+        }
+        localStorage.setItem("user_actions_reactions", JSON.stringify(user_actions_reactions));
+    }
 };
 </script>
 
