@@ -16,6 +16,8 @@
                 <p>&nbsp;</p>
                 <div v-if="filteredServices.length === 0">
                     No other services available
+                    <p>&nbsp;</p>
+                    <button type="button" @click="cancelForm">Cancel</button>
                 </div>
                 <div v-else>
                     <form @submit.prevent="createService">
@@ -26,6 +28,16 @@
                                     {{ service.name }}
                                 </option>
                             </select>
+                            <p>&nbsp;</p>
+                            <label for="credentials">Credentials: </label>
+                            <div v-if="selectedService !== null">
+                                <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
+                                    :key="index">
+                                    <label for="credential">{{ credential }}: </label>
+                                    <input id="credential" type="text" v-model="credentials[credential]"
+                                        placeholder="Enter value" />
+                                </div>
+                            </div>
                         </div>
                         <button type="submit">Create Service</button>
                         <button type="button" @click="cancelForm">Cancel</button>
@@ -43,24 +55,24 @@ export default {
         return {
             showForm: false,
             selectedService: null,
-            credentials: null,
+            credentials: {},
             available_services: [
                 {
                     "name": "Discord",
-                    "credentials": {
-                        "name": "token"
-                    },
+                    "credentials": [
+                        "token",
+                    ],
                 },
                 {
                     "name": "Google",
-                    "credentials": {
-                        "name": "email",
-                        "name": "password",
-                    }
+                    "credentials": [
+                        "email",
+                        "password",
+                    ]
                 }
             ],
             services: [
-                "Discord",
+                // "Discord",
             ],
         }
     },
@@ -77,13 +89,17 @@ export default {
             return colors[index % colors.length];
         },
         createService() {
-            if (this.selectedService != null) {
+            if (this.selectedService != null && this.credentials != null) {
                 this.services.push(this.filteredServices[this.selectedService]["name"]);
                 this.resetForm();
             } else {
                 alert("Please select a service and specify the corresponding credentials.");
             }
-            this.resetForm();
+
+            // TODO : Send credentials to API
+            alert(JSON.stringify(this.credentials, null, 2));
+
+            this.credentials = {};
         },
         cancelForm() {
             this.resetForm();
