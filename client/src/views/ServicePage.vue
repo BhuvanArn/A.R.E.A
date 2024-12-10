@@ -1,7 +1,7 @@
 <template>
     <NavBar class="navbar"></NavBar>
     <div class="services-page">
-        <SectionList :sections="sectionNames" />
+        <SectionList />
         <WidgetList />
     </div>
 </template>
@@ -20,18 +20,12 @@ export default {
     },
     data() {
         return {
-            sectionNames: [],
         };
     },
 
     mounted() {
-        this.fetchSections();
     },
     methods: {
-        fetchSections() {
-            // TODO Fetch services from server here
-            this.sectionNames = ["Google", "Gmail", "Discord", "Timer", "Outlook"];
-        },
     },
 
 };
