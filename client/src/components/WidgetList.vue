@@ -3,7 +3,14 @@
         <div class="grid-container">
             <div class="widget" v-for="(widget, index) in widgets" :key="index"
                 :style="{ backgroundColor: getColor(index) }">
-                {{ widget }}
+                <div>
+                    <h3>Trigger: {{ widget.action.name }}</h3>
+                    <p>Service: {{ services[widget.action.service_id] }}</p>
+                    <p>{{ widget.action.description }}</p>
+                    <h4>Reaction: {{ widget.reaction.name }}</h4>
+                    <p>Service: {{ services[widget.reaction.service_id] }}</p>
+                    <p>{{ widget.reaction.description }}</p>
+                </div>
             </div>
             <div class="widget add-widget" @click="addWidgetInList">
                 Add new widget
@@ -21,14 +28,68 @@ export default {
             return colors[index % colors.length];
         },
         addWidgetInList() {
-            this.widgets.push("Widget feur")
-        }
+            this.widgets.push({
+                action: {
+                    name: "New Action",
+                    description: "New action description",
+                },
+                reaction: {
+                    name: "New Reaction",
+                    description: "New reaction description",
+                },
+            });
+        },
     },
     data() {
         return {
-            widgets: ["Widget E", "Widget F", "Widget G"],
+            services: {},
+            widgets: [],
         };
-    }
+    },
+    mounted() {
+        // fetch("URL_TO_API")
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         // Update the widgets array with the API data
+        //         this.widgets = data;
+        //     })
+        //     .catch((error) => {
+        //         console.error("Error fetching widgets:", error);
+        //     });
+        this.services["1"] = "Discord";
+        this.services["2"] = "Google";
+        this.widgets = [
+        {
+            action: {
+                id: "1",
+                service_id: "2",
+                name: "Action 1",
+                description: "Description de l'action 1",
+            },
+            reaction: {
+                id: "1",
+                service_id: "1",
+                name: "Reaction 1",
+                description: "Description de la reaction 1",
+            },
+        },
+        {
+            action: {
+                id: "1",
+                service_id: "1",
+                name: "Action 2",
+                description: "Description de l'action 2",
+            },
+            reaction: {
+                id: "1",
+                service_id: "1",
+                name: "Reaction 2",
+                description: "Description de la reaction 2",
+            },
+        },
+    ];
+
+    },
 };
 </script>
 
