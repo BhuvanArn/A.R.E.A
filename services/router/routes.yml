@@ -14,6 +14,16 @@ routes:
     port: 8080
     condition: ^/area$
 
+  - name: get-services
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services$
+
+  - name: subscribe-service
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/subscribe_service$
+
   - name: about
     host: service-about
     port: 80

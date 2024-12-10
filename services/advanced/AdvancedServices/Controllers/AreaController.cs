@@ -1,4 +1,5 @@
-﻿using Database.Entities;
+﻿using AdvancedServices.Request;
+using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ public class AreaController : ControllerBase
         return Ok(responses.Select(s => s.Item1));
     }
 
-    [HttpGet("/users/{user_token}/services")]
+    [HttpGet("{user_token}/services")]
     public async Task<IActionResult> GetServices(string user_token)
     {
         _logger.LogInformation("GetServices event triggered.");
@@ -38,6 +39,21 @@ public class AreaController : ControllerBase
             JwtToken = user_token
         });
         
-        return Ok(responses);
+        return Ok(responses.Select(s => s.Item1));
+    }
+
+    [HttpPost("{user_token}/subscribe_service")]
+    public async Task<IActionResult> SubscribeService(string user_token, [FromBody] SubscribeServiceRequest request)
+    {
+        _logger.LogInformation("SubscribeService event triggered for token: {UserToken} and service: {ServiceName}", user_token, request.Name);
+
+        var responses = await _eventBus.PublishAsync<SubscribeServiceEvent, (List<Service>, ResultType)>(new SubscribeServiceEvent
+        {
+            JwtToken = user_token,
+            Name = request.Name,
+            Credentials = request.Credentials
+        });
+
+        return Ok();
     }
 }
