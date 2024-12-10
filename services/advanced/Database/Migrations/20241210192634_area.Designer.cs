@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241209223711_action-reaction")]
-    partial class actionreaction
+    [Migration("20241210192634_area")]
+    partial class area
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,7 +87,12 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Services");
                 });
@@ -116,9 +121,6 @@ namespace Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
@@ -146,9 +148,25 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Entities.Service", b =>
                 {
+                    b.HasOne("Database.Entities.User", "User")
+                        .WithMany("Services")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Database.Entities.Service", b =>
+                {
                     b.Navigation("Actions");
 
                     b.Navigation("Reactions");
+                });
+
+            modelBuilder.Entity("Database.Entities.User", b =>
+                {
+                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

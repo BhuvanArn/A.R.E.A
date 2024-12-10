@@ -37,6 +37,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
             {
                 Id = service.Id,
                 Name = service.Name,
+                UserId = service.UserId,
                 Auth = service.Auth,
                 Actions = actions.Select(a => new Action
                 {

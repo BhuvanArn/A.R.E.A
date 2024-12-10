@@ -24,6 +24,9 @@ public class AreaController : ControllerBase
         
         var responses = await _eventBus.PublishAsync<ActionReactionEvent, (string, ResultType)>(new ActionReactionEvent());
 
-        return Ok(responses);
+        return Ok(new
+        {
+            Message = responses.Select(s => s.Item1)
+        });
     }
 }

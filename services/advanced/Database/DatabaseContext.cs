@@ -20,10 +20,6 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Id)
-            .IsUnique();
-        
         modelBuilder.Entity<Entities.Service>()
             .HasMany(s => s.Actions)
             .WithOne(a => a.Service)
@@ -34,6 +30,12 @@ public class DatabaseContext : DbContext
             .HasMany(s => s.Reactions)
             .WithOne(r => r.Service)
             .HasForeignKey(r => r.ServiceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Entities.Service>()
+            .HasOne<User>(s => s.User)
+            .WithMany(u => u.Services)
+            .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
