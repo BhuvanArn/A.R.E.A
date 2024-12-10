@@ -59,15 +59,44 @@ public class AreaController : ControllerBase
     }
 
     [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
-    public async Task<IActionResult> GetActionsReactions(string user_token)
+    public async Task<IActionResult> GetActionsReactions(string user_token, string service_name)
     {
         _logger.LogInformation("GetActionsReactions event triggered");
         
         var responses = await _eventBus.PublishAsync<GetActionsReactionsEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionsReactionsEvent
         {
+            ServiceName = service_name,
             JwtToken = user_token
         });
 
+        return Ok(responses.Select(s => s.Item1));
+    }
+
+    [HttpGet("{user_token}/services/{service_name}/action")]
+    public async Task<IActionResult> GetAction(string user_token, string service_name)
+    {
+        _logger.LogInformation("GetActions event triggered");
+        
+        var responses = await _eventBus.PublishAsync<GetActionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionEvent
+        {
+            ServiceName = service_name,
+            JwtToken = user_token
+        });
+        
+        return Ok(responses.Select(s => s.Item1));
+    }
+    
+    [HttpGet("{user_token}/services/{service_name}/reaction")]
+    public async Task<IActionResult> GetReaction(string user_token, string service_name)
+    {
+        _logger.LogInformation("GetReaction event triggered");
+        
+        var responses = await _eventBus.PublishAsync<GetReactionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetReactionEvent
+        {
+            ServiceName = service_name,
+            JwtToken = user_token
+        });
+        
         return Ok(responses.Select(s => s.Item1));
     }
 }

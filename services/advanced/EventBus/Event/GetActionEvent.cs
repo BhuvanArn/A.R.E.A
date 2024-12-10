@@ -1,6 +1,6 @@
 ﻿namespace EventBus.Event;
 
-public class GetActionsReactionsEvent
+public class GetActionEvent
 {
     public string ServiceName { get; set; }
     

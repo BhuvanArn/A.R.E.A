@@ -27,7 +27,7 @@ public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActio
             return (new(), ResultType.Fail);
         }
         
-        var service = (await _serviceService.FindServicesAsync(s => s.UserId == userId)).FirstOrDefault();
+        var service = (await _serviceService.FindServicesAsync(s => s.UserId == userId && s.Name == @event.ServiceName)).FirstOrDefault();
 
         if (service is null)
         {
