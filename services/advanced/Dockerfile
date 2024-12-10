@@ -10,6 +10,7 @@ COPY ../../LoginService/LoginService.csproj ./LoginService/
 COPY ../../RegisterService/RegisterService.csproj ./RegisterService/
 COPY ../../Extension/Extension.csproj ./Extension/
 COPY ../../DatabaseTests/DatabaseTests.csproj ./DatabaseTests/
+COPY ../../EventBusTests/EventBusTests.csproj ./EventBusTests/
 
 RUN dotnet restore
 
