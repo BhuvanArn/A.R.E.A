@@ -6,6 +6,8 @@ NOOP = 0
 CONH = 1
 CONR = 2
 TAKN = 3
+UPDT = 4
+ACTI = 5
 
 class Message(object):
     def __init__(self, message_type = NOOP, payload = b"") -> None:

@@ -66,6 +66,7 @@ services:
       - services-storage:/var/service_storage
       - ./lib/protocol:/usr/src/app/protocol
       - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
 
   service-reaction:
     build:
@@ -79,6 +80,7 @@ services:
       - services-storage:/var/service_storage
       - ./lib/protocol:/usr/src/app/protocol
       - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
 
   db:
     image: "postgres:15"

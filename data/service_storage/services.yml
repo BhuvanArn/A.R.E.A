@@ -1,5 +1,9 @@
 services:
   - name: discord
+    credentials:
+      - name: token
+        regex: "^*$"
+
     actions:
       - name: new_message
         description: action when a new message is received
@@ -8,11 +12,9 @@ services:
           - name: channel_id
             regex: "^*$"
 
-          - name: token
-            regex: "^*$"
-
         fetch:
           strategy: hash
+          middleware: log
           endpoint:
             method: get
             url: https://discord.com/api/v9/channels/$+channel_id/messages?limit=50
@@ -22,6 +24,7 @@ services:
     reactions:
       - name: send_message
         description: send a user defined message in a channel
+        update_action: true
         inputs:
           - name: channel_id
             regex: "^*$"
@@ -29,16 +32,13 @@ services:
           - name: message
             regex: "^*$"
 
-          - name: token
-            regex: "^*$"
-
         commit:
           endpoint:
               method: post
               url: https://discord.com/api/v9/channels/$+channel_id/messages
               headers: |
-                {"Authorization": "$+token"}
-              body: |
+                {"Authorization": "$+token", "Content-Type": "application/json"}
+              data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
 
   - name: timer

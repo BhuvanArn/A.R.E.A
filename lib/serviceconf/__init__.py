@@ -25,8 +25,9 @@ class Endpoint(object):
         return (f"{self.method.upper()} {self.url}")
 
 class Fetch(object):
-    def __init__(self, strategy: str, endpoint: Endpoint):
+    def __init__(self, strategy: str, middleware: str, endpoint: Endpoint):
         self.strategy: str = strategy
+        self.middleware: str = middleware
 
         self.endpoint: Endpoint = endpoint
 
@@ -34,22 +35,24 @@ class Fetch(object):
         return (self.__str__())
 
     def __str__(self) -> str:
-        return (f"strategy({self.strategy}) {self.endpoint}")
+        return (f"strategy({self.strategy}) middleware({self.middleware}) {self.endpoint}")
 
 class Commit(object):
-    def __init__(self, endpoint: Endpoint):
+    def __init__(self, middleware: str, endpoint: Endpoint):
+        self.middleware = middleware
         self.endpoint: Endpoint = endpoint
 
     def __repr__(self) -> str:
         return (self.__str__())
 
     def __str__(self) -> str:
-        return (f"{self.endpoint}")
+        return (f"middleware({self.middleware}) {self.endpoint}")
 
 class Reaction(object):
-    def __init__(self, name: str, description: str, commit: Commit):
+    def __init__(self, name: str, description: str, redo_action: bool, commit: Commit):
         self.name: str = name
         self.description: str = description
+        self.redo_action: bool = redo_action
 
         self.commit: Commit = commit
 
@@ -92,13 +95,16 @@ class Service(object):
         self.actions: list = []
         self.reactions: list = []
 
+        self.credentials: dict = []
+
     def __repr__(self) -> str:
         return (self.__str__())
 
     def __str__(self) -> str:
         actions = '\n'.join(map(lambda x: '  ' + '\n    '.join(str(x).split('\n')), self.actions))
         reactions = '\n'.join(map(lambda x: '  ' + '\n    '.join(str(x).split('\n')), self.reactions))
-        return (f"{self.name}:\nactions:\n{actions}\nreactions:\n{reactions}")
+        inputs = '\n'.join(map(lambda x: '  ' + '\n    '.join(str(x).split('\n')), self.credentials))
+        return (f"{self.name}:\ninput:{inputs}\nactions:\n{actions}\nreactions:\n{reactions}")
 
     def get_action(self, name: str) -> Action:
         temp = tuple(filter(lambda x: x.name == name, self.actions))
@@ -116,6 +122,9 @@ class Service(object):
 
     def add_action(self, _action: Action):
         self.actions.append(_action)
+
+    def add_credentials(self, _input: Input):
+        self.credentials.append(_input)
 
     def add_reaction(self, _reaction: Reaction):
         self.reactions.append(_reaction)
@@ -151,6 +160,13 @@ class Config(object):
             name = item["name"] if "name" in item else "new_service"
             self.services.append(Service(name))
 
+            if ("credentials" in item):
+                for creds in item["credentials"]:
+                    creds_name = creds["name"] if "name" in creds else "new_creds"
+                    creds_regex = creds["regex"] if "regex" in creds else "^*$"
+
+                    self.services[-1].add_credentials(Input(creds_name, creds_regex))
+
             if ("actions" in item):
                 for action in item["actions"]:
                     name = action["name"] if "name" in action else "new_action"
@@ -160,6 +176,7 @@ class Config(object):
                     fetch = None
                     if ("fetch" in action):
                         strategy: str = action["fetch"]["strategy"] if "strategy" in action["fetch"] else "custom"
+                        middleware: str = action["fetch"]["middleware"] if "middleware" in action["fetch"] else "custom"
                         endpoint = None
 
                         if ("endpoint" in action["fetch"]):
@@ -169,7 +186,7 @@ class Config(object):
                             data =  action["fetch"]["endpoint"]["data"] if "data" in action["fetch"]["endpoint"] else None
 
                             endpoint = Endpoint(url, method, headers, data)
-                        fetch = Fetch(strategy, endpoint)
+                        fetch = Fetch(strategy, middleware, endpoint)
 
                     self.services[-1].add_action(Action(name, description, time, fetch))
 
@@ -184,6 +201,8 @@ class Config(object):
                 for reaction in item["reactions"]:
                     name = reaction["name"] if "name" in reaction else "new_reaction"
                     description = reaction["description"] if "description" in reaction else "placeholder"
+                    middleware: str = reaction["fetch"]["commit"] if "middleware" in reaction["commit"] else "custom"
+                    redo_action: bool = reaction["update_action"] if "update_action" in reaction else False
 
                     commit = None
                     if ("commit" in reaction):
@@ -196,9 +215,9 @@ class Config(object):
                             data =  reaction["commit"]["endpoint"]["data"] if "data" in reaction["commit"]["endpoint"] else None
 
                             endpoint = Endpoint(url, method, headers, data)
-                        commit = Commit(endpoint)
+                        commit = Commit(middleware, endpoint)
 
-                    self.services[-1].add_reaction(Reaction(name, description, commit))
+                    self.services[-1].add_reaction(Reaction(name, description, redo_action, commit))
 
                     if ("inputs" in reaction):
                         for _input in reaction["inputs"]:

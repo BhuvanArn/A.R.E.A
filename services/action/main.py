@@ -2,51 +2,14 @@ from sys import exit
 from select import select
 from protocol import *
 from serviceconf import *
-from threading import Thread
 from time import time
-from requests import get, post, patch, put, delete
-from json import loads
-from hashlib import sha256
-
-METHODS = {
-    "get": get,
-    "post": post,
-    "patch": patch,
-    "put": put,
-    "delete": delete
-}
-
-class Worker(object):
-    def __init__(self, callback):
-        self.stopped = True
-        self.joined = False
-
-        self.thread = Thread(target=self._start)
-        self.callback = callback
-
-    def _start(self):
-        self.stopped = False
-        self.callback()
-        self.stopped = True
-
-    def start(self):
-        self.stopped = False
-        self.thread.start()
-
-    def close(self):
-        self.stopped = True
-        if (self.joined):
-            return
-
-        self.thread.join(5)
-        self.joined = True
-
-    def __del__(self):
-        self.close()
+from service_mod import *
 
 class RegisteredAction(object):
-    def __init__(self, service_id, service, name, _vars = {}):
+    def __init__(self, service_id, action_id, service, name, _vars = {}):
         self.service_id = service_id
+        self.action_id = action_id
+
         self.service = service
         self.name = name
 
@@ -58,64 +21,142 @@ class RegisteredAction(object):
 
         self.cache = None
 
-    def _run_action(self, service_config):
-        action: Action = service_config.get_service(self.service).get_action(self.name)
+    def _discard(self, watcher, action, message, update=True):
+        print(f"[PYTHON (service-action)] - {message}", flush=True)
+        if (update):
+            self.last_update = time()
 
-        if (not action.fetch):
+    def _valid(self, watcher, action, data, update=True):
+        if (not watcher.get_module_strategy(action.fetch.strategy)):
+            return (self._discard(watcher, action, f"strategy {action.fetch.strategy} not found or not set, skipping."))
+
+        value = watcher.get_module_strategy(action.fetch.strategy)(self, data)
+
+        if (not value):
             self.last_update = time()
             return
 
+        if (update):
+            self.last_update = time()
+
+            if (not watcher.connection.connected):
+                watcher.waiting_requests.append(Message(ACTI, f"{self.service_id} {self.service} {self.action_id} {self.name} {str(value)}".encode()))
+            else:
+                watcher.connection.send_message(Message(ACTI, f"{self.service_id} {self.service} {self.action_id} {self.name} {str(value)}".encode()))
+        else:
+            print(f"[PYTHON (service-action)] - update_done", flush=True)
+
+    def _build_middleware(self, watcher, action, middleware, update = True):
+        return lambda x, v, f=middleware: f(self, action, lambda m: self._discard(watcher, action, m, update), x, v)
+
+    def _run_action(self, watcher):
+        action: Action = watcher.services.get_service(self.service).get_action(self.name)
+        middlewares = []
+
+        if (not action.fetch):
+            self._discard(watcher, action, "no fetch entry found, skipping.")
+
         if (action.fetch.endpoint):
-            if (action.fetch.endpoint.method.lower() not in METHODS):
-                print(f"[PYTHON (service-action)] - invalid fetch method {action.fetch.endpoint.method.upper()}", flush=True)
-                self.last_update = time()
-                return
+            middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware("endpoint")))
 
-            url = action.fetch.endpoint.url
-            headers = action.fetch.endpoint.headers
-            data = action.fetch.endpoint.data
+        if (action.fetch.middleware):
+            if (watcher.get_module_middleware(action.fetch.middleware)):
+                middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware(action.fetch.middleware)))
 
-            for item in self.vars:
-                url = url.replace(f"$+{item}", self.vars[item])
-                headers = headers.replace(f"$+{item}", self.vars[item])
-                if (data):
-                    data = data.replace(f"$+{item}", self.vars[item])
+        middlewares.append(lambda x: self._valid(watcher, action, x))
 
-            headers = loads(headers)
+        for i in range(len(middlewares) - 2, -1, -1):
+            call = middlewares[i]
 
-            req = METHODS[action.fetch.endpoint.method.lower()](url, data=data, headers=headers)
+            middlewares[i] = lambda x, f=middlewares[i + 1], c=call: c(f, x)
 
-            if (req.status_code not in (200, 201)):
-                print(f"[PYTHON (service-action)] - error requesting {url}", flush=True)
-                self.last_update = time()
-                return
+        middlewares[0](None)
 
-            if (action.fetch.strategy == "hash"):
-                if (not self.cache or self.cache != sha256(req.text.encode(), usedforsecurity=False).hexdigest()):
-                    self.cache = sha256(req.text.encode(), usedforsecurity=False).hexdigest()
-                    print(self.cache, flush=True)
-            req.close()
+    def _update_action(self, watcher):
+        action: Action = watcher.services.get_service(self.service).get_action(self.name)
+        middlewares = []
 
-        self.last_update = time()
+        if (not action.fetch):
+            self._discard(watcher, action, "no fetch entry found, skipping.")
 
-    def start_worker(self, service_config: Config):
+        if (action.fetch.endpoint):
+            middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware("endpoint"), False))
+
+        if (action.fetch.middleware):
+            if (watcher.get_module_middleware(action.fetch.middleware)):
+                middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware(action.fetch.middleware), False))
+
+        middlewares.append(lambda x: self._valid(watcher, action, x, False))
+
+        for i in range(len(middlewares) - 2, -1, -1):
+            call = middlewares[i]
+
+            middlewares[i] = lambda x, f=middlewares[i + 1], c=call: c(f, x)
+
+        middlewares[0](None)
+
+    def update(self, watcher):
+        while (self.worker and not self.worker.stopped):
+            continue
+
+        self.worker = Worker(lambda: self._update_action(watcher))
+        self.worker.start()
+
+    def start_worker(self, watcher: object):
         if (self.worker and not self.worker.stopped):
             return
 
-        if (service_config.get_service(self.service).get_action(self.name).time >= (time() - self.last_update)):
+        if (watcher.services.get_service(self.service).get_action(self.name).time >= (time() - self.last_update)):
             return
 
-        self.worker = Worker(lambda: self._run_action(service_config))
+        self.worker = Worker(lambda: self._run_action(watcher))
         self.worker.start()
 
 class Watcher(object):
-    def __init__(self):
+    def __init__(self, connection):
         self.services = Config("/var/service_storage/services.yml")
         self.registered_actions = []
+        self.waiting_requests = []
+        self.connection = connection
+        self.mods_strategy = GenericModRegister()
+        self.mods_middleware = GenericModRegister()
+
+        self.load_module_strategy("hash", "base.hash_strategy_base_handler")
+        self.load_module_middleware("endpoint", "base.endpoint_base_handler")
+        self.load_module_middleware("log", "base.log_middelware_exemple")
+
+    def load_module_strategy(self, name: str, real_name: str):
+        self.mods_strategy.load_module(name, "service_mod." + real_name)
+
+    def load_module_middleware(self, name: str, real_name: str):
+        self.mods_middleware.load_module(name, "service_mod." + real_name)
+
+    def get_module_strategy(self, name: str):
+        if (not self.mods_strategy.get_module(name)):
+            self.mods_strategy.load_module(name, name)
+        else:
+            return (self.mods_strategy.get_module(name))
+
+    def get_module_middleware(self, name: str):
+        if (not self.mods_middleware.get_module(name)):
+            self.mods_middleware.load_module(name, name)
+        else:
+            return (self.mods_middleware.get_module(name))
+
+    def update(self, name_id):
+        for item in self.registered_actions:
+            if (item.action_id == name_id):
+                item.update(self)
 
     def watch(self):
+        if (self.waiting_requests and self.connection.connected):
+            for i, item in enumerate(self.waiting_requests):
+                self.connection.send_message(item)
+                self.waiting_requests[i] = None
+            self.waiting_requests = list(filter(lambda x: x is not None, self.waiting_requests))
+
         for item in self.registered_actions:
-            item.start_worker(self.services)
+            item.start_worker(self)
 
     def register_action(self, action):
         self.registered_actions.append(action)
@@ -126,8 +167,8 @@ def main() -> int:
     connection = AreaConnect()
     connection.set_listen()
 
-    watcher = Watcher()
-    watcher.register_action(RegisteredAction("2343354", "discord", "new_message", {"channel_id": "1303739948171526246", "token": "le_token_del_reffe"}))
+    watcher = Watcher(connection)
+    watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
 
@@ -148,6 +189,11 @@ def main() -> int:
                     if (message.type == INVM):
                         connection.close_client()
                         print(f"[PYTHON (service-action)] - reaction disconnected", flush=True)
+
+                    if (message.type == ACTI):
+                        name_id = message.payload.split(b' ')[0].decode()
+
+                        watcher.update(name_id)
 
             watcher.watch()
         except KeyboardInterrupt:
