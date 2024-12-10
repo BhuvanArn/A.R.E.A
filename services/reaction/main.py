@@ -110,7 +110,7 @@ def main() -> int:
     print(f"[PYTHON (service-reaction)] - connected to service-action on port 2727", flush=True)
 
     handler = Handler(connection)
-    handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1303739948171526246", "message": "test reaction from reaction-service.", "token": ""}))
+    #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1303739948171526246", "message": "test reaction from reaction-service.", "token": ""}))
 
     while 1:
         try:
@@ -133,7 +133,10 @@ def main() -> int:
 
                     handler.activate(name_id, data)
 
-                    print(data, flush=True)
+                    #print(data, flush=True)
+
+                if (connection.get_message() == UPDT):
+                    print(f"[PYTHON (service-reaction)] - receive update request from action", flush=True)
         except KeyboardInterrupt:
             break
         except Exception as e:

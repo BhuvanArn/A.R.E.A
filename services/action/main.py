@@ -167,8 +167,11 @@ def main() -> int:
     connection = AreaConnect()
     connection.set_listen()
 
+    db_connect = AreaConnect(2728)
+    db_connect.set_listen()
+
     watcher = Watcher(connection)
-    watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
+    #watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
 
@@ -196,6 +199,26 @@ def main() -> int:
                         watcher.update(name_id)
 
             watcher.watch()
+
+            read_ready_sockets, _, _ = select([db_connect.socket], [], [], 0)
+
+            if (read_ready_sockets):
+                db_connect.accept_if_not_connected()
+                print(f"[PYTHON (service-action)] - db requested connection", flush=True)
+
+                message = db_connect.get_message()
+
+                if (db_connect.get_message() == INVM):
+                    db_connect.close_client()
+                    print(f"[PYTHON (service-action)] - closing db connect", flush=True)
+
+                if (db_connect.get_message() == UPDT):
+                    print(f"[PYTHON (service-action)] - db requested data update", flush=True)
+                    db_connect.close_client()
+                    print(f"[PYTHON (service-action)] - closing db connect", flush=True)
+                    connection.send_message(Message(UPDT))
+                    print(f"[PYTHON (service-action)] - forwading to reaction", flush=True)
+
         except KeyboardInterrupt:
             break
         except Exception as e:
