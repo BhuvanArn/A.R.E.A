@@ -18,6 +18,8 @@ COPY ../../ ./
 
 RUN dotnet build -c Release -o /app/build
 
+RUN dotnet test ./DatabaseTests/DatabaseTests.csproj --logger "trx;LogFileName=/test-results/test-results.trx" --results-directory /test-results
+
 FROM build AS publish
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
