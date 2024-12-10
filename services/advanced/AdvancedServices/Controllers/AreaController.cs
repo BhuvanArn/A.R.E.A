@@ -27,4 +27,17 @@ public class AreaController : ControllerBase
 
         return Ok(responses.Select(s => s.Item1));
     }
+
+    [HttpGet("/users/{user_token}/services")]
+    public async Task<IActionResult> GetServices(string user_token)
+    {
+        _logger.LogInformation("GetServices event triggered.");
+
+        var responses = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
+        {
+            JwtToken = user_token
+        });
+        
+        return Ok(responses);
+    }
 }
