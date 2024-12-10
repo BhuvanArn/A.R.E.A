@@ -7,6 +7,9 @@ from service_mod import *
 from requests import get
 from json import dumps
 from time import sleep
+from genericpath import isdir, isfile
+from os import mkdir
+from signal import signal, SIGTERM
 
 class RegisteredAction(object):
     def __init__(self, service_id, action_id, service, name, _vars = {}):
@@ -23,6 +26,24 @@ class RegisteredAction(object):
         self.last_update = 0
 
         self.cache = None
+
+        self.read_cache()
+
+    def write_cache(self):
+        if (not isdir("/var/service_storage/caches")):
+            mkdir("/var/service_storage/caches")
+        if (not isdir(f'/var/service_storage/caches/{self.action_id}')):
+            mkdir(f'/var/service_storage/caches/{self.action_id}')
+        if (self.cache):
+            with open(f'/var/service_storage/caches/{self.action_id}/cache.tmp', 'w') as fp:
+                fp.write(self.cache)
+
+    def read_cache(self):
+        if (not isfile(f"/var/service_storage/caches/{self.action_id}/cache.tmp")):
+            return
+
+        with open(f'/var/service_storage/caches/{self.action_id}/cache.tmp', 'r') as fp:
+            self.cache = fp.read()
 
     def _discard(self, watcher, action, message, update=True):
         print(f"[PYTHON (service-action)] - {message}", flush=True)
@@ -115,6 +136,9 @@ class RegisteredAction(object):
         self.worker = Worker(lambda: self._run_action(watcher))
         self.worker.start()
 
+    def __del__(self):
+        self.write_cache()
+
 class Watcher(object):
     def __init__(self, connection):
         self.services = Config("/var/service_storage/services.yml")
@@ -150,6 +174,8 @@ class Watcher(object):
 
     def from_request(self, url):
         self.failed_update = True
+
+        self.save()
 
         self.registered_actions.clear()
 
@@ -191,6 +217,13 @@ class Watcher(object):
     def register_action(self, action):
         self.registered_actions.append(action)
 
+    def save(self):
+        for item in self.registered_actions:
+            item.write_cache()
+
+    def __del__(self):
+        self.save()
+
 def main() -> int:
     print(f"[PYTHON (service-action)] - starting...", flush=True)
 
@@ -217,6 +250,8 @@ def main() -> int:
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
     print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)
+
+    signal(SIGTERM, lambda: watcher.save() and exit(0))
 
     while 1:
         try:
