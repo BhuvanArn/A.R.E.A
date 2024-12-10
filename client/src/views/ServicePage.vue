@@ -1,4 +1,5 @@
 <template>
+    <NavBar class="navbar"></NavBar>
     <div class="services-page">
         <SectionList :sections="sectionNames" />
         <WidgetList />
@@ -6,6 +7,7 @@
 </template>
 
 <script>
+import NavBar from '../components/MainNavBar.vue';
 import SectionList from '@/components/SectionList.vue';
 import WidgetList from '@/components/WidgetList.vue';
 
@@ -14,6 +16,7 @@ export default {
     components: {
         SectionList,
         WidgetList,
+        NavBar,
     },
     data() {
         return {
