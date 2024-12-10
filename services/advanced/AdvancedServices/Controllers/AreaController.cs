@@ -1,4 +1,5 @@
-﻿using AdvancedServices.Request;
+﻿using ActionReactionService;
+using AdvancedServices.Request;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
@@ -45,7 +46,7 @@ public class AreaController : ControllerBase
     [HttpPost("{user_token}/subscribe_service")]
     public async Task<IActionResult> SubscribeService(string user_token, [FromBody] SubscribeServiceRequest request)
     {
-        _logger.LogInformation("SubscribeService event triggered for token: {UserToken} and service: {ServiceName}", user_token, request.Name);
+        _logger.LogInformation($"SubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
 
         await _eventBus.PublishAsync<SubscribeServiceEvent, (List<Service>, ResultType)>(new SubscribeServiceEvent
         {
@@ -55,5 +56,18 @@ public class AreaController : ControllerBase
         });
 
         return Ok();
+    }
+
+    [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
+    public async Task<IActionResult> GetActionsReactions(string user_token)
+    {
+        _logger.LogInformation("GetActionsReactions event triggered");
+        
+        var responses = await _eventBus.PublishAsync<GetActionsReactionsEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionsReactionsEvent
+        {
+            JwtToken = user_token
+        });
+
+        return Ok(responses.Select(s => s.Item1));
     }
 }
