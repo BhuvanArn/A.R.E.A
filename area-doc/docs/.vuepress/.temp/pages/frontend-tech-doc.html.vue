@@ -35,6 +35,8 @@ For our example &quot;MyPage&quot;, you will have to add a new route in this fil
 <div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>Launch the frontend with the command <code v-pre>npm run serve</code> and go to the URL displayed in the console.</p>
 <p>Navigate to the URL <code v-pre>http://localhost:your-port/my-page</code> to see your new page. Replace &quot;<strong>your-port</strong>&quot; by the port displayed in the console.</p>
 <p><img src="/assets/mypage.png" alt="MyPage"></p>
+<h2 id="to-go-further" tabindex="-1"><a class="header-anchor" href="#to-go-further"><span>To go further</span></a></h2>
+<p>You can find more information about the Vue.js framework in the <a href="https://vuejs.org/guide/introduction.html" target="_blank" rel="noopener noreferrer">official documentation</a>.</p>
 </div></template>
 
 
