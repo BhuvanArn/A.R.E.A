@@ -22,6 +22,13 @@ public class UserRegisteredEventHandler : IIntegrationEventHandler<UserRegistere
             return ("Password are not the same", ResultType.Fail);
         }
 
+        var existingUser = (await _userService.FindUsersAsync(s => s.Email == @event.Email)).FirstOrDefault();
+
+        if (existingUser is not null)
+        {
+            return ($"User with email {@event.Email} already exists.", ResultType.Fail);
+        }
+
         string password = @event.Password.HashPassword(out string salt);
 
         User user = new()
