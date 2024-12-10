@@ -11,4 +11,6 @@ public class Action
     public string Name { get; set; }
     
     public string TriggerConfig { get; set; }
+    
+    public ICollection<Reaction> Reactions { get; set; } = new List<Reaction>();
 }

@@ -37,5 +37,11 @@ public class DatabaseContext : DbContext
             .WithMany(u => u.Services)
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Reaction>()
+            .HasOne(r => r.Action)
+            .WithMany(a => a.Reactions)
+            .HasForeignKey(r => r.ActionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
