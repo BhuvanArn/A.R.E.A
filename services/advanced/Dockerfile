@@ -11,6 +11,7 @@ COPY ../../RegisterService/RegisterService.csproj ./RegisterService/
 COPY ../../Extension/Extension.csproj ./Extension/
 COPY ../../DatabaseTests/DatabaseTests.csproj ./DatabaseTests/
 COPY ../../EventBusTests/EventBusTests.csproj ./EventBusTests/
+COPY ../../ActionReactionService/ActionReactionService.csproj ./ActionReactionService/
 
 RUN dotnet restore
 
