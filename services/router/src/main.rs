@@ -15,41 +15,51 @@ use response::Response;
 use routes::RouteLoader;
 
 fn handle_connection(mut stream: TcpStream) {
-    static CELL: OnceLock<Mutex<RouteLoader>> =  OnceLock::new();
+    static CELL: OnceLock<Mutex<RouteLoader>> = OnceLock::new();
     let mut req = parser::collect_request(&stream);
     let mut response = Response::new();
-
-    response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
-    response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
-    response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
-    response.headers.insert("Access-Control-Allow-Credentials".to_string(), "true".to_string());
 
     if req.method == "OPTIONS" {
         response.code = 204;
         response.message = String::from("No Content");
+        response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
+        response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
+        
+        if let Some(requested_headers) = req.headers.get("access-control-request-headers") {
+            response.headers.insert(
+                "Access-Control-Allow-Headers".to_string(),
+                requested_headers.clone(),
+            );
+        } else {
+            response.headers.insert(
+                "Access-Control-Allow-Headers".to_string(),
+                "*".to_string(),
+            );
+        }
+    
+        response.headers.insert("Access-Control-Allow-Credentials".to_string(), "true".to_string());
         stream.write_all(&response.build_request()).unwrap();
         return;
-    }
+    }    
 
     let router = CELL.get_or_init(|| Mutex::new(RouteLoader::new("routes.yml")));
 
     match router.lock().unwrap().get_route(&req.route) {
         Some(&ref route) => {
-            let ip_lookup = format!("{}:{}", route.host, route.port).to_socket_addrs().expect("failed to connect to service").next().unwrap();
+            let ip_lookup = format!("{}:{}", route.host, route.port)
+                .to_socket_addrs()
+                .expect("failed to connect to service")
+                .next()
+                .unwrap();
 
-            match TcpStream::connect_timeout(&ip_lookup, Duration::from_millis(1024 * 10)) {
+            match TcpStream::connect_timeout(&ip_lookup, Duration::from_secs(10)) {
                 Ok(mut socket) => {
                     socket.write_all(&req.build_request()).unwrap();
 
                     let mut res = parser::collect_response(&socket);
 
-                    response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
-                    response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
-                    response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
-
-                    eprintln!("{} - {} - {}", req.method, req.route, res.code);
                     stream.write_all(&res.build_request()).unwrap();
-                    return ();
+                    return;
                 }
                 Err(e) => {
                     eprintln!("Failed to connect to service at {}: {}: {}", route.host, route.port, e);
@@ -60,22 +70,22 @@ fn handle_connection(mut stream: TcpStream) {
                     stream.write_all(&response.build_request()).unwrap();
                 }
             }
-        },
-        _ => {
+        }
+        None => {
             if req.route == "/health" {
                 response.set_body("OK");
                 response.code = 200;
                 response.message = String::from("OK");
 
                 stream.write_all(&response.build_request()).unwrap();
-                return ();
+                return;
             }
-            response.set_body("Not found");
+            response.set_body("Not Found");
             response.code = 404;
             response.message = String::from("NOT FOUND");
 
             stream.write_all(&response.build_request()).unwrap();
-        },
+        }
     }
 }
 
