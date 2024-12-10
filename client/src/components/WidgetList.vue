@@ -1,15 +1,23 @@
 <template>
     <div class="widget-list">
         <div class="grid-container">
-            <div class="widget" v-for="(widget, index) in widgets" :key="index"
-                :style="{ backgroundColor: getColor(index) }">
+            <div class="widget" v-for="(widget, index) in widgets" :key="index">
                 <div>
-                    <h3>Trigger: {{ widget.action.name }}</h3>
-                    <p>Service: {{ services[widget.action.service_id] }}</p>
-                    <p>{{ widget.action.description }}</p>
-                    <h4>Reaction: {{ widget.reaction.name }}</h4>
-                    <p>Service: {{ services[widget.reaction.service_id] }}</p>
-                    <p>{{ widget.reaction.description }}</p>
+                    <div class="widget-title">
+                        <h2>Widget {{ index + 1 }}</h2>
+                    </div>
+                    <div class="widget-action">
+                        <h3>Trigger: {{ widget.action.name }}</h3>
+                        <p>Service: {{ services[widget.action.service_id] }}</p>
+                        <p>&nbsp</p>
+                        <p>{{ widget.action.description }}</p>
+                    </div>
+                    <div class="widget-reaction">
+                        <h3>Reaction: {{ widget.reaction.name }}</h3>
+                        <p>Service: {{ services[widget.reaction.service_id] }}</p>
+                        <p>&nbsp</p>
+                        <p>{{ widget.reaction.description }}</p>
+                    </div>
                 </div>
             </div>
             <div class="widget add-widget" @click="addWidgetInList">
@@ -96,13 +104,13 @@ export default {
 <style scoped>
 .widget-list {
     display: flex;
-    width: 80vw;
     height: 100vh;
     overflow-y: auto;
 }
 
 .grid-container {
     display: grid;
+    width: 80vw;
     gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 20px;
@@ -111,16 +119,39 @@ export default {
 
 .widget {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    /* align-items: center;
+    justify-content: center;*/
     font-size: 18px;
     font-weight: bold;
-    width: 400px;
-    height: 200px;
-    color: #fff;
-    background-color: #007BFF;
+    text-align: center;
+    color: #000;
+    width: 300px;
+    height: 400px;
+    background-color: #fff;
     border-radius: 8px;
+    outline: 2px solid black;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.widget-title {
+    height: 50px;
+    background-color: #bcc1ba;
+    padding: 5px;
+}
+
+.widget-action {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    outline: 1px solid black;
+}
+
+.widget-reaction {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: 20px;
 }
 

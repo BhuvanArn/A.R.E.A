@@ -1,6 +1,7 @@
 <template>
     <div class="service-list">
         <h1>Services</h1>
+        <p>&nbsp</p>
         <ul>
             <li v-for="(section, index) in sections" class=" section-item">
                 <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
