@@ -2,7 +2,7 @@
     <body>
         <div class="main-container" :class="{ 'mobile-container': mobile }">
             <div class="main-container-top">
-                <h2 class="login-title-txt">Login</h2>
+                <h2 class="reset-pwd-title-txt" :class="{ 'mobile-title': mobile }">Forgot Password</h2>
                 <div class="filler01"></div>
                 <img src="@/assets/logo.png" class="logo">
             </div>
@@ -11,51 +11,22 @@
                     <img src="@/assets/user.png" class="img-style1">
                     <input type="text" class="input-style1" placeholder="Email" v-model="email">
                 </div>
-                <div class="pwd-container">
-                    <img src="@/assets/key.png" class="img-style1">
-                    <input type="password" class="input-style1" placeholder="Password" v-model="password">
-                </div>
-                <button @click="loginClient" class="login-btn">LOGIN</button>
-                <div v-if="errorMessage" class="error-message">
-                    <span>{{ errorMessage }}</span>
-                </div>
-                <div class="or-filler">
-                    <hr class="or-hr">
-                    <p class="or-txt">or</p>
-                    <hr class="or-hr">
-                </div>
-                <div class="oauth-container">
-                    <div class="oauth-ind-container-fk">
-                        <img src="@/assets/oauth/facebook_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-gg">
-                        <img src="@/assets/oauth/google_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-mc">
-                        <img src="@/assets/oauth/microsoft_logo.png" class="img-style2">
-                    </div>
-                    <div class="oauth-ind-container-dc">
-                        <img src="@/assets/oauth/discord_logo.png" class="img-style2">
-                    </div>
-                </div>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToForgotPwd">Forgot password ?</h4></router-link>
+                <button @click="resetPwd" class="send-btn">SEND</button>
+                <div class="filler02"></div>
+                <p class="rst-pwd-instruction-container"> An email will be sent to you with instructions on how to reset your password.</p>
             </div>
         </div>
     </body>
 </template>
 
 <script>
-
 export default {
-    name: 'Login',
+    name: 'ForgotPwd',
     data() {
         return {
             windowWidth: false,
             mobile: false,
             email: '',
-            password: '',
-            errorMessage: ''
         }
     },
     mounted() {
@@ -63,18 +34,6 @@ export default {
         this.checkScreen();
     },
     methods: {
-        navigateToRegister(event) {
-            event.preventDefault()
-            window.location.href = this.$router.resolve({ name: 'register' }).href;
-        },
-        navigateToHome(event) {
-            event.preventDefault()
-            window.location.href = this.$router.resolve({ name: 'home' }).href;
-        },
-        navigateToForgotPwd(event) {
-            event.preventDefault()
-            window.location.href = this.$router.resolve({ name: 'forgot-password' }).href;
-        },
         checkScreen() {
             this.windowWidth = window.innerWidth;
             if (this.windowWidth <= 960) {
@@ -83,33 +42,8 @@ export default {
                 this.mobile = false;
             }
         },
-        async loginClient(event) {
-            if (!this.email || !this.password) {
-                this.errorMessage = 'Please fill all the fields';
-                return;
-            }
-            if (!this.email.includes('@') || !this.email.includes('.')) {
-                this.errorMessage = 'Please enter a valid email';
-                return;
-            }
-            this.errorMessage = '';
-            try {
-                const response = await this.$axios.post('/auth/login', {
-                    Email: this.email,
-                    Password: this.password
-                });
-                if (!response.data || !response.data.responses || response.data.responses.length === 0) {
-                    this.errorMessage = 'Invalid email or password';
-                    return;
-                }
-                const token = response.data.responses[0];
-                console.log(token);
-                localStorage.setItem('token', token);
-                this.navigateToHome(event);
-            } catch (error) {
-                console.error(error);
-                this.errorMessage = 'An error occurred';
-            }
+        async resetPwd() {
+            // Send the request to the backend to reset the password
         }
     }
 }
@@ -132,14 +66,14 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 33rem;
-    height: 35rem;
+    width: 40rem;
+    height: 20rem;
     background-color: transparent;
 }
 
 .mobile-container {
     width: 25rem;
-    height: 35rem;
+    height: 25rem;
 }
 
 .main-container-bottom {
@@ -162,7 +96,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 20%;
+    height: 30%;
     background-color: #bcc1ba;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -172,7 +106,7 @@ body {
     border-bottom-color: #000000;
 }
 
-.login-title-txt {
+.reset-pwd-title-txt {
     font-size: 3rem;
     color: #313030;
     margin: 0;
@@ -181,6 +115,11 @@ body {
     margin-right: 1rem;
     font-family: 'inter', sans-serif;
     font-weight: 400;
+    white-space: nowrap;
+}
+
+.mobile-title {
+    font-size: 2.3rem;
 }
 
 .logo {
@@ -193,6 +132,12 @@ body {
 .filler01 {
     width: 100%;
     height: 100%;
+    background-color: transparent;
+}
+
+.filler02 {
+    width: 100%;
+    height: 1rem;
     background-color: transparent;
 }
 
@@ -250,7 +195,7 @@ body {
     cursor: pointer;
 }
 
-.login-btn {
+.send-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -264,15 +209,15 @@ body {
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
-.login-btn:hover {
+.send-btn:hover {
     background-color: #3a9cb1;
 }
 
-.login-btn:active {
+.send-btn:active {
     background-color: #2e7f8f;
 }
 
@@ -387,11 +332,15 @@ body {
     padding: 0;
 }
 
-.error-message {
-    color: red;
+.rst-pwd-instruction-container {
     font-family: 'inter', sans-serif;
     font-size: medium;
-    margin-bottom: -1rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    text-align: center;
 }
 
 </style>

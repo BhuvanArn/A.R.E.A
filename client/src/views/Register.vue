@@ -7,15 +7,22 @@
                 <img src="@/assets/logo.png" class="logo">
             </div>
             <div class="main-container-bottom">
+                <div class="username-container">
+                    <img src="@/assets/user.png" class="img-style1">
+                    <input type="text" class="input-style1" placeholder="Name" v-model="name">
+                </div>
                 <div class="email-container">
                     <img src="@/assets/user.png" class="img-style1">
-                    <input type="text" class="input-style1" placeholder="Email">
+                    <input type="text" class="input-style1" placeholder="Your Email" v-model="email">
                 </div>
                 <div class="pwd-container">
                     <img src="@/assets/key.png" class="img-style1">
-                    <input type="password" class="input-style1" placeholder="Password">
+                    <input type="password" class="input-style1" placeholder="Your Password" v-model="password">
                 </div>
                 <button @click="registerClient" class="login-btn">REGISTER</button>
+                <div v-if="errorMessage" class="error-message">
+                    <span>{{ errorMessage }}</span>
+                </div>
                 <div class="filler02"></div>
                 <router-link class="link"><h4 class="txt-link" @click="navigateToLogin">Already have an account ?</h4></router-link>
             </div>
@@ -31,6 +38,10 @@ export default {
         return {
             windowWidth: false,
             mobile: false,
+            email: '',
+            password: '',
+            name: '',
+            errorMessage: ''
         }
     },
     mounted() {
@@ -51,8 +62,35 @@ export default {
             }
         },
         async registerClient() {
-            // Register client
-        }
+            if (!this.email || !this.password) {
+                this.errorMessage = 'Please fill in all fields';
+                return;
+            }
+            // check if email is valid
+            if (!this.email.includes('@') || !this.email.includes('.')) {
+                this.errorMessage = 'Please enter a valid email address';
+                return;
+            }
+
+            this.errorMessage = '';
+
+            try {
+                console.log('Registering client...');
+                const response = await this.$axios.post('/auth/register', {
+                    Email: this.email,
+                    Password: this.password,
+                    ConfirmedPassword: this.password,
+                    Username: this.name
+                });
+                console.log(response);
+
+                // Redirect to login page
+                this.$router.push({ name: 'login' });
+            } catch (error) {
+                console.error(error);
+                this.errorMessage = 'An error occurred. Please try again later.';
+            };
+        },
     }
 }
 </script>
@@ -144,6 +182,15 @@ body {
     background-color: transparent;
 }
 
+.username-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: transparent;
+    height: 3rem;
+    width: 23rem;
+}
+
 .email-container {
     display: flex;
     flex-direction: row;
@@ -213,7 +260,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     margin-top: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 5px;
 }
 
 .login-btn:hover {
@@ -333,6 +380,13 @@ body {
     cursor: pointer;
     margin: 0;
     padding: 0;
+}
+
+.error-message {
+    color: red;
+    font-family: 'inter', sans-serif;
+    font-size: medium;
+    margin-bottom: -2rem;
 }
 
 </style>
