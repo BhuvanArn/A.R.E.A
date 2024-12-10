@@ -119,7 +119,7 @@ class HTTPServerBase(object):
 
         json = {
             "client": {
-                "host": client.headers["x-router-forwarded"]
+                "host": client.headers["x-router-forwarded"] if "x-router-forwarded" in client.headers else client.client_address[0],
             },
             "server": {
                 "current_time": int(time()),

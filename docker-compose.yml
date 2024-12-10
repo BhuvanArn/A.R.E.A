@@ -62,6 +62,11 @@ services:
     volumes:
       - services-storage:/var/service_storage
       - ./lib/serviceconf:/usr/src/app/serviceconf
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/about.json"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   service-action:
     build:
