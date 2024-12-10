@@ -13,7 +13,7 @@ The software is devided in three parts:
 
 Each user can create an account and connect different services to the application. The user can then create actions and reactions components for these services. The application triggers AREA automatically thanks to triggers.
 
-## Techinical stack
+## Technical stack
 
 ### Backend
 
