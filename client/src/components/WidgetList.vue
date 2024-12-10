@@ -1,6 +1,7 @@
 <template>
     <div class="widget-list">
         <div class="grid-container">
+            <!-- Existing widgets -->
             <div class="widget" v-for="(widget, index) in user_widgets" :key="index">
                 <div>
                     <div class="widget-title">
@@ -20,9 +21,46 @@
                     </div>
                 </div>
             </div>
-            <div class="widget add-widget" @click="addWidgetInList">
+
+            <!-- Add new widget button -->
+            <div class="widget add-widget" @click="showForm = true">
                 Add new widget
             </div>
+        </div>
+
+        <!-- Dynamic form for creating a new widget -->
+        <div v-if="showForm" class="widget-form">
+            <h3>Create New Widget</h3>
+            <form @submit.prevent="createWidget">
+                <div>
+                    <label for="service">Service:</label>
+                    <select id="service" v-model="selectedServiceId">
+                        <option v-for="(service, id) in services" :key="id" :value="id">
+                            {{ service }}
+                        </option>
+                    </select>
+                </div>
+                <div v-if="selectedServiceId">
+                    <label for="action">Action:</label>
+                    <select id="action" v-model="selectedAction">
+                        <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
+                            :value="action">
+                            {{ action.name }}
+                        </option>
+                    </select>
+                </div>
+                <div v-if="selectedServiceId">
+                    <label for="reaction">Reaction:</label>
+                    <select id="reaction" v-model="selectedReaction">
+                        <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []" :key="reaction.id"
+                            :value="reaction">
+                            {{ reaction.name }}
+                        </option>
+                    </select>
+                </div>
+                <button type="submit">Create Widget</button>
+                <button type="button" @click="cancelForm">Cancel</button>
+            </form>
         </div>
     </div>
 </template>
@@ -30,132 +68,109 @@
 <script>
 export default {
     name: "WidgetList",
-    methods: {
-        getColor(index) {
-            const colors = ["#D4A5A5", "#A7C4A0", "#92B4F4", "#E9C46A"];
-            return colors[index % colors.length];
-        },
-        addWidgetInList() {
-            this.user_widgets.push({
-                action: {
-                    name: "New Action",
-                    description: "New action description",
-                },
-                reaction: {
-                    name: "New Reaction",
-                    description: "New reaction description",
-                },
-            });
-        },
-    },
     data() {
         return {
-            services: {},
-            user_widgets: [],
-            all_widgets: [],
+            services: {
+                "1": "Discord",
+                "2": "Google",
+            },
+            user_widgets: [
+                {
+                    action: {
+                        id: "1",
+                        service_id: "2",
+                        name: "Action 1",
+                        description: "Description de l'action 1",
+                    },
+                    reaction: {
+                        id: "1",
+                        service_id: "1",
+                        name: "Reaction 1",
+                        description: "Description de la reaction 1",
+                    },
+                },
+                {
+                    action: {
+                        id: "1",
+                        service_id: "1",
+                        name: "Action 2",
+                        description: "Description de l'action 2",
+                    },
+                    reaction: {
+                        id: "1",
+                        service_id: "1",
+                        name: "Reaction 2",
+                        description: "Description de la reaction 2",
+                    },
+                },
+            ],
+            all_widgets: {
+                "1": {
+                    actions: [
+                        {
+                            id: "1",
+                            name: "Action 1 discord",
+                            description: "Description de l'action 1",
+                        },
+                    ],
+                    reactions: [
+                        {
+                            id: "1",
+                            name: "Reaction 1 discord",
+                            description: "Description de la reaction 1",
+                        },
+                    ],
+                },
+                "2": {
+                    actions: [
+                        {
+                            id: "1",
+                            name: "Action 1 google",
+                            description: "Description de l'action 1",
+                        },
+                    ],
+                    reactions: [
+                        {
+                            id: "1",
+                            name: "Reaction 1 google",
+                            description: "Description de la reaction 1",
+                        },
+                    ],
+                },
+            },
+            showForm: false,
+            selectedServiceId: null,
+            selectedAction: null,
+            selectedReaction: null,
         };
     },
-    mounted() {
-        // fetch("URL_TO_API")
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         // Update the user_widgets array with the API data
-        //         this.user_widgets = data;
-        //     })
-        //     .catch((error) => {
-        //         console.error("Error fetching user_widgets:", error);
-        //     });
-        this.services["1"] = "Discord";
-        this.services["2"] = "Google";
-        this.user_widgets = [
-            {
-                action: {
-                    id: "1",
-                    service_id: "2",
-                    name: "Action 1",
-                    description: "Description de l'action 1",
-                },
-                reaction: {
-                    id: "1",
-                    service_id: "1",
-                    name: "Reaction 1",
-                    description: "Description de la reaction 1",
-                },
-            },
-            {
-                action: {
-                    id: "1",
-                    service_id: "1",
-                    name: "Action 2",
-                    description: "Description de l'action 2",
-                },
-                reaction: {
-                    id: "1",
-                    service_id: "1",
-                    name: "Reaction 2",
-                    description: "Description de la reaction 2",
-                },
-            },
-        ];
-        this.all_widgets = {
-            "1": {
-                "actions": [
-                    {
-                        "id": "1",
-                        "name": "Action 1",
-                        "description": "Description de l'action 1",
-                        "inputs": [
-                            {
-                                "name": "E-mail"
-                            },
-                            {
-                                "name": "Username"
-                            }
-                        ]
-
+    methods: {
+        createWidget() {
+            if (this.selectedAction && this.selectedReaction) {
+                this.user_widgets.push({
+                    action: {
+                        ...this.selectedAction,
+                        service_id: this.selectedServiceId,
                     },
-                ],
-                "reactions": [
-                    {
-                        "id": "1",
-                        "name": "Reaction 1",
-                        "description": "Description de la reaction 1",
-                        "inputs": [
-                            {
-                                "name": "Password"
-                            }
-                        ]
+                    reaction: {
+                        ...this.selectedReaction,
+                        service_id: this.selectedServiceId,
                     },
-                ]
-            },
-            "2": {
-                "actions": [
-                    {
-                        "id": "1",
-                        "name": "Action 1",
-                        "description": "Description de l'action 1",
-                        "inputs": [
-                            {
-                                "name": "E-mail"
-                            }
-                        ]
-
-                    },
-                ],
-                "reactions": [
-                    {
-                        "id": "1",
-                        "name": "Reaction 1",
-                        "description": "Description de la reaction 1",
-                        "inputs": [
-                            {
-                                "name": "Password"
-                            }
-                        ]
-                    },
-                ]
-            },
-        };
+                });
+                this.resetForm();
+            } else {
+                alert("Please select both an action and a reaction.");
+            }
+        },
+        cancelForm() {
+            this.resetForm();
+        },
+        resetForm() {
+            this.showForm = false;
+            this.selectedServiceId = null;
+            this.selectedAction = null;
+            this.selectedReaction = null;
+        },
     },
 };
 </script>
@@ -179,8 +194,6 @@ export default {
 .widget {
     display: flex;
     flex-direction: column;
-    /* align-items: center;
-    justify-content: center;*/
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -217,5 +230,30 @@ export default {
 .add-widget {
     color: black;
     background-color: white;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.widget-form {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.widget-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.widget-form button {
+    margin-top: 10px;
 }
 </style>
