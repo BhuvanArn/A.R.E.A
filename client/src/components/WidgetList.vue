@@ -1,70 +1,72 @@
 <template>
-    <div class="widget-list">
-        <div class="grid-container">
-            <!-- Existing widgets -->
-            <div class="widget" v-for="(widget, index) in user_widgets" :key="index">
-                <div>
-                    <div class="widget-title">
-                        <h2>Widget {{ index + 1 }}</h2>
+    <body>
+        <div class="widget-list">
+            <div class="grid-container">
+                <!-- Existing widgets -->
+                <div class="widget" v-for="(widget, index) in user_widgets" :key="index">
+                    <div>
+                        <div class="widget-title">
+                            <h2>Widget {{ index + 1 }}</h2>
+                        </div>
+                        <div class="widget-action">
+                            <h3>Trigger: {{ widget.action.name }}</h3>
+                            <p>Service: {{ services[widget.action.service_id] }}</p>
+                            <p>&nbsp</p>
+                            <p>{{ widget.action.description }}</p>
+                        </div>
+                        <div class="widget-reaction">
+                            <h3>Reaction: {{ widget.reaction.name }}</h3>
+                            <p>Service: {{ services[widget.reaction.service_id] }}</p>
+                            <p>&nbsp</p>
+                            <p>{{ widget.reaction.description }}</p>
+                        </div>
                     </div>
-                    <div class="widget-action">
-                        <h3>Trigger: {{ widget.action.name }}</h3>
-                        <p>Service: {{ services[widget.action.service_id] }}</p>
-                        <p>&nbsp</p>
-                        <p>{{ widget.action.description }}</p>
-                    </div>
-                    <div class="widget-reaction">
-                        <h3>Reaction: {{ widget.reaction.name }}</h3>
-                        <p>Service: {{ services[widget.reaction.service_id] }}</p>
-                        <p>&nbsp</p>
-                        <p>{{ widget.reaction.description }}</p>
-                    </div>
+                </div>
+
+                <!-- Add new widget button -->
+                <div class="widget add-widget" @click="showForm = true">
+                    Add new widget
                 </div>
             </div>
 
-            <!-- Add new widget button -->
-            <div class="widget add-widget" @click="showForm = true">
-                Add new widget
+            <!-- Modal with form -->
+            <div v-if="showForm" class="modal-overlay">
+                <div class="modal">
+                    <h3>Create New Widget</h3>
+                    <form @submit.prevent="createWidget">
+                        <div>
+                            <label for="service">Service:</label>
+                            <select id="service" v-model="selectedServiceId">
+                                <option v-for="(service, id) in services" :key="id" :value="id">
+                                    {{ service }}
+                                </option>
+                            </select>
+                        </div>
+                        <div v-if="selectedServiceId">
+                            <label for="action">Action:</label>
+                            <select id="action" v-model="selectedAction">
+                                <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
+                                    :value="action">
+                                    {{ action.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div v-if="selectedServiceId">
+                            <label for="reaction">Reaction:</label>
+                            <select id="reaction" v-model="selectedReaction">
+                                <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []"
+                                    :key="reaction.id" :value="reaction">
+                                    {{ reaction.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit">Create Widget</button>
+                        <button type="button" @click="cancelForm">Cancel</button>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <!-- Modal with form -->
-        <div v-if="showForm" class="modal-overlay">
-            <div class="modal">
-                <h3>Create New Widget</h3>
-                <form @submit.prevent="createWidget">
-                    <div>
-                        <label for="service">Service:</label>
-                        <select id="service" v-model="selectedServiceId">
-                            <option v-for="(service, id) in services" :key="id" :value="id">
-                                {{ service }}
-                            </option>
-                        </select>
-                    </div>
-                    <div v-if="selectedServiceId">
-                        <label for="action">Action:</label>
-                        <select id="action" v-model="selectedAction">
-                            <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
-                                :value="action">
-                                {{ action.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div v-if="selectedServiceId">
-                        <label for="reaction">Reaction:</label>
-                        <select id="reaction" v-model="selectedReaction">
-                            <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []"
-                                :key="reaction.id" :value="reaction">
-                                {{ reaction.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <button type="submit">Create Widget</button>
-                    <button type="button" @click="cancelForm">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    </body>
 </template>
 
 
@@ -187,11 +189,21 @@ export default {
 
 .grid-container {
     display: grid;
-    width: 80vw;
-    gap: 10px;
+    width: auto;
+    gap: 3rem;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 20px;
     overflow-y: auto;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 920px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .widget {

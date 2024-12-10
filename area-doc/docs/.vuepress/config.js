@@ -2,6 +2,8 @@ import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 
+import VuepressApiPlayground from 'vuepress-api-playground'
+
 export default defineUserConfig({
   lang: 'en-US',
 
@@ -11,8 +13,12 @@ export default defineUserConfig({
   theme: defaultTheme({
     logo: '/assets/logo.png',
 
-    navbar: ['/', '/introduction', '/get-started', '/technical-doc'],
+    navbar: ['/', '/introduction', '/technical-doc'],
   }),
 
   bundler: viteBundler(),
+
+  enhance({ app }) {
+    app.component('VuepressApiPlayground', VuepressApiPlayground)
+  },
 })

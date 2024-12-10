@@ -1,6 +1,8 @@
-﻿using System.Text;
+using System.Text;
+using ActionReactionService;
 using Database;
 using Database.Dao;
+using Database.Entities;
 using Database.Service;
 using EventBus;
 using EventBus.Event;
@@ -50,8 +52,13 @@ public static class Program
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<ActionService>();
+        builder.Services.AddScoped<ReactionService>();
+        builder.Services.AddScoped<ServiceService>();
+        
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
@@ -87,6 +94,8 @@ public static class Program
         eventBus.Subscribe(userLoginHandler);
         var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
         eventBus.Subscribe(userRegisteredHandler);
+        var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>>();
+        eventBus.Subscribe(actionReactionHandler);
 
         await app.RunAsync();
     }

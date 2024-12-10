@@ -1,13 +1,13 @@
-import * as clientConfig0 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-active-header-links/lib/client/config.js'
-import * as clientConfig1 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-back-to-top/lib/client/config.js'
-import * as clientConfig2 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-copy-code/lib/client/config.js'
-import * as clientConfig3 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-markdown-hint/lib/client/config.js'
-import * as clientConfig4 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-medium-zoom/lib/client/config.js'
-import * as clientConfig5 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-nprogress/lib/client/config.js'
-import * as clientConfig6 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/prismjs/config.js'
-import * as clientConfig7 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/markdown-tab/config.js'
-import * as clientConfig8 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/plugin-theme-data/lib/client/config.js'
-import * as clientConfig9 from '/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/node_modules/@vuepress/theme-default/lib/client/config.js'
+import * as clientConfig0 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-active-header-links/lib/client/config.js'
+import * as clientConfig1 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-back-to-top/lib/client/config.js'
+import * as clientConfig2 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-copy-code/lib/client/config.js'
+import * as clientConfig3 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-markdown-hint/lib/client/config.js'
+import * as clientConfig4 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-medium-zoom/lib/client/config.js'
+import * as clientConfig5 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-nprogress/lib/client/config.js'
+import * as clientConfig6 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/docs/.vuepress/.temp/prismjs/config.js'
+import * as clientConfig7 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/docs/.vuepress/.temp/markdown-tab/config.js'
+import * as clientConfig8 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/plugin-theme-data/lib/client/config.js'
+import * as clientConfig9 from '/home/barnaud/.Delivery/tek3/DEV/A.R.E.A/area-doc/node_modules/@vuepress/theme-default/lib/client/config.js'
 
 export const clientConfigs = [
   clientConfig0,

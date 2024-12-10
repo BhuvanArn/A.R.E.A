@@ -3,6 +3,7 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241210192634_area")]
+    partial class area
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,9 +55,6 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ActionId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("ExecutionConfig")
                         .IsRequired()
                         .HasColumnType("text");
@@ -67,8 +67,6 @@ namespace Database.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ActionId");
 
                     b.HasIndex("ServiceId");
 
@@ -139,19 +137,11 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Entities.Reaction", b =>
                 {
-                    b.HasOne("Database.Entities.Action", "Action")
-                        .WithMany("Reactions")
-                        .HasForeignKey("ActionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Database.Entities.Service", "Service")
                         .WithMany("Reactions")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Action");
 
                     b.Navigation("Service");
                 });
@@ -165,11 +155,6 @@ namespace Database.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Database.Entities.Action", b =>
-                {
-                    b.Navigation("Reactions");
                 });
 
             modelBuilder.Entity("Database.Entities.Service", b =>

@@ -2,17 +2,16 @@
     <NavBar class="navbar"></NavBar>
     <div class="services-page">
         <SectionList/>
-        <WidgetList></WidgetList>
     </div>
 </template>
 
 <script>
 import NavBar from '../components/WorkspaceNavBar.vue';
-import SectionList from '@/components/SectionList.vue';
+import SectionList from '@/components/SectionListMobile.vue';
 import WidgetList from '@/components/WidgetList.vue';
 
 export default {
-    name: "ServicePage",
+    name: "MobileServicePage",
     components: {
         SectionList,
         WidgetList,
@@ -44,13 +43,8 @@ export default {
     flex-direction: row;
     font-family: 'inter', sans-serif;
     z-index: 1;
-}
-
-@media (max-width: 920px) {
-    .services-page {
-        justify-content: center;
-        align-items: center;
-    }
+    height: 100vh;
+    width: auto;
 }
 
 </style>
