@@ -1,4 +1,5 @@
-﻿using EventBus;
+﻿using Database.Entities;
+using EventBus;
 using EventBus.Event;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,11 +23,8 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("Action reaction event triggered.");
         
-        var responses = await _eventBus.PublishAsync<ActionReactionEvent, (string, ResultType)>(new ActionReactionEvent());
+        var responses = await _eventBus.PublishAsync<ActionReactionEvent, (List<Service>, ResultType)>(new ActionReactionEvent());
 
-        return Ok(new
-        {
-            Message = responses.Select(s => s.Item1)
-        });
+        return Ok(responses.Select(s => s.Item1));
     }
 }

@@ -7,7 +7,7 @@ using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
-public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactionEvent, (string, ResultType)>
+public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>
 {
     private readonly ServiceService _serviceService;
     private readonly ActionService _actionService;
@@ -23,7 +23,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
         _reactionService = reactionService;
     }
     
-    public async Task<(string, ResultType)> HandleAsync(ActionReactionEvent @event)
+    public async Task<(List<Service>, ResultType)> HandleAsync(ActionReactionEvent @event)
     {
         var services = await _serviceService.GetAllServicesAsync();
         
@@ -56,6 +56,6 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
             result.Add(serviceDto);
         }
 
-        return (JsonSerializer.Serialize(result), ResultType.Success);
+        return (result, ResultType.Success);
     }
 }
