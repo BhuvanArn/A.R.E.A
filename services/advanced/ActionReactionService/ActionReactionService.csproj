@@ -9,6 +9,11 @@
     <ItemGroup>
       <ProjectReference Include="..\Database\Database.csproj" />
       <ProjectReference Include="..\EventBus\EventBus.csproj" />
+      <ProjectReference Include="..\Extension\Extension.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     </ItemGroup>
 
 </Project>
