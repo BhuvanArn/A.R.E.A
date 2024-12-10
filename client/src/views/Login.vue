@@ -67,6 +67,10 @@ export default {
             event.preventDefault()
             window.location.href = this.$router.resolve({ name: 'register' }).href;
         },
+        navigateToHome(event) {
+            event.preventDefault()
+            window.location.href = this.$router.resolve({ name: 'home' }).href;
+        },
         checkScreen() {
             this.windowWidth = window.innerWidth;
             if (this.windowWidth <= 960) {
@@ -75,7 +79,7 @@ export default {
                 this.mobile = false;
             }
         },
-        async loginClient() {
+        async loginClient(event) {
             if (!this.email || !this.password) {
                 this.errorMessage = 'Please fill all the fields';
                 return;
@@ -90,14 +94,14 @@ export default {
                     Email: this.email,
                     Password: this.password
                 });
-                const data = await response.json();
-                if (data.error) {
-                    this.errorMessage = data.error;
+                if (!response.data || !response.data.responses || response.data.responses.length === 0) {
+                    this.errorMessage = 'Invalid email or password';
                     return;
                 }
-                console.log(data);
-                localStorage.setItem('token', data.token);
-                this.$router.push({ name: 'home' });
+                const token = response.data.responses[0];
+                console.log(token);
+                localStorage.setItem('token', token);
+                this.navigateToHome(event);
             } catch (error) {
                 console.error(error);
                 this.errorMessage = 'An error occurred';
