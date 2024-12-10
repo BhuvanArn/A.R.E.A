@@ -3,8 +3,9 @@ export const redirects = JSON.parse("{}")
 export const routes = Object.fromEntries([
   ["/", { loader: () => import(/* webpackChunkName: "index.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/index.html.js"), meta: {"title":"Home"} }],
   ["/get-started.html", { loader: () => import(/* webpackChunkName: "get-started.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/get-started.html.js"), meta: {"title":"Get Started"} }],
-  ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
   ["/introduction.html", { loader: () => import(/* webpackChunkName: "introduction.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/introduction.html.js"), meta: {"title":"Introduction"} }],
+  ["/technical-doc.html", { loader: () => import(/* webpackChunkName: "technical-doc.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/technical-doc.html.js"), meta: {"title":"Technical documentation"} }],
+  ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"/home/andriamanampisoa/Epitech/TECH_3/App-Dev/A.R.E.A/area-doc/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
 ]);
 
 if (import.meta.webpackHot) {

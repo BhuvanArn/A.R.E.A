@@ -11,7 +11,7 @@ export default defineUserConfig({
   theme: defaultTheme({
     logo: '/assets/logo.png',
 
-    navbar: ['/', '/get-started'],
+    navbar: ['/', '/introduction', '/get-started', '/technical-doc'],
   }),
 
   bundler: viteBundler(),
