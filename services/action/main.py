@@ -6,6 +6,7 @@ from time import time
 from service_mod import *
 from requests import get
 from json import dumps
+from time import sleep
 
 class RegisteredAction(object):
     def __init__(self, service_id, action_id, service, name, _vars = {}):
@@ -155,16 +156,16 @@ class Watcher(object):
         req = get(url)
 
         if (req.status_code not in (200, 201)):
-            raise RuntimeError("cannot update datas")
+            raise RuntimeError(f"invalid status {req.status_code} {req.text}")
 
         json = req.json()
 
-        for item in json["message"]:
+        for item in json[0]:
             for action in item["Actions"]:
                 _vars = {}
 
                 for var_name, var_value in {**dumps(item["TriggerConfig"]), **dumps(item["Auth"])}.items():
-                    _vars[var_name, var_value]
+                    _vars[var_name] = var_value
 
                 self.register_action(RegisteredAction(item["Id"], action["Id"], item["Name"], action["Name"], _vars))
 
@@ -200,13 +201,22 @@ def main() -> int:
     db_connect.set_listen()
 
     watcher = Watcher(connection)
-    try:
-        watcher.from_request("csharp_service:8080/area")
-    except Exception as e:
-        print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
+
+    retry = 0
+    start = True
+    while (start or (watcher.failed_update)) and retry < 3:
+        start = False
+        try:
+            watcher.from_request("http://csharp_service:8080/area")
+            print(f"[PYTHON (service-action)] - updated data", flush=True)
+        except Exception as e:
+            print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
+            retry += 1
+            sleep(7.4)
     #watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
+    print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)
 
     while 1:
         try:
@@ -248,19 +258,13 @@ def main() -> int:
                 if (db_connect.get_message() == UPDT):
                     print(f"[PYTHON (service-action)] - db requested data update", flush=True)
                     try:
-                        watcher.from_request("csharp_service:8080/area")
+                        watcher.from_request("http://csharp_service:8080/area")
                     except Exception as e:
                         print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
                     db_connect.close_client()
                     print(f"[PYTHON (service-action)] - closing db connect", flush=True)
                     connection.send_message(Message(UPDT))
                     print(f"[PYTHON (service-action)] - forwading to reaction", flush=True)
-
-            if (watcher.failed_update):
-                try:
-                    watcher.from_request("csharp_service:8080/area")
-                except Exception as e:
-                    print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
         except KeyboardInterrupt:
             break
         except Exception as e:

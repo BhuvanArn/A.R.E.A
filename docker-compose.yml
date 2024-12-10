@@ -56,7 +56,8 @@ services:
       context: ./services/about
       dockerfile: Dockerfile
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - server-tier
     volumes:
@@ -73,7 +74,8 @@ services:
       context: ./services/action
       dockerfile: Dockerfile
     depends_on:
-      - server
+      csharp_service:
+        condition: service_healthy
     networks:
       - server-tier
     volumes:
@@ -87,7 +89,8 @@ services:
       context: ./services/reaction
       dockerfile: Dockerfile
     depends_on:
-      - server
+      csharp_service:
+        condition: service_healthy
     networks:
       - server-tier
     volumes:
