@@ -19,12 +19,10 @@ fn handle_connection(mut stream: TcpStream) {
     let mut req = parser::collect_request(&stream);
     let mut response = Response::new();
 
-    response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
-    response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
-    response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
-    response.headers.insert("Access-Control-Allow-Credentials".to_string(), "true".to_string());
-
     if req.method == "OPTIONS" {
+        response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
+        response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
+
         response.code = 204;
         response.message = String::from("No Content");
         stream.write_all(&response.build_request()).unwrap();
@@ -43,11 +41,6 @@ fn handle_connection(mut stream: TcpStream) {
 
                     let mut res = parser::collect_response(&socket);
 
-                    response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
-                    response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
-                    response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
-
-                    eprintln!("{} - {} - {}", req.method, req.route, res.code);
                     stream.write_all(&res.build_request()).unwrap();
                     return ();
                 }
