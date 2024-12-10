@@ -189,11 +189,21 @@ export default {
 
 .grid-container {
     display: grid;
-    width: 80vw;
-    gap: 10px;
+    width: auto;
+    gap: 3rem;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 20px;
     overflow-y: auto;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 920px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .widget {

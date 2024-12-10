@@ -1,6 +1,6 @@
 <template>
     <body>
-        <div class="service-list" v-show="!mobile">
+        <div class="service-list">
             <h1 class="service-txt-title">Services</h1>
             <!-- <p>&nbsp</p> -->
             <ul>
@@ -142,10 +142,11 @@ body {
     display: flex;
     background-color: transparent;
     height: auto;
+    width: 100%;
 }
 
 .service-list {
-    width: 20vw;
+    width: 100%;
     height: 100%;
     overflow-y: auto;
     background-color: #f4f4f4;
@@ -168,7 +169,7 @@ body {
 }
 
 .add-services {
-    width: 20vw;
+    width: 100%;
     text-align: center;
     font-weight: bold;
     font-size: 20px;
