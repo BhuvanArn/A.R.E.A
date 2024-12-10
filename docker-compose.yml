@@ -59,6 +59,9 @@ services:
       - server
     networks:
       - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/serviceconf:/usr/src/app/serviceconf
 
   service-action:
     build:
