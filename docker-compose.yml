@@ -115,6 +115,13 @@ services:
       retries: 5
     restart: on-failure
 
+  docs:
+    build:
+      context: ./area-doc
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+
 networks:
   server-tier:
 
