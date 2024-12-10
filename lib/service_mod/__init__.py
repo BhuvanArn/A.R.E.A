@@ -37,7 +37,7 @@ class GenericModRegister(object):
         try:
             self.mods[name] = getattr(import_module('.'.join(real_name.split('.')[:-1])), real_name.split('.')[-1])
         except Exception as e:
-            print(f"[MODULE] - {e}", flush=True)
+            print(f"[MODULE] - {real_name} - {e}", flush=True)
 
     def get_module(self, name: str):
         return (self.mods[name] if name in self.mods else None)

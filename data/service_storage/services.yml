@@ -43,29 +43,12 @@ services:
 
   - name: timer
     actions:
-      - name: daily_time
-        description: reached time marker
-        inputs:
-          - name: time_marker
-            regex: "^*$"
-        fetch:
-          - strategy: custom
-        time: 0
-
-      - name: yealy_time
-        description: reached date marker
-        inputs:
-          - name: date_marker
-            regex: "^*$"
-        fetch:
-          - strategy: custom
-        time: 0
-
       - name: only_time
         description: reached onetime marker
         inputs:
           - name: marker
             regex: "^*$"
         fetch:
-          - strategy: custom
+          strategy: timer.strategy_only_time
+          middleware: timer.middleware_only_time
         time: 0
