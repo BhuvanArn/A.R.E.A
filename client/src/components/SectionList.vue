@@ -46,11 +46,18 @@
             </div>
         </div>
     </div>
+    <WidgetList></WidgetList>
 </template>
 
 <script>
+import WidgetList from '@/components/WidgetList.vue';
+
 export default {
+
     name: "SectionList",
+    components: {
+        WidgetList,
+    },
     data() {
         return {
             showForm: false,
@@ -89,7 +96,8 @@ export default {
             return colors[index % colors.length];
         },
         createService() {
-            if (this.selectedService != null && this.credentials != null) {
+            if (this.selectedService != null &&
+                Object.keys(this.credentials).length == Object.keys(this.filteredServices[this.selectedService].credentials).length) {
                 this.services.push(this.filteredServices[this.selectedService]["name"]);
                 this.resetForm();
             } else {

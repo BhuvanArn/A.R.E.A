@@ -2,7 +2,6 @@
     <NavBar class="navbar"></NavBar>
     <div class="services-page">
         <SectionList />
-        <WidgetList />
     </div>
 </template>
 
