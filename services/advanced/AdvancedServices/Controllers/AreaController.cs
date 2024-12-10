@@ -20,7 +20,7 @@ public class AreaController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        _logger.LogInformation("Login event triggered.");
+        _logger.LogInformation("Action reaction event triggered.");
         
         var responses = await _eventBus.PublishAsync<ActionReactionEvent, (string, ResultType)>(new ActionReactionEvent());
 
