@@ -49,6 +49,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 {
                     Id = r.Id,
                     Name = r.Name,
+                    ActionId = r.ActionId,
                     ExecutionConfig = r.ExecutionConfig
                 }).ToList()
             };

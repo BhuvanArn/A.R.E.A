@@ -6,6 +6,10 @@ public class Reaction
     
     public Guid ServiceId { get; set; }
     
+    public Guid ActionId { get; set; }
+    
+    public Action Action { get; set; }
+    
     public Service Service { get; set; }
     
     public string Name { get; set; }
