@@ -9,7 +9,7 @@
 <li><strong>a mobile application</strong> (frontend).</li>
 </ul>
 <p>Each user can create an account and connect different services to the application. The user can then create actions and reactions components for these services. The application triggers AREA automatically thanks to triggers.</p>
-<h2 id="techinical-stack" tabindex="-1"><a class="header-anchor" href="#techinical-stack"><span>Techinical stack</span></a></h2>
+<h2 id="technical-stack" tabindex="-1"><a class="header-anchor" href="#technical-stack"><span>Technical stack</span></a></h2>
 <h3 id="backend" tabindex="-1"><a class="header-anchor" href="#backend"><span>Backend</span></a></h3>
 <p>For the backend, we used the following technologies:</p>
 <ul>
