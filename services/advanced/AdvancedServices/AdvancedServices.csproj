@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ActionReactionService\ActionReactionService.csproj" />
       <ProjectReference Include="..\EventBus\EventBus.csproj" />
       <ProjectReference Include="..\Extension\Extension.csproj" />
       <ProjectReference Include="..\LoginService\LoginService.csproj" />

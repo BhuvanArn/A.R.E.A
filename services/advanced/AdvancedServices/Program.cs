@@ -1,4 +1,5 @@
 using System.Text;
+using ActionReactionService;
 using Database;
 using Database.Dao;
 using Database.Service;
@@ -50,6 +51,7 @@ public static class Program
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (string, ResultType)>, ActionReactionEventHandler>();
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<ActionService>();
@@ -91,6 +93,8 @@ public static class Program
         eventBus.Subscribe(userLoginHandler);
         var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
         eventBus.Subscribe(userRegisteredHandler);
+        var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (string, ResultType)>>();
+        eventBus.Subscribe(actionReactionHandler);
 
         await app.RunAsync();
     }
