@@ -3,8 +3,12 @@ routes:
     host: csharp_service
     port: 8080
     condition: ^/auth/login$
+    method: POST
+    path: /auth/login
 
   - name: auth-register
     host: csharp_service
     port: 8080
     condition: ^/auth/register$
+    method: POST
+    path: /auth/register

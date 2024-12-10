@@ -1,3 +1,6 @@
+extern crate serde;
+extern crate serde_json;
+
 use std::{
     io::prelude::*,
     net::{TcpListener, TcpStream, ToSocketAddrs},
@@ -12,7 +15,51 @@ mod parser;
 mod routes;
 
 use response::Response;
-use routes::RouteLoader;
+use routes::{RouteLoader, Route};
+
+use serde::{Deserialize, Serialize};
+
+
+#[derive(Serialize, Deserialize)]
+struct OpenApiSpec {
+    openapi: String,
+    info: Info,
+    paths: serde_json::Value,
+}
+
+#[derive(Serialize, Deserialize)]
+struct Info {
+    title: String,
+    version: String,
+}
+
+fn generate_openapi_spec(routes: &[Route]) -> OpenApiSpec {
+    let mut paths = serde_json::Map::new();
+
+    for route in routes {
+        let path_item = serde_json::json!({
+            &route.method.to_lowercase(): {
+                "summary": route.name,
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        });
+
+        paths.insert(route.path.clone(), path_item);
+    }
+
+    OpenApiSpec {
+        openapi: "3.0.0".to_string(),
+        info: Info {
+            title: "API Documentation".to_string(),
+            version: "1.0.0".to_string(),
+        },
+        paths: serde_json::Value::Object(paths),
+    }
+}
 
 fn handle_connection(mut stream: TcpStream) {
     static CELL: OnceLock<Mutex<RouteLoader>> =  OnceLock::new();
@@ -27,6 +74,24 @@ fn handle_connection(mut stream: TcpStream) {
         response.message = String::from("No Content");
         stream.write_all(&response.build_request()).unwrap();
         return;
+    }
+
+    if req.route == "/swagger" {
+        let router = CELL.get_or_init(|| Mutex::new(RouteLoader::new("routes.yml")));
+        let locked_router = router.lock().unwrap();
+        let routes = locked_router.get_all_routes();
+        let openapi_spec = generate_openapi_spec(routes);
+        let swagger_json = serde_json::to_string_pretty(&openapi_spec).unwrap();
+
+        response.set_body(&swagger_json);
+        response.headers.insert("Content-Type".to_string(), "application/json".to_string());
+        response.code = 200;
+        response.message = String::from("OK");
+
+        eprintln!("Generated OpenAPI spec: {}", swagger_json);
+
+        stream.write_all(&response.build_request()).unwrap();
+        return ();
     }
 
     let router = CELL.get_or_init(|| Mutex::new(RouteLoader::new("routes.yml")));
