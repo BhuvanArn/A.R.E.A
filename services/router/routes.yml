@@ -8,3 +8,8 @@ routes:
     host: csharp_service
     port: 8080
     condition: ^/auth/register$
+
+  - name: about
+    host: service-about
+    port: 80
+    condition: ^/about.json$
