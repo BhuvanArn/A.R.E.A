@@ -53,6 +53,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
         builder.Services.AddScoped<DaoFactory>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<ActionService>();
@@ -96,6 +97,8 @@ public static class Program
         eventBus.Subscribe(userRegisteredHandler);
         var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>>();
         eventBus.Subscribe(actionReactionHandler);
+        var getServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>>();
+        eventBus.Subscribe(getServiceHandler);
 
         await app.RunAsync();
     }
