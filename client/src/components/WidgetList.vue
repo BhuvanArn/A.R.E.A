@@ -1,7 +1,7 @@
 <template>
     <div class="widget-list">
         <div class="grid-container">
-            <div class="widget" v-for="(widget, index) in widgets" :key="index">
+            <div class="widget" v-for="(widget, index) in user_widgets" :key="index">
                 <div>
                     <div class="widget-title">
                         <h2>Widget {{ index + 1 }}</h2>
@@ -36,7 +36,7 @@ export default {
             return colors[index % colors.length];
         },
         addWidgetInList() {
-            this.widgets.push({
+            this.user_widgets.push({
                 action: {
                     name: "New Action",
                     description: "New action description",
@@ -51,22 +51,22 @@ export default {
     data() {
         return {
             services: {},
-            widgets: [],
+            user_widgets: [],
         };
     },
     mounted() {
         // fetch("URL_TO_API")
         //     .then((response) => response.json())
         //     .then((data) => {
-        //         // Update the widgets array with the API data
-        //         this.widgets = data;
+        //         // Update the user_widgets array with the API data
+        //         this.user_widgets = data;
         //     })
         //     .catch((error) => {
-        //         console.error("Error fetching widgets:", error);
+        //         console.error("Error fetching user_widgets:", error);
         //     });
         this.services["1"] = "Discord";
         this.services["2"] = "Google";
-        this.widgets = [
+        this.user_widgets = [
         {
             action: {
                 id: "1",
