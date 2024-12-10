@@ -47,7 +47,7 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("SubscribeService event triggered for token: {UserToken} and service: {ServiceName}", user_token, request.Name);
 
-        var responses = await _eventBus.PublishAsync<SubscribeServiceEvent, (List<Service>, ResultType)>(new SubscribeServiceEvent
+        await _eventBus.PublishAsync<SubscribeServiceEvent, (List<Service>, ResultType)>(new SubscribeServiceEvent
         {
             JwtToken = user_token,
             Name = request.Name,
