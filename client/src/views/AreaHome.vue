@@ -55,7 +55,7 @@ export default {
         }
     },
     components: {
-        NavBar
+        NavBar,
     },
     methods: {
         // methods
