@@ -1,7 +1,7 @@
 <template>
     <NavBar class="navbar"></NavBar>
     <div class="services-page">
-        <SectionList />
+        <SectionList/>
     </div>
 </template>
 
@@ -31,9 +31,18 @@ export default {
 </script>
 
 <style scoped>
+
+.navbar {
+    position: relative;
+    z-index: 10;
+}
+
 .services-page {
+    position: relative;
     display: flex;
     flex-direction: row;
     font-family: 'inter', sans-serif;
+    z-index: 1;
 }
+
 </style>

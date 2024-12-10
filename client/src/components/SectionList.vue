@@ -1,52 +1,54 @@
 <template>
-    <div class="service-list">
-        <h1>Services</h1>
-        <p>&nbsp</p>
-        <ul>
-            <li v-for="(section, index) in services" class=" section-item">
-                <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
-            </li>
-        </ul>
-        <div class="add-services" @click="showForm = true">
-            ADD SERVICE
-        </div>
-        <div v-if="showForm" class="modal-overlay">
-            <div class="modal">
-                <h3>Add New Service</h3>
-                <p>&nbsp;</p>
-                <div v-if="filteredServices.length === 0">
-                    No other services available
+    <body>
+        <div class="service-list">
+            <h1 class="service-txt-title">Services</h1>
+            <p>&nbsp</p>
+            <ul>
+                <li v-for="(section, index) in services" class=" section-item">
+                    <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
+                </li>
+            </ul>
+            <div class="add-services" @click="showForm = true">
+                ADD SERVICE
+            </div>
+            <div v-if="showForm" class="modal-overlay">
+                <div class="modal">
+                    <h3>Add New Service</h3>
                     <p>&nbsp;</p>
-                    <button type="button" @click="cancelForm">Cancel</button>
-                </div>
-                <div v-else>
-                    <form @submit.prevent="createService">
-                        <div>
-                            <label for="service">Services: </label>
-                            <select id="service" v-model="selectedService">
-                                <option v-for="(service, id) in filteredServices" :key="id" :value="id">
-                                    {{ service.name }}
-                                </option>
-                            </select>
-                            <p>&nbsp;</p>
-                            <label for="credentials">Credentials: </label>
-                            <div v-if="selectedService !== null">
-                                <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
-                                    :key="index">
-                                    <label for="credential">{{ credential }}: </label>
-                                    <input id="credential" type="text" v-model="credentials[credential]"
-                                        placeholder="Enter value" />
+                    <div v-if="filteredServices.length === 0">
+                        No other services available
+                        <p>&nbsp;</p>
+                        <button type="button" @click="cancelForm">Cancel</button>
+                    </div>
+                    <div v-else>
+                        <form @submit.prevent="createService">
+                            <div>
+                                <label for="service">Services: </label>
+                                <select id="service" v-model="selectedService">
+                                    <option v-for="(service, id) in filteredServices" :key="id" :value="id">
+                                        {{ service.name }}
+                                    </option>
+                                </select>
+                                <p>&nbsp;</p>
+                                <label for="credentials">Credentials: </label>
+                                <div v-if="selectedService !== null">
+                                    <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
+                                        :key="index">
+                                        <label for="credential">{{ credential }}: </label>
+                                        <input id="credential" type="text" v-model="credentials[credential]"
+                                            placeholder="Enter value" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <button type="submit">Create Service</button>
-                        <button type="button" @click="cancelForm">Cancel</button>
-                    </form>
+                            <button type="submit">Create Service</button>
+                            <button type="button" @click="cancelForm">Cancel</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <WidgetList></WidgetList>
+        <WidgetList></WidgetList>
+    </body>
 </template>
 
 <script>
@@ -120,10 +122,19 @@ export default {
 };
 </script>
 
+
 <style scoped>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    background-color: transparent;
+    height: auto;
+}
+
 .service-list {
     width: 20vw;
-    height: 100vh;
+    height: 100%;
     overflow-y: auto;
     background-color: #f4f4f4;
     border-right: 1px solid #ccc;
@@ -212,5 +223,10 @@ ul {
 
 li {
     padding: 10px;
+}
+
+.service-txt-title {
+    font-family: 'inter', sans-serif;
+    margin: 1rem;
 }
 </style>
