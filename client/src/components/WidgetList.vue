@@ -28,42 +28,45 @@
             </div>
         </div>
 
-        <!-- Dynamic form for creating a new widget -->
-        <div v-if="showForm" class="widget-form">
-            <h3>Create New Widget</h3>
-            <form @submit.prevent="createWidget">
-                <div>
-                    <label for="service">Service:</label>
-                    <select id="service" v-model="selectedServiceId">
-                        <option v-for="(service, id) in services" :key="id" :value="id">
-                            {{ service }}
-                        </option>
-                    </select>
-                </div>
-                <div v-if="selectedServiceId">
-                    <label for="action">Action:</label>
-                    <select id="action" v-model="selectedAction">
-                        <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
-                            :value="action">
-                            {{ action.name }}
-                        </option>
-                    </select>
-                </div>
-                <div v-if="selectedServiceId">
-                    <label for="reaction">Reaction:</label>
-                    <select id="reaction" v-model="selectedReaction">
-                        <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []" :key="reaction.id"
-                            :value="reaction">
-                            {{ reaction.name }}
-                        </option>
-                    </select>
-                </div>
-                <button type="submit">Create Widget</button>
-                <button type="button" @click="cancelForm">Cancel</button>
-            </form>
+        <!-- Modal with form -->
+        <div v-if="showForm" class="modal-overlay">
+            <div class="modal">
+                <h3>Create New Widget</h3>
+                <form @submit.prevent="createWidget">
+                    <div>
+                        <label for="service">Service:</label>
+                        <select id="service" v-model="selectedServiceId">
+                            <option v-for="(service, id) in services" :key="id" :value="id">
+                                {{ service }}
+                            </option>
+                        </select>
+                    </div>
+                    <div v-if="selectedServiceId">
+                        <label for="action">Action:</label>
+                        <select id="action" v-model="selectedAction">
+                            <option v-for="action in all_widgets[selectedServiceId]?.actions || []" :key="action.id"
+                                :value="action">
+                                {{ action.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div v-if="selectedServiceId">
+                        <label for="reaction">Reaction:</label>
+                        <select id="reaction" v-model="selectedReaction">
+                            <option v-for="reaction in all_widgets[selectedServiceId]?.reactions || []"
+                                :key="reaction.id" :value="reaction">
+                                {{ reaction.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit">Create Widget</button>
+                    <button type="button" @click="cancelForm">Cancel</button>
+                </form>
+            </div>
         </div>
     </div>
 </template>
+
 
 <script>
 export default {
@@ -254,6 +257,45 @@ export default {
 }
 
 .widget-form button {
+    margin-top: 10px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    /* Ensures it's above everything else */
+}
+
+.modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    width: 400px;
+    max-width: 90%;
+}
+
+.modal h3 {
+    margin-top: 0;
+}
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal button {
     margin-top: 10px;
 }
 </style>
