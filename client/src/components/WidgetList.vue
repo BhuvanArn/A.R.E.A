@@ -52,6 +52,7 @@ export default {
         return {
             services: {},
             user_widgets: [],
+            all_widgets: [],
         };
     },
     mounted() {
@@ -67,36 +68,94 @@ export default {
         this.services["1"] = "Discord";
         this.services["2"] = "Google";
         this.user_widgets = [
-        {
-            action: {
-                id: "1",
-                service_id: "2",
-                name: "Action 1",
-                description: "Description de l'action 1",
+            {
+                action: {
+                    id: "1",
+                    service_id: "2",
+                    name: "Action 1",
+                    description: "Description de l'action 1",
+                },
+                reaction: {
+                    id: "1",
+                    service_id: "1",
+                    name: "Reaction 1",
+                    description: "Description de la reaction 1",
+                },
             },
-            reaction: {
-                id: "1",
-                service_id: "1",
-                name: "Reaction 1",
-                description: "Description de la reaction 1",
+            {
+                action: {
+                    id: "1",
+                    service_id: "1",
+                    name: "Action 2",
+                    description: "Description de l'action 2",
+                },
+                reaction: {
+                    id: "1",
+                    service_id: "1",
+                    name: "Reaction 2",
+                    description: "Description de la reaction 2",
+                },
             },
-        },
-        {
-            action: {
-                id: "1",
-                service_id: "1",
-                name: "Action 2",
-                description: "Description de l'action 2",
-            },
-            reaction: {
-                id: "1",
-                service_id: "1",
-                name: "Reaction 2",
-                description: "Description de la reaction 2",
-            },
-        },
-    ];
+        ];
+        this.all_widgets = {
+            "1": {
+                "actions": [
+                    {
+                        "id": "1",
+                        "name": "Action 1",
+                        "description": "Description de l'action 1",
+                        "inputs": [
+                            {
+                                "name": "E-mail"
+                            },
+                            {
+                                "name": "Username"
+                            }
+                        ]
 
+                    },
+                ],
+                "reactions": [
+                    {
+                        "id": "1",
+                        "name": "Reaction 1",
+                        "description": "Description de la reaction 1",
+                        "inputs": [
+                            {
+                                "name": "Password"
+                            }
+                        ]
+                    },
+                ]
+            },
+            "2": {
+                "actions": [
+                    {
+                        "id": "1",
+                        "name": "Action 1",
+                        "description": "Description de l'action 1",
+                        "inputs": [
+                            {
+                                "name": "E-mail"
+                            }
+                        ]
+
+                    },
+                ],
+                "reactions": [
+                    {
+                        "id": "1",
+                        "name": "Reaction 1",
+                        "description": "Description de la reaction 1",
+                        "inputs": [
+                            {
+                                "name": "Password"
+                            }
+                        ]
+                    },
+                ]
+            },
+        };
     },
 };
 </script>
