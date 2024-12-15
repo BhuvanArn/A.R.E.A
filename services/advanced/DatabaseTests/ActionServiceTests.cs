@@ -2,9 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-// Assuming these namespaces and classes are accessible:
-// using YourNamespace; // For IDatabaseHandler, DatabaseHandler, AppDbContext, Action entity.
-
 public class ActionDatabaseHandlerTests : IDisposable
 {
     private readonly ServiceProvider _serviceProvider;
