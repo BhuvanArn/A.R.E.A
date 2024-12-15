@@ -16,18 +16,14 @@ public class ReactionDatabaseHandlerTests : IDisposable
     public ReactionDatabaseHandlerTests()
     {
         var services = new ServiceCollection();
-
-        // Use an InMemory database for testing
         services.AddDbContextFactory<DatabaseContext>(options =>
             options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
         );
 
-        // Register your DatabaseHandler as IDatabaseHandler
         services.AddScoped<IDatabaseHandler, DatabaseHandler>();
 
         _serviceProvider = services.BuildServiceProvider();
 
-        // Resolve the services we need
         _contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory<DatabaseContext>>();
         _databaseHandler = _serviceProvider.GetRequiredService<IDatabaseHandler>();
     }
