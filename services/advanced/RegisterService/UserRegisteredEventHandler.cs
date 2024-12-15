@@ -1,5 +1,5 @@
-﻿using Database.Entities;
-using Database.Service;
+﻿using Database;
+using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
@@ -8,11 +8,11 @@ namespace RegisterService;
 
 public class UserRegisteredEventHandler : IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>
 {
-    private UserService _userService;
+    private IDatabaseHandler _dbHandler;
 
-    public UserRegisteredEventHandler(UserService userService)
+    public UserRegisteredEventHandler(IDatabaseHandler dbHandler)
     {
-        _userService = userService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(string, ResultType)> HandleAsync(UserRegisteredEvent @event)
@@ -22,7 +22,7 @@ public class UserRegisteredEventHandler : IIntegrationEventHandler<UserRegistere
             return ("Password are not the same", ResultType.Fail);
         }
 
-        var existingUser = (await _userService.FindUsersAsync(s => s.Email == @event.Email)).FirstOrDefault();
+        var existingUser = (await _dbHandler.GetAsync<User>(s => s.Email == @event.Email)).FirstOrDefault();
 
         if (existingUser is not null)
         {
@@ -39,7 +39,7 @@ public class UserRegisteredEventHandler : IIntegrationEventHandler<UserRegistere
             Salt = salt
         };
         
-        await _userService.CreateUserAsync(user);
+        await _dbHandler.AddAsync(user);
         return ("OK", ResultType.Success);
     }
 }

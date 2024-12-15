@@ -1,133 +1,163 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Database;
-using Database.Dao;
 using Database.Entities;
-using Database.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
-namespace DatabaseTests
+public class ServiceDatabaseHandlerTests : IDisposable
 {
-    public class ServiceServiceTests : IDisposable
+    private readonly ServiceProvider _serviceProvider;
+    private readonly IDbContextFactory<DatabaseContext> _contextFactory;
+    private readonly IDatabaseHandler _databaseHandler;
+
+    public ServiceDatabaseHandlerTests()
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly DaoFactory _daoFactory;
-        private readonly ServiceService _serviceService;
+        var services = new ServiceCollection();
 
-        public ServiceServiceTests()
+        // Use InMemoryDatabase for testing
+        services.AddDbContextFactory<DatabaseContext>(options =>
+            options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        );
+
+        // Register the DatabaseHandler as IDatabaseHandler
+        services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+
+        _serviceProvider = services.BuildServiceProvider();
+
+        // Resolve the services
+        _contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory<DatabaseContext>>();
+        _databaseHandler = _serviceProvider.GetRequiredService<IDatabaseHandler>();
+    }
+
+    [Fact]
+    public async Task CreateServiceAsync_WithValidService_AddsServiceToDatabase()
+    {
+        var service = new Service
         {
-            var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            Name = "TestService",
+            Auth = "{\"client_id\": \"testClient\", \"client_secret\": \"testSecret\"}"
+        };
 
-            _dbContext = new DatabaseContext(options);
-            _daoFactory = new DaoFactory(_dbContext);
-            _serviceService = new ServiceService(_daoFactory);
+        await _databaseHandler.AddAsync(service);
+
+        using var context = _contextFactory.CreateDbContext();
+        var createdService = await context.Services.FirstOrDefaultAsync(s => s.Name == "TestService");
+
+        Assert.NotNull(createdService);
+        Assert.Equal("TestService", createdService.Name);
+        Assert.Equal("{\"client_id\": \"testClient\", \"client_secret\": \"testSecret\"}", createdService.Auth);
+    }
+
+    [Fact]
+    public async Task GetServiceByIdAsync_WithExistingService_ReturnsService()
+    {
+        var service = new Service
+        {
+            Name = "TestServiceById",
+            Auth = "{\"key\": \"value\"}"
+        };
+
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Services.Add(service);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task CreateServiceAsync_WithValidService_AddsServiceToDatabase()
+        var retrievedService = (await _databaseHandler.GetAsync<Service>(s => s.Id == service.Id)).FirstOrDefault();
+
+        Assert.NotNull(retrievedService);
+        Assert.Equal(service.Id, retrievedService.Id);
+        Assert.Equal("TestServiceById", retrievedService.Name);
+        Assert.Equal("{\"key\": \"value\"}", retrievedService.Auth);
+    }
+
+    [Fact]
+    public async Task GetAllServicesAsync_ReturnsAllServices()
+    {
+        var service1 = new Service
         {
-            var service = new Service
-            {
-                Name = "TestService",
-                Auth = "{\"client_id\": \"testClient\", \"client_secret\": \"testSecret\"}"
-            };
+            Name = "Service1",
+            Auth = "{\"key1\": \"value1\"}"
+        };
+        var service2 = new Service
+        {
+            Name = "Service2",
+            Auth = "{\"key2\": \"value2\"}"
+        };
 
-            await _serviceService.CreateServiceAsync(service);
-            var createdService = await _dbContext.Services.FirstOrDefaultAsync(s => s.Name == "TestService");
-
-            Assert.NotNull(createdService);
-            Assert.Equal("TestService", createdService.Name);
-            Assert.Equal("{\"client_id\": \"testClient\", \"client_secret\": \"testSecret\"}", createdService.Auth);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Services.AddRange(service1, service2);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task GetServiceByIdAsync_WithExistingService_ReturnsService()
+        var services = await _databaseHandler.GetAllAsync<Service>();
+
+        Assert.NotNull(services);
+        Assert.Equal(2, services.Count());
+        Assert.Contains(services, s => s.Name == "Service1" && s.Auth == "{\"key1\": \"value1\"}");
+        Assert.Contains(services, s => s.Name == "Service2" && s.Auth == "{\"key2\": \"value2\"}");
+    }
+
+    [Fact]
+    public async Task UpdateServiceAsync_WithExistingService_UpdatesServiceInDatabase()
+    {
+        var service = new Service
         {
-            var service = new Service
-            {
-                Name = "TestServiceById",
-                Auth = "{\"key\": \"value\"}"
-            };
-            _dbContext.Services.Add(service);
-            await _dbContext.SaveChangesAsync();
+            Name = "UpdateService",
+            Auth = "{\"key\": \"value\"}"
+        };
 
-            var retrievedService = await _serviceService.GetServiceByIdAsync(service.Id);
-
-            Assert.NotNull(retrievedService);
-            Assert.Equal(service.Id, retrievedService.Id);
-            Assert.Equal("TestServiceById", retrievedService.Name);
-            Assert.Equal("{\"key\": \"value\"}", retrievedService.Auth);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Services.Add(service);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task GetAllServicesAsync_ReturnsAllServices()
+        service.Name = "UpdatedService";
+        service.Auth = "{\"key\": \"newValue\"}";
+
+        await _databaseHandler.UpdateAsync(service);
+
+        using (var context = _contextFactory.CreateDbContext())
         {
-            var service1 = new Service
-            {
-                Name = "Service1",
-                Auth = "{\"key1\": \"value1\"}"
-            };
-            var service2 = new Service
-            {
-                Name = "Service2",
-                Auth = "{\"key2\": \"value2\"}"
-            };
-            _dbContext.Services.AddRange(service1, service2);
-            await _dbContext.SaveChangesAsync();
-
-            var services = await _serviceService.GetAllServicesAsync();
-
-            Assert.NotNull(services);
-            Assert.Equal(2, services.Count());
-            Assert.Contains(services, s => s.Name == "Service1" && s.Auth == "{\"key1\": \"value1\"}");
-            Assert.Contains(services, s => s.Name == "Service2" && s.Auth == "{\"key2\": \"value2\"}");
-        }
-
-        [Fact]
-        public async Task UpdateServiceAsync_WithExistingService_UpdatesServiceInDatabase()
-        {
-            var service = new Service
-            {
-                Name = "UpdateService",
-                Auth = "{\"key\": \"value\"}"
-            };
-            _dbContext.Services.Add(service);
-            await _dbContext.SaveChangesAsync();
-
-            service.Name = "UpdatedService";
-            service.Auth = "{\"key\": \"newValue\"}";
-
-            await _serviceService.UpdateServiceAsync(service);
-
-            var updatedService = await _dbContext.Services.FindAsync(service.Id);
+            var updatedService = await context.Services.FindAsync(service.Id);
 
             Assert.NotNull(updatedService);
             Assert.Equal("UpdatedService", updatedService.Name);
             Assert.Equal("{\"key\": \"newValue\"}", updatedService.Auth);
         }
+    }
 
-        [Fact]
-        public async Task DeleteServiceAsync_WithExistingService_DeletesServiceFromDatabase()
+    [Fact]
+    public async Task DeleteServiceAsync_WithExistingService_DeletesServiceFromDatabase()
+    {
+        var service = new Service
         {
-            var service = new Service
-            {
-                Name = "DeleteService",
-                Auth = "{\"key\": \"value\"}"
-            };
-            _dbContext.Services.Add(service);
-            await _dbContext.SaveChangesAsync();
+            Name = "DeleteService",
+            Auth = "{\"key\": \"value\"}"
+        };
 
-            await _serviceService.DeleteServiceAsync(service.Id);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Services.Add(service);
+            await context.SaveChangesAsync();
+        }
 
-            var deletedService = await _dbContext.Services.FindAsync(service.Id);
+        await _databaseHandler.DeleteAsync(service);
+
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            var deletedService = await context.Services.FindAsync(service.Id);
             Assert.Null(deletedService);
         }
+    }
 
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-        }
+    public void Dispose()
+    {
+        _serviceProvider.Dispose();
     }
 }

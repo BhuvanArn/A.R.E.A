@@ -1,9 +1,7 @@
 using System.Text;
 using ActionReactionService;
 using Database;
-using Database.Dao;
 using Database.Entities;
-using Database.Service;
 using EventBus;
 using EventBus.Event;
 using LoginService;
@@ -23,7 +21,7 @@ public static class Program
 
         var configuration = builder.Configuration;
 
-        builder.Services.AddDbContext<DatabaseContext>(options =>
+        builder.Services.AddDbContextFactory<DatabaseContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         var jwtSettings = configuration.GetSection("JwtSettings");
@@ -59,11 +57,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
-        builder.Services.AddScoped<DaoFactory>();
-        builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<ActionService>();
-        builder.Services.AddScoped<ReactionService>();
-        builder.Services.AddScoped<ServiceService>();
+        builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
         
         builder.Services.AddCors(options =>
         {

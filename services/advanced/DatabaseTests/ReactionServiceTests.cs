@@ -1,140 +1,168 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Database;
-using Database.Dao;
 using Database.Entities;
-using Database.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DatabaseTests
+public class ReactionDatabaseHandlerTests : IDisposable
 {
-    public class ReactionServiceTests : IDisposable
+    private readonly ServiceProvider _serviceProvider;
+    private readonly IDatabaseHandler _databaseHandler;
+    private readonly IDbContextFactory<DatabaseContext> _contextFactory;
+
+    public ReactionDatabaseHandlerTests()
     {
-        private readonly DatabaseContext _dbContext;
-        private readonly DaoFactory _daoFactory;
-        private readonly ReactionService _reactionService;
+        var services = new ServiceCollection();
 
-        public ReactionServiceTests()
+        // Use an InMemory database for testing
+        services.AddDbContextFactory<DatabaseContext>(options =>
+            options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        );
+
+        // Register your DatabaseHandler as IDatabaseHandler
+        services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+
+        _serviceProvider = services.BuildServiceProvider();
+
+        // Resolve the services we need
+        _contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory<DatabaseContext>>();
+        _databaseHandler = _serviceProvider.GetRequiredService<IDatabaseHandler>();
+    }
+
+    [Fact]
+    public async Task CreateReactionAsync_WithValidReaction_AddsReactionToDatabase()
+    {
+        var reaction = new Reaction
         {
-            var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+            Name = "TestReaction",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key\": \"value\"}"
+        };
 
-            _dbContext = new DatabaseContext(options);
-            _daoFactory = new DaoFactory(_dbContext);
-            _reactionService = new ReactionService(_daoFactory);
+        await _databaseHandler.AddAsync(reaction);
+
+        using var context = _contextFactory.CreateDbContext();
+        var createdReaction = await context.Reactions.FirstOrDefaultAsync(r => r.Name == "TestReaction");
+
+        Assert.NotNull(createdReaction);
+        Assert.Equal("TestReaction", createdReaction.Name);
+        Assert.Equal("{\"key\": \"value\"}", createdReaction.ExecutionConfig);
+    }
+
+    [Fact]
+    public async Task GetReactionByIdAsync_WithExistingReaction_ReturnsReaction()
+    {
+        var reaction = new Reaction
+        {
+            Name = "TestReactionById",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key\": \"value\"}"
+        };
+
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Reactions.Add(reaction);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task CreateReactionAsync_WithValidReaction_AddsReactionToDatabase()
+        var retrievedReaction = (await _databaseHandler.GetAsync<Reaction>(s => s.Id == reaction.Id)).FirstOrDefault();
+
+        Assert.NotNull(retrievedReaction);
+        Assert.Equal(reaction.Id, retrievedReaction.Id);
+        Assert.Equal("TestReactionById", retrievedReaction.Name);
+        Assert.Equal("{\"key\": \"value\"}", retrievedReaction.ExecutionConfig);
+    }
+
+    [Fact]
+    public async Task GetAllReactionsAsync_ReturnsAllReactions()
+    {
+        var reaction1 = new Reaction
         {
-            var reaction = new Reaction
-            {
-                Name = "TestReaction",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key\": \"value\"}"
-            };
+            Name = "Reaction1",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key1\": \"value1\"}"
+        };
+        var reaction2 = new Reaction
+        {
+            Name = "Reaction2",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key2\": \"value2\"}"
+        };
 
-            await _reactionService.CreateReactionAsync(reaction);
-            var createdReaction = await _dbContext.Reactions.FirstOrDefaultAsync(r => r.Name == "TestReaction");
-
-            Assert.NotNull(createdReaction);
-            Assert.Equal("TestReaction", createdReaction.Name);
-            Assert.Equal("{\"key\": \"value\"}", createdReaction.ExecutionConfig);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Reactions.AddRange(reaction1, reaction2);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task GetReactionByIdAsync_WithExistingReaction_ReturnsReaction()
+        var reactions = await _databaseHandler.GetAllAsync<Reaction>();
+
+        Assert.NotNull(reactions);
+        Assert.Equal(2, reactions.Count());
+        Assert.Contains(reactions, r => r.Name == "Reaction1" && r.ExecutionConfig == "{\"key1\": \"value1\"}");
+        Assert.Contains(reactions, r => r.Name == "Reaction2" && r.ExecutionConfig == "{\"key2\": \"value2\"}");
+    }
+
+    [Fact]
+    public async Task UpdateReactionAsync_WithExistingReaction_UpdatesReactionInDatabase()
+    {
+        var reaction = new Reaction
         {
-            var reaction = new Reaction
-            {
-                Name = "TestReactionById",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key\": \"value\"}"
-            };
-            _dbContext.Reactions.Add(reaction);
-            await _dbContext.SaveChangesAsync();
+            Name = "UpdateReaction",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key\": \"value\"}"
+        };
 
-            var retrievedReaction = await _reactionService.GetReactionByIdAsync(reaction.Id);
-
-            Assert.NotNull(retrievedReaction);
-            Assert.Equal(reaction.Id, retrievedReaction.Id);
-            Assert.Equal("TestReactionById", retrievedReaction.Name);
-            Assert.Equal("{\"key\": \"value\"}", retrievedReaction.ExecutionConfig);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Reactions.Add(reaction);
+            await context.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task GetAllReactionsAsync_ReturnsAllReactions()
+        reaction.Name = "UpdatedReaction";
+        reaction.ExecutionConfig = "{\"key\": \"newValue\"}";
+
+        await _databaseHandler.UpdateAsync(reaction);
+
+        using (var context = _contextFactory.CreateDbContext())
         {
-            var reaction1 = new Reaction
-            {
-                Name = "Reaction1",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key1\": \"value1\"}"
-            };
-            var reaction2 = new Reaction
-            {
-                Name = "Reaction2",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key2\": \"value2\"}"
-            };
-            _dbContext.Reactions.AddRange(reaction1, reaction2);
-            await _dbContext.SaveChangesAsync();
-
-            var reactions = await _reactionService.GetAllReactionsAsync();
-
-            Assert.NotNull(reactions);
-            Assert.Equal(2, reactions.Count());
-            Assert.Contains(reactions, r => r.Name == "Reaction1" && r.ExecutionConfig == "{\"key1\": \"value1\"}");
-            Assert.Contains(reactions, r => r.Name == "Reaction2" && r.ExecutionConfig == "{\"key2\": \"value2\"}");
-        }
-
-        [Fact]
-        public async Task UpdateReactionAsync_WithExistingReaction_UpdatesReactionInDatabase()
-        {
-            var reaction = new Reaction
-            {
-                Name = "UpdateReaction",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key\": \"value\"}"
-            };
-            _dbContext.Reactions.Add(reaction);
-            await _dbContext.SaveChangesAsync();
-
-            reaction.Name = "UpdatedReaction";
-            reaction.ExecutionConfig = "{\"key\": \"newValue\"}";
-
-            await _reactionService.UpdateReactionAsync(reaction);
-
-            var updatedReaction = await _dbContext.Reactions.FindAsync(reaction.Id);
-
+            var updatedReaction = await context.Reactions.FindAsync(reaction.Id);
             Assert.NotNull(updatedReaction);
             Assert.Equal("UpdatedReaction", updatedReaction.Name);
             Assert.Equal("{\"key\": \"newValue\"}", updatedReaction.ExecutionConfig);
         }
+    }
 
-        [Fact]
-        public async Task DeleteReactionAsync_WithExistingReaction_DeletesReactionFromDatabase()
+    [Fact]
+    public async Task DeleteReactionAsync_WithExistingReaction_DeletesReactionFromDatabase()
+    {
+        var reaction = new Reaction
         {
-            var reaction = new Reaction
-            {
-                Name = "DeleteReaction",
-                ServiceId = Guid.NewGuid(),
-                ExecutionConfig = "{\"key\": \"value\"}"
-            };
-            _dbContext.Reactions.Add(reaction);
-            await _dbContext.SaveChangesAsync();
+            Name = "DeleteReaction",
+            ServiceId = Guid.NewGuid(),
+            ExecutionConfig = "{\"key\": \"value\"}"
+        };
 
-            await _reactionService.DeleteReactionAsync(reaction.Id);
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            context.Reactions.Add(reaction);
+            await context.SaveChangesAsync();
+        }
 
-            var deletedReaction = await _dbContext.Reactions.FindAsync(reaction.Id);
+        await _databaseHandler.DeleteAsync(reaction);
+
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            var deletedReaction = await context.Reactions.FindAsync(reaction.Id);
             Assert.Null(deletedReaction);
         }
+    }
 
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-        }
+    public void Dispose()
+    {
+        _serviceProvider.Dispose();
     }
 }

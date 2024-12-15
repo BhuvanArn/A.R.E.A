@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
+﻿using Database;
 using Database.Entities;
-using Database.Service;
 using EventBus;
 using EventBus.Event;
 using Action = Database.Entities.Action;
@@ -9,29 +8,22 @@ namespace ActionReactionService;
 
 public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>
 {
-    private readonly ServiceService _serviceService;
-    private readonly ActionService _actionService;
-    private readonly ReactionService _reactionService;
+    private readonly IDatabaseHandler _dbHandler;
     
-    public ActionReactionEventHandler(
-        ServiceService serviceService,
-        ActionService actionService,
-        ReactionService reactionService)
+    public ActionReactionEventHandler(IDatabaseHandler dbHandler)
     {
-        _serviceService = serviceService;
-        _actionService = actionService;
-        _reactionService = reactionService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(List<Service>, ResultType)> HandleAsync(ActionReactionEvent @event)
     {
-        var services = await _serviceService.GetAllServicesAsync();
+        var services = await _dbHandler.GetAllAsync<Service>();
         
         var result = new List<Service>();
         foreach (var service in services)
         {
-            var actions = await _actionService.FindActionsAsync(a => a.ServiceId == service.Id);
-            var reactions = await _reactionService.FindReactionsAsync(r => r.ServiceId == service.Id);
+            var actions = await _dbHandler.GetAsync<Action>(a => a.ServiceId == service.Id);
+            var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id);
 
             var serviceDto = new Service
             {

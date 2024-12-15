@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Database;
 using Database.Entities;
-using Database.Service;
 using EventBus;
 using EventBus.Event;
 using Extension;
@@ -14,17 +14,17 @@ namespace LoginService;
 public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>
 {
     private readonly IConfiguration _configuration;
-    private readonly UserService _userService;
+    private readonly IDatabaseHandler _dbHandler;
 
-    public UserCreatedEventHandler(IConfiguration configuration, UserService userService)
+    public UserCreatedEventHandler(IConfiguration configuration, IDatabaseHandler dbHandler)
     {
         _configuration = configuration;
-        _userService = userService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(string, ResultType)> HandleAsync(UserCreatedEvent @event)
     {
-        User? user = (await _userService.FindUsersAsync(s => s.Email == @event.Email)).FirstOrDefault();
+        User? user = (await _dbHandler.GetAsync<User>(s => s.Email == @event.Email)).FirstOrDefault();
 
         if (user == null)
         {

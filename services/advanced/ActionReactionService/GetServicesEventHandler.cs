@@ -1,5 +1,5 @@
-﻿using Database.Entities;
-using Database.Service;
+﻿using Database;
+using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
@@ -8,11 +8,11 @@ namespace ActionReactionService;
 
 public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>
 {
-    private readonly ServiceService _serviceService;
+    private readonly IDatabaseHandler _dbHandler;
 
-    public GetServicesEventHandler(ServiceService serviceService)
+    public GetServicesEventHandler(IDatabaseHandler dbHandler)
     {
-        _serviceService = serviceService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(List<Service>, ResultType)> HandleAsync(GetServiceEvent @event)
@@ -24,7 +24,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
             return (new(), ResultType.Fail);
         }
         
-        var services = await _serviceService.FindServicesAsync(s => s.UserId == userId);
+        var services = await _dbHandler.GetAsync<Service>(s => s.UserId == userId);
         
         return (services.ToList(), ResultType.Success);
     }
