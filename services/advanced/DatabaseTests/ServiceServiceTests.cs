@@ -17,17 +17,14 @@ public class ServiceDatabaseHandlerTests : IDisposable
     {
         var services = new ServiceCollection();
 
-        // Use InMemoryDatabase for testing
         services.AddDbContextFactory<DatabaseContext>(options =>
             options.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
         );
 
-        // Register the DatabaseHandler as IDatabaseHandler
         services.AddScoped<IDatabaseHandler, DatabaseHandler>();
 
         _serviceProvider = services.BuildServiceProvider();
 
-        // Resolve the services
         _contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory<DatabaseContext>>();
         _databaseHandler = _serviceProvider.GetRequiredService<IDatabaseHandler>();
     }

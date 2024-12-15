@@ -1,11 +1,7 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 public class UserDatabaseHandlerTests : IDisposable
 {
@@ -17,17 +13,14 @@ public class UserDatabaseHandlerTests : IDisposable
     {
         var services = new ServiceCollection();
 
-        // Use an InMemory database for testing
         services.AddDbContextFactory<DatabaseContext>(options =>
             options.UseInMemoryDatabase(Guid.NewGuid().ToString())
         );
 
-        // Register DatabaseHandler as IDatabaseHandler
         services.AddScoped<IDatabaseHandler, DatabaseHandler>();
 
         _serviceProvider = services.BuildServiceProvider();
 
-        // Resolve the services we need
         _contextFactory = _serviceProvider.GetRequiredService<IDbContextFactory<DatabaseContext>>();
         _databaseHandler = _serviceProvider.GetRequiredService<IDatabaseHandler>();
     }
