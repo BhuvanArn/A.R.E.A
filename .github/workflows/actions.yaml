@@ -119,14 +119,22 @@ jobs:
           EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
 
         # run tests for every service
-      - name: Run tests in csharp_service
-        run: docker compose exec csharp_service dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results
-        env:
-          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
-          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
-          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
-          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+      - name: Run tests for services
+        run: |
+          services=$(docker compose config --services)
+            for service in $services; do
+              echo "Checking for tests in $service"
+              if docker compose exec $service test -x /tests.sh; then
+                echo "Running tests for $service"
+                docker compose exec $service /tests.sh
+              else
+                echo "No tests found for $service"
+              fi
+            done
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: docker compose down -v --remove-orphans
 
   push_to_mirror:
     runs-on: ubuntu-latest
