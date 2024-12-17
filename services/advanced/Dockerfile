@@ -26,8 +26,7 @@ RUN apt-get update && apt-get install -y curl
 
 COPY --from=build /app/build .
 
-COPY tests.sh .
-COPY ./DatabaseTests/ .
+COPY --from=build /src /app/tests
 
 EXPOSE 80
 

@@ -124,9 +124,9 @@ jobs:
           services=$(docker compose config --services)
             for service in $services; do
               echo "Checking for tests in $service"
-              if docker compose exec $service test -x /app/tests.sh; then
+              if docker compose exec $service test -x /app/tests/tests.sh; then
                 echo "Running tests for $service"
-                docker compose exec $service /app/tests.sh
+                docker compose exec $service /app/tests/tests.sh
               else
                 echo "No tests found for $service"
               fi
