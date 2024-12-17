@@ -92,6 +92,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      # Create .env file from Secret
+      - name: get environment variables
+        id: import-env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" >> .env
+      - uses: cardinalby/export-env-action@v2
+        id: exportEnv
+        with:
+          mask: true
+          export: false
+          envFile: '.env'
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
+
         # run tests for every service
       - name: Run test for csharp-service
         uses: adambirds/docker-compose-action@v1.5.0
@@ -99,6 +115,12 @@ jobs:
           compose-file: "./docker-compose.yml"
           test-container: "csharp_service"
           test-command: "dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results"
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
 
   push_to_mirror:
     runs-on: ubuntu-latest
