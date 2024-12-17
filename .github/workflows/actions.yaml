@@ -131,6 +131,12 @@ jobs:
                 echo "No tests found for $service"
               fi
             done
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
 
       - name: Stop Docker Compose services
         if: always()
