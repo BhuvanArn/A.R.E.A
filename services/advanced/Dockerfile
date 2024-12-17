@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y curl
 
 COPY --from=build /app/build .
 
-COPY --from=build /src /app/tests
+COPY --from=build /src .
 
 EXPOSE 80
 
