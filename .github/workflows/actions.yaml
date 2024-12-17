@@ -126,7 +126,7 @@ jobs:
               echo "Checking for tests in $service"
               if docker compose exec $service test -x /app/tests.sh; then
                 echo "Running tests for $service"
-                docker compose exec $service tests.sh
+                docker compose exec $service /app/tests.sh
               else
                 echo "No tests found for $service"
               fi
