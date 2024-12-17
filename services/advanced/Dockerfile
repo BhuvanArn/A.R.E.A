@@ -25,7 +25,9 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl
 
 COPY --from=build /app/build .
-COPY . .
+
+COPY tests.sh .
+COPY ./DatabaseTests/ .
 
 EXPOSE 80
 
