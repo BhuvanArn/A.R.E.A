@@ -26,10 +26,6 @@ RUN apt-get update && apt-get install -y curl
 
 COPY --from=build /app/build .
 
-# Tests executable for CI/CD
-COPY tests.sh /tests.sh
-RUN chmod +x /tests.sh
-
 EXPOSE 80
 
 ENTRYPOINT ["dotnet", "AdvancedServices.dll"]
