@@ -4,6 +4,8 @@ TEST_RESULTS_DIR="/test-results"
 
 mkdir -p $TEST_RESULTS_DIR
 
+ls -a
+
 dotnet test ./DatabaseTests/DatabaseTests.csproj --logger "trx;LogFileName=$TEST_RESULTS_DIR/test-results.trx" --results-directory $TEST_RESULTS_DIR
 
 TEST_EXIT_CODE=$?

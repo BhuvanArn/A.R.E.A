@@ -25,7 +25,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl
 
 COPY --from=build /app/build .
-COPY tests.sh .
+COPY . .
 
 EXPOSE 80
 
