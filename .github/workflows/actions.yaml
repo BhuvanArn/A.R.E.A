@@ -83,10 +83,27 @@ jobs:
         if: always()
         run: docker compose down -v --remove-orphans
 
-  push_to_mirror:
+  tests_run:
     runs-on: ubuntu-latest
     needs:
       - check_health
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+        # run tests for every service
+      - name: Run test for csharp-service
+        uses: adambirds/docker-compose-action@v1.5.0
+        with:
+          compose-file: "./docker-compose.yml"
+          test-container: "csharp_service"
+          test-command: "dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results"
+
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    needs:
+      - tests_run
 
     if: ${{ github.event_name == 'push' }}
 
