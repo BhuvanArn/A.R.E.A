@@ -109,12 +109,8 @@ jobs:
         run: rm -f .env
 
         # run tests for every service
-      - name: Run test for csharp-service
-        uses: adambirds/docker-compose-action@v1.5.0
-        with:
-          compose-file: "./docker-compose.yml"
-          test-container: "csharp_service"
-          test-command: "dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results"
+      - name: Run tests in csharp_service
+        run: docker compose exec csharp_service dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results
         env:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
