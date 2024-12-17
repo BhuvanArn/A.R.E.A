@@ -108,6 +108,16 @@ jobs:
       - name: remove .env file
         run: rm -f .env
 
+      - name: Start Docker Compose services
+        id: startServices
+        run: docker compose up -d --wait
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+
         # run tests for every service
       - name: Run tests in csharp_service
         run: docker compose exec csharp_service dotnet test ./DatabaseTests/DatabaseTests.csproj --logger 'trx;LogFileName=/test-results/test-results.trx' --results-directory /test-results
