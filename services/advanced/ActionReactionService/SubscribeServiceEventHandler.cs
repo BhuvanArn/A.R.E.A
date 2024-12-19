@@ -1,5 +1,5 @@
-﻿using Database.Entities;
-using Database.Service;
+﻿using Database;
+using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
@@ -8,11 +8,11 @@ namespace ActionReactionService;
 
 public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>
 {
-    private readonly ServiceService _serviceService;
+    private readonly IDatabaseHandler _dbHandler;
 
-    public SubscribeServiceEventHandler(ServiceService serviceService)
+    public SubscribeServiceEventHandler(IDatabaseHandler dbHandler)
     {
-        _serviceService = serviceService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(List<Service>, ResultType)> HandleAsync(SubscribeServiceEvent @event)
@@ -24,7 +24,7 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
             return (new(), ResultType.Fail);
         }
         
-        var existingService = await _serviceService.FindServicesAsync(s => s.Name == @event.Name && s.UserId == userId);
+        var existingService = await _dbHandler.GetAsync<Service>(s => s.Name == @event.Name && s.UserId == userId);
         
         var service = new Service
         {
@@ -33,7 +33,7 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
             Auth = System.Text.Json.JsonSerializer.Serialize(@event.Credentials)
         };
         
-        await _serviceService.CreateServiceAsync(service);
+        await _dbHandler.AddAsync(service);
         return (existingService.ToList(), ResultType.Success);
     }
 }
