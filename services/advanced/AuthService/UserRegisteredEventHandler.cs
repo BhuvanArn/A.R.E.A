@@ -4,7 +4,7 @@ using EventBus;
 using EventBus.Event;
 using Extension;
 
-namespace RegisterService;
+namespace AuthService;
 
 public class UserRegisteredEventHandler : IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>
 {

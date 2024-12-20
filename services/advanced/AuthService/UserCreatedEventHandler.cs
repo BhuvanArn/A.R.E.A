@@ -9,7 +9,7 @@ using Extension;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace LoginService;
+namespace AuthService;
 
 public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>
 {

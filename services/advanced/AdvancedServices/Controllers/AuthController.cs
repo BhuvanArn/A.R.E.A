@@ -2,6 +2,8 @@
 using EventBus;
 using EventBus.Event;
 using Microsoft.AspNetCore.Mvc;
+using LoginRequest = AdvancedServices.Request.LoginRequest;
+using RegisterRequest = AdvancedServices.Request.RegisterRequest;
 
 namespace AdvancedServices.Controllers;
 
@@ -16,6 +18,25 @@ public class AuthController : ControllerBase
     {
         _eventBus = eventBus;
         _logger = logger;
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        _logger.LogInformation("Reset password event triggered.");
+        
+        var responses = await _eventBus.PublishAsync<UserResetPasswordEvent, (string, ResultType)>(new UserResetPasswordEvent
+        {
+            JwtToken = request.JwtToken,
+            Password = request.Password,
+            NewPassword = request.NewPassword
+        });
+        
+        return Ok(new
+        {
+            Message = "User password reset published successfully.",
+            Responses = responses.Select(s => s.Item1)
+        });
     }
 
     [HttpPost("login")]
