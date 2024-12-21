@@ -4,11 +4,12 @@ routes:
     port: 8080
     condition: ^/auth/login$
 
+
   - name: auth-register
     host: csharp_service
     port: 8080
     condition: ^/auth/register$
-  
+
   - name: area
     host: csharp_service
     port: 8080
@@ -43,3 +44,38 @@ routes:
     host: service-about
     port: 80
     condition: ^/about.json$
+
+  # Add new routes here
+
+
+
+
+
+
+
+  ###------------------ Swagger ------------------###
+
+  - name: swagger-doc
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/$
+
+  - name: swagger-ui-css
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui.css$
+
+  - name: swagger-ui-bundle-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-bundle.js$
+
+  - name: swagger-ui-standalone-preset-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-standalone-preset.js$
+
+  - name: swagger-ui-init-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-init.js$
