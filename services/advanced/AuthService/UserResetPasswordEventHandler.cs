@@ -30,6 +30,11 @@ public class UserResetPasswordEventHandler : IIntegrationEventHandler<UserResetP
         {
             return ("Not logged in.", ResultType.Fail);
         }
+
+        if (user.Salt == null || user.Password == null)
+        {
+            return ("Not logged in.", ResultType.Fail);
+        }
         
         bool validPassword = @event.Password.VerifyPassword(user.Salt, user.Password);
 

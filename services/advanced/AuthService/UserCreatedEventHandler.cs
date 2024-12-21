@@ -31,6 +31,11 @@ public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent
             return ("Invalid credentials", ResultType.Fail);
         }
 
+        if (user.Password == null || user.Salt == null)
+        {
+            return ("Invalid credentials", ResultType.Fail);
+        }
+
         bool validPassword = @event.Password.VerifyPassword(user.Salt, user.Password);
 
         if (!validPassword)
@@ -38,29 +43,6 @@ public class UserCreatedEventHandler : IIntegrationEventHandler<UserCreatedEvent
             return ("Invalid credentials", ResultType.Fail);
         }
         
-        return (GenerateJwtToken(user), ResultType.Success);
-    }
-    
-    private string GenerateJwtToken(User user)
-    {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var token = new JwtSecurityToken(
-            issuer: jwtSettings["Issuer"],
-            audience: jwtSettings["Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["TokenLifetimeMinutes"])),
-            signingCredentials: credentials);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return (user.GenerateJwtToken(_configuration), ResultType.Success);
     }
 }

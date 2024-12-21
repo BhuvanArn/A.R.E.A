@@ -20,6 +20,23 @@ public class AuthController : ControllerBase
         _logger = logger;
     }
 
+    [HttpPost("google-login")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+    {
+        _logger.LogInformation("Google login event triggered.");
+        
+        var responses = await _eventBus.PublishAsync<GoogleLoginEvent, (string, ResultType)>(new GoogleLoginEvent
+        {
+            Token = request.Token
+        });
+        
+        return Ok(new
+        {
+            Message = "Google login published successfully.",
+            Responses = responses.Select(s => s.Item1)
+        });
+    }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {

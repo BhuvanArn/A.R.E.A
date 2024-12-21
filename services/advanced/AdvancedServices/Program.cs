@@ -57,6 +57,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>, GoogleLoginEventHandler>();
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
         
         builder.Services.AddCors(options =>
@@ -108,6 +109,8 @@ public static class Program
         eventBus.Subscribe(getActionHandler);
         var getReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>>();
         eventBus.Subscribe(getReactionHandler);
+        var googleLoginEventHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>>();
+        eventBus.Subscribe(googleLoginEventHandler);
 
         await app.RunAsync();
     }
