@@ -3,6 +3,9 @@ from socket import socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
 from src import *
 from select import select
 from threading import Thread
+from json import dumps
+from time import time
+from serviceconf import *
 
 class TextIOSearch(TextIOBytesLocal):
     def __init__(self, encoding="utf-8", errors="strict", maxlines=9999):
@@ -110,10 +113,57 @@ class HTTPServerBase(object):
 
     def accept(self):
         client: Client = Client(*self.socket.accept())
+        config: Config = Config("/var/service_storage/services.yml")
 
         print(client, flush=True)
 
-        response = f'HTTP/1.0 200 OK\r\ncontent-type: text/html\r\ncontent-length: {len("Hello World")}\r\n\r\nHello World'
+        json = {
+            "client": {
+                "host": client.headers["x-router-forwarded"] if "x-router-forwarded" in client.headers else client.client_address[0],
+            },
+            "server": {
+                "current_time": int(time()),
+                "services": [
+                    {
+                        "name": item.name,
+                        "vars": [
+                            {
+                                "name": data.name,
+                                "regex": data.regex
+                            } for data in item.credentials
+                        ],
+                        "actions": [
+                            {
+                                "name": action.name,
+                                "description": action.description,
+                                "inputs": [
+                                    {
+                                        "name": data.name,
+                                        "regex": data.regex
+                                    } for data in action.inputs
+                                ]
+                            } for action in item.actions
+                        ],
+                        "reactions": [
+                            {
+                                "name": reaction.name,
+                                "description": reaction.description,
+                                "inputs": [
+                                    {
+                                        "name": data.name,
+                                        "regex": data.regex
+                                    } for data in reaction.inputs
+                                ]
+                            } for reaction in item.reactions
+                        ]
+                    } for item in config.services
+                ]
+            }
+        }
+
+        json = dumps(json)
+
+        response = f'HTTP/1.0 200 OK\r\ncontent-type: application/json\r\ncontent-length: {len(json)}\r\n\r\n{json}'
 
         client.socket.sendall(response.encode())
         client.close()

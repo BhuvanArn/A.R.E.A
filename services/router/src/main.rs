@@ -66,6 +66,8 @@ fn handle_connection(mut stream: TcpStream) {
     let mut req = parser::collect_request(&stream);
     let mut response = Response::new();
 
+    req.headers.insert("x-router-forwarded".to_string(), stream.peer_addr().unwrap().ip().to_string());
+
     if req.method == "OPTIONS" {
         response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
         response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());

@@ -3,12 +3,43 @@ routes:
     host: csharp_service
     port: 8080
     condition: ^/auth/login$
-    method: POST
-    path: /auth/login
 
   - name: auth-register
     host: csharp_service
     port: 8080
     condition: ^/auth/register$
-    method: POST
-    path: /auth/register
+  
+  - name: area
+    host: csharp_service
+    port: 8080
+    condition: ^/area$
+
+  - name: get-services
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services$
+
+  - name: subscribe-service
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/subscribe_service$
+  
+  - name: actions-reactions
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/actions_reactions$
+
+  - name: action
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/action$
+
+  - name: reaction
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/reaction$
+
+  - name: about
+    host: service-about
+    port: 80
+    condition: ^/about.json$
