@@ -10,6 +10,16 @@ routes:
     port: 8080
     condition: ^/auth/register$
 
+  - name: google-login
+    host: csharp_service
+    port: 8080
+    condition: ^/auth/google-login$
+
+  - name: reset-password
+    host: csharp_service
+    port: 8080
+    condition: ^/auth/reset-password$
+
   - name: area
     host: csharp_service
     port: 8080

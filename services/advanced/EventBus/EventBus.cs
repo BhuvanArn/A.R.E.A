@@ -6,13 +6,13 @@ public class EventBus : IEventBus
 {
     private readonly ConcurrentDictionary<Type, List<object>> _handlers = new();
 
-    public async Task<IEnumerable<TResponse>> PublishAsync<TEvent, TResponse>(TEvent @event)
+    public async Task<TResponse?> PublishAsync<TEvent, TResponse>(TEvent @event)
     {
         var responses = new List<TResponse>();
 
         if (!_handlers.TryGetValue(typeof(TEvent), out var handlers))
         {
-            return responses;
+            return responses.FirstOrDefault();
         }
         
         var tasks = new List<Task<TResponse>>();
@@ -32,7 +32,7 @@ public class EventBus : IEventBus
             responses = (await Task.WhenAll(tasks)).ToList();
         }
 
-        return responses;
+        return responses.FirstOrDefault();
     }
 
     public void Subscribe<TEvent, TResponse>(IIntegrationEventHandler<TEvent, TResponse> handler)
