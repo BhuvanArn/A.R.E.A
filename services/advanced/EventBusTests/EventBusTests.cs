@@ -21,10 +21,9 @@ namespace EventBusTests
                 Password = "password123"
             };
 
-            var responses = await _eventBus.PublishAsync<UserCreatedEvent, ResultType>(userCreatedEvent);
+            (string, ResultType)? response = await _eventBus.PublishAsync<UserCreatedEvent, (string, ResultType)>(userCreatedEvent);
 
-            Assert.NotNull(responses);
-            Assert.Empty(responses);
+            Assert.NotNull(response);
         }
 
         [Fact]
@@ -39,38 +38,12 @@ namespace EventBusTests
             var handler = new TestUserCreatedEventHandler();
             _eventBus.Subscribe(handler);
 
-            var responses = await _eventBus.PublishAsync<UserCreatedEvent, ResultType>(userCreatedEvent);
+            (string, ResultType)? response = await _eventBus.PublishAsync<UserCreatedEvent, (string, ResultType)>(userCreatedEvent);
 
-            Assert.NotNull(responses);
-            Assert.Single(responses);
-            Assert.Contains(ResultType.Success, responses);
+            Assert.NotNull(response);
+            Assert.Equal(ResultType.Fail, response.Value.Item2);
 
             _eventBus.Unsubscribe(handler);
-        }
-
-        [Fact]
-        public async Task PublishAsync_WithMultipleSubscribers_ReturnsResponsesFromAllHandlers()
-        {
-            var userCreatedEvent = new UserCreatedEvent
-            {
-                Email = "test@example.com",
-                Password = "password123"
-            };
-
-            var handler1 = new TestUserCreatedEventHandler();
-            var handler2 = new AnotherUserCreatedEventHandler();
-            _eventBus.Subscribe(handler1);
-            _eventBus.Subscribe(handler2);
-
-            var responses = await _eventBus.PublishAsync<UserCreatedEvent, ResultType>(userCreatedEvent);
-
-            Assert.NotNull(responses);
-            Assert.Equal(2, responses.Count());
-            Assert.Contains(ResultType.Success, responses);
-            Assert.Contains(ResultType.Fail, responses);
-
-            _eventBus.Unsubscribe(handler1);
-            _eventBus.Unsubscribe(handler2);
         }
 
         [Fact]
@@ -86,10 +59,9 @@ namespace EventBusTests
             _eventBus.Subscribe(handler);
             _eventBus.Unsubscribe(handler);
 
-            var responses = await _eventBus.PublishAsync<UserCreatedEvent, ResultType>(userCreatedEvent);
+            (string, ResultType)? response = await _eventBus.PublishAsync<UserCreatedEvent, (string, ResultType)>(userCreatedEvent);
 
-            Assert.NotNull(responses);
-            Assert.Empty(responses);
+            Assert.NotNull(response);
         }
     }
 

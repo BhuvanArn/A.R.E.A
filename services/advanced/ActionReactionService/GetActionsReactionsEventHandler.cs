@@ -1,21 +1,19 @@
-﻿using Database.Service;
+﻿using Database;
+using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
 public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>
 {
-    private readonly ServiceService _serviceService;
-    private readonly ActionService _actionService;
-    private readonly ReactionService _reactionService;
+    private readonly IDatabaseHandler _dbHandler;
 
-    public GetActionsReactionsEventHandler(ActionService actionService, ReactionService reactionService, ServiceService serviceService)
+    public GetActionsReactionsEventHandler(IDatabaseHandler dbHandler)
     {
-        _actionService = actionService;
-        _reactionService = reactionService;
-        _serviceService = serviceService;
+        _dbHandler = dbHandler;
     }
     
     public async Task<(ActionsReactionsResponse, ResultType)> HandleAsync(GetActionsReactionsEvent @event)
@@ -27,15 +25,15 @@ public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActio
             return (new(), ResultType.Fail);
         }
         
-        var service = (await _serviceService.FindServicesAsync(s => s.UserId == userId && s.Name == @event.ServiceName)).FirstOrDefault();
+        var service = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId && s.Name == @event.ServiceName)).FirstOrDefault();
 
         if (service is null)
         {
             return (new(), ResultType.Fail);
         }
         
-        var actions = await _actionService.FindActionsAsync(a => a.ServiceId == service.Id);
-        var reactions = await _reactionService.FindReactionsAsync(r => r.ServiceId == service.Id);
+        var actions = await _dbHandler.GetAsync<Action>(a => a.ServiceId == service.Id);
+        var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id);
 
         var response = new ActionsReactionsResponse
         {

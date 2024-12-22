@@ -90,7 +90,7 @@ routes:
     condition: ^/auth/reset-password$
     realPath: /auth/reset-password
     summary: Reset Password
-    description: Resets a user's password. The user must be logged in to reset their password.
+    description: Resets a user's password.\\nThe user must be logged in to reset their password.
     method: POST
     requestBody:
       required: true
@@ -168,9 +168,9 @@ routes:
                     type: string
                     example: "password"
     responses:
-      200:
-        description: Subscription successful (no data).
-      401:
+      201:
+        description: Subscription successful.
+      400:
         description: Invalid subscription data.
 
   - name: actions-reactions
@@ -179,13 +179,11 @@ routes:
     condition: ^/area/([^/]+)/services/([^/]+)/actions_reactions$
     realPath: /area/{jwtToken}/services/{serviceName}/actions_reactions
     summary: Get Actions and Reactions
-    description: Retrieves a list of actions and reactions available in a service (you must be subscribed to the service).
+    description: Retrieves a list of actions and reactions available in a service.
     method: GET
     responses:
       200:
         description: List of actions and reactions.
-      401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
 
   - name: action
     host: csharp_service
@@ -193,13 +191,13 @@ routes:
     condition: ^/area/([^/]+)/services/([^/]+)/action$
     realPath: /area/{jwtToken}/services/{serviceName}/action
     summary: Get all actions of the service
-    description: Retrieves a list of actions available in a service (you must be subscribed to the service).
+    description: Retrieves a list of actions available in a service.
     method: GET
     responses:
       200:
         description: List of actions.
-      401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
+      400:
+        description: Invalid action data.
 
   - name: reaction
     host: csharp_service
@@ -207,13 +205,13 @@ routes:
     condition: ^/area/([^/]+)/services/([^/]+)/reaction$
     realPath: /area/{jwtToken}/services/{serviceName}/reaction
     summary: Get all reactions of the service
-    description: Retrieves a list of reactions available in a service (you must be subscribed to the service).
+    description: Retrieves a list of reactions available in a service.
     method: GET
     responses:
       200:
-        description: List of reactions.
-      401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
+        description: Reaction successful.
+      400:
+        description: Invalid reaction data.
 
   - name: about
     host: service-about
