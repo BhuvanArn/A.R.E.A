@@ -12,7 +12,7 @@ mod parser;
 mod routes;
 
 use response::Response;
-use routes::RouteLoader;
+use routes::{RouteLoader, Route};
 
 fn handle_connection(mut stream: TcpStream) {
     static CELL: OnceLock<Mutex<RouteLoader>> =  OnceLock::new();

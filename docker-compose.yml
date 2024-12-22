@@ -125,6 +125,18 @@ services:
     ports:
       - "8082:8080"
 
+  swagger-doc:
+    build:
+      context: ./services/swagger
+      dockerfile: Dockerfile
+    networks:
+      - server-tier
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/swagger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   server-tier:
 
