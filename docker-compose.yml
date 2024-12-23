@@ -35,8 +35,6 @@ services:
     build:
       context: ./services/advanced
       dockerfile: Dockerfile
-    ports:
-      - "5000:8080"
     depends_on:
       server:
         condition: service_healthy
