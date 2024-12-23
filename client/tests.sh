@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-npm run test
+#  '--run' is used to run tests without watch mode, so that it exits after running tests
+npm run test -- --run
