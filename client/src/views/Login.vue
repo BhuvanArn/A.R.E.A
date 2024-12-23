@@ -38,8 +38,8 @@
                         <img src="@/assets/oauth/discord_logo.png" class="img-style2">
                     </div>
                 </div>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></router-link>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToForgotPwd">Forgot password ?</h4></router-link>
+                <div class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></div>
+                <div class="link"><h4 class="txt-link" @click="navigateToForgotPwd">Forgot password ?</h4></div>
             </div>
         </div>
     </body>

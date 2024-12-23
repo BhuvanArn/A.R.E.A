@@ -29,12 +29,12 @@ const routes = [
   {
     path: '/mobile-services',
     name: 'mobile-services',
-    component: () => import('../views/MobileServicePage.vue')   
+    component: () => import('../views/MobileServicePage.vue')
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes
 })
 
