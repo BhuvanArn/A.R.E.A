@@ -23,11 +23,11 @@
       <button>Sample</button> <!-- To replace with the correct links/buttons -->
       <hr class="horizontal-hr">
       <div v-show="!isLogged" class="nv-btn-container-mobile">
-        <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
-        <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+        <button @click="navigateToLogin" class="access-btn-style">Login</button>
+        <button @click="navigateToRegister" class="access-btn-style">Register</button>
       </div>
       <div v-show="isLogged">
-        <router-link><button @click="navigateToPanel" class="access-btn-style">Your panel</button></router-link>
+        <button @click="navigateToPanel" class="access-btn-style">Your panel</button>
       </div>
     </div>
     <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
@@ -56,6 +56,10 @@ export default {
     window.addEventListener('resize', this.enforceMinWidth);
     this.checkScreen();
     this.enforceMinWidth();
+    const clientStatus = localStorage.getItem('Status');
+    if (clientStatus === 'Logged In') {
+      this.isLogged = true;
+    }
   },
 
   methods: {
@@ -138,8 +142,8 @@ export default {
     },
 
     navigateToPanel(event) {
-/*       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'panel' }).href; */
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'services' }).href;
     },
 
     displayMenu() {
