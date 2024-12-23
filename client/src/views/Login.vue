@@ -105,6 +105,9 @@ export default {
                 const token = response.data.responses[0];
                 console.log(token);
                 localStorage.setItem('token', token);
+                localStorage.setItem('Status', 'Logged In');
+                const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
+                localStorage.setItem('expirationTime', expirationTime);
                 this.navigateToHome(event);
             } catch (error) {
                 console.error(error);
