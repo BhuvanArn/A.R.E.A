@@ -135,8 +135,8 @@ export default {
       },
 
       goToProfilePage(event) {
-/*         event.preventDefault()
-        this.$router.push('/profile'); */ // To replace with the correct route to the profile page
+        event.preventDefault()
+        this.$router.push('/profile');
       },
 
       displayMenu() {
