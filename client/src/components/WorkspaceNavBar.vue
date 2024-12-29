@@ -459,6 +459,7 @@ export default {
     background-color: #bcc1ba;
     border: 1px solid black;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 99;
   }
 
 .user-avatar-img-container {
