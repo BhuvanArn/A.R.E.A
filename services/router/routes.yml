@@ -1,10 +1,268 @@
 routes:
   - name: auth-login
     host: csharp_service
-    port: 5000
+    port: 8080
     condition: ^/auth/login$
+    realPath: /auth/login
+    summary: User Login
+    description: Authenticates a user and provides an access token.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Email:
+                type: string
+                example: "example@app.com"
+              Password:
+                type: string
+                example: "password"
+    responses:
+      200:
+        description: Login successful and access token provided.
+      401:
+        description: Invalid credentials.
+
 
   - name: auth-register
     host: csharp_service
-    port: 5000
+    port: 8080
     condition: ^/auth/register$
+    realPath: /auth/register
+    summary: User Registration
+    description: Registers a new user.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Username:
+                type: string
+                example: "username"
+              Email:
+                type: string
+                example: "example@app.com"
+              Password:
+                type: string
+                example: "password"
+              ConfirmedPassword:
+                type: string
+                example: "password"
+    responses:
+      200:
+        description: Registration successful.
+      401:
+        description: Invalid datas (passwords do not match, email already exists, etc).
+
+  - name: auth-google-login
+    host: csharp_service
+    port: 8080
+    condition: ^/auth/google-login$
+    realPath: /auth/google-login
+    summary: Google Login
+    description: Authenticates a user using Google OAuth and provides an access token.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Token:
+                type: string
+                example: "google_oauth_token"
+    responses:
+      200:
+        description: Login successful and access token provided.
+      500:
+        description: Invalid Google OAuth token.
+
+  - name: auth-reset-password
+    host: csharp_service
+    port: 8080
+    condition: ^/auth/reset-password$
+    realPath: /auth/reset-password
+    summary: Reset Password
+    description: Resets a user's password. The user must be logged in to reset their password.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              JwtToken:
+                type: string
+                example: "jwt_token"
+              Password:
+                type: string
+                example: "password"
+              NewPassword:
+                type: string
+                example: "new_password"
+    responses:
+      200:
+        description: Password reset successful.
+      401:
+        description: Invalid datas (old password incorrect, etc).
+      500:
+        description: Internal server error (bad JWT token, etc).
+
+  - name: area-list
+    host: csharp_service
+    port: 8080
+    condition: ^/area$
+    realPath: /area
+    summary: Get Areas
+    description: Retrieves a list of available areas.
+    method: GET
+    responses:
+      200:
+        description: List of areas.
+
+  - name: get-services
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services$
+    realPath: /area/{jwtToken}/services
+    summary: Get Services
+    description: Retrieves a list of services that you subscribed to.
+    method: GET
+    responses:
+      200:
+        description: List of services.
+
+  - name: subscribe-service
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/subscribe_service$
+    realPath: /area/{jwtToken}/subscribe_service
+    summary: Subscribe Service
+    description: Subscribes to a service in an area.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "facebook"
+              credentials:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "example@app.com"
+                  password:
+                    type: string
+                    example: "password"
+    responses:
+      200:
+        description: Subscription successful (no data).
+      401:
+        description: Invalid subscription data.
+
+  - name: actions-reactions
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/actions_reactions$
+    realPath: /area/{jwtToken}/services/{serviceName}/actions_reactions
+    summary: Get Actions and Reactions
+    description: Retrieves a list of actions and reactions available in a service (you must be subscribed to the service).
+    method: GET
+    responses:
+      200:
+        description: List of actions and reactions.
+      401:
+        description: Not subscribed to the service/bad service name/ bad JWT token.
+
+  - name: action
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/action$
+    realPath: /area/{jwtToken}/services/{serviceName}/action
+    summary: Get all actions of the service
+    description: Retrieves a list of actions available in a service (you must be subscribed to the service).
+    method: GET
+    responses:
+      200:
+        description: List of actions.
+      401:
+        description: Not subscribed to the service/bad service name/ bad JWT token.
+
+  - name: reaction
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/services/([^/]+)/reaction$
+    realPath: /area/{jwtToken}/services/{serviceName}/reaction
+    summary: Get all reactions of the service
+    description: Retrieves a list of reactions available in a service (you must be subscribed to the service).
+    method: GET
+    responses:
+      200:
+        description: List of reactions.
+      401:
+        description: Not subscribed to the service/bad service name/ bad JWT token.
+
+  - name: about
+    host: service-about
+    port: 80
+    condition: ^/about.json$
+    realPath: /about.json
+    summary: About Information
+    description: Provides information about the backend services. All implemented services, their actions and reactions are listed here.
+    method: GET
+    responses:
+      200:
+        description: About details.
+
+  # Add new routes here
+
+
+
+
+
+
+
+  ###------------------ Swagger ------------------###
+
+  - name: swagger-doc
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/$
+
+  - name: swagger-ui-css
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui.css$
+
+  - name: swagger-ui-bundle-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-bundle.js$
+
+  - name: swagger-ui-standalone-preset-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-standalone-preset.js$
+
+  - name: swagger-ui-init-js
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger-ui-init.js$
+
+  - name: swagger-json
+    host: swagger-doc
+    port: 3000
+    condition: ^/swagger/swagger.json$

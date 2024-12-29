@@ -12,12 +12,24 @@ mod parser;
 mod routes;
 
 use response::Response;
-use routes::RouteLoader;
+use routes::{RouteLoader, Route};
 
 fn handle_connection(mut stream: TcpStream) {
     static CELL: OnceLock<Mutex<RouteLoader>> =  OnceLock::new();
     let mut req = parser::collect_request(&stream);
     let mut response = Response::new();
+
+    req.headers.insert("x-router-forwarded".to_string(), stream.peer_addr().unwrap().ip().to_string());
+
+    if req.method == "OPTIONS" {
+        response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
+        response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
+
+        response.code = 204;
+        response.message = String::from("No Content");
+        stream.write_all(&response.build_request()).unwrap();
+        return;
+    }
 
     let router = CELL.get_or_init(|| Mutex::new(RouteLoader::new("routes.yml")));
 
@@ -25,13 +37,24 @@ fn handle_connection(mut stream: TcpStream) {
         Some(&ref route) => {
             let ip_lookup = format!("{}:{}", route.host, route.port).to_socket_addrs().expect("failed to connect to service").next().unwrap();
 
-            let mut socket = TcpStream::connect_timeout(&ip_lookup, Duration::from_millis(1024 * 10)).unwrap();
+            match TcpStream::connect_timeout(&ip_lookup, Duration::from_millis(1024 * 10)) {
+                Ok(mut socket) => {
+                    socket.write_all(&req.build_request()).unwrap();
 
-            socket.write_all(&req.build_request());
+                    let mut res = parser::collect_response(&socket);
 
-            let mut response = parser::collect_response(&socket);
+                    stream.write_all(&res.build_request()).unwrap();
+                    return ();
+                }
+                Err(e) => {
+                    eprintln!("Failed to connect to service at {}: {}: {}", route.host, route.port, e);
+                    response.set_body("Service Unavailable");
+                    response.code = 503;
+                    response.message = String::from("SERVICE UNAVAILABLE");
 
-            stream.write_all(&response.build_request()).unwrap();
+                    stream.write_all(&response.build_request()).unwrap();
+                }
+            }
         },
         _ => {
             if req.route == "/health" {

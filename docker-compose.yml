@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${EXPOSE_PORT_CLIENT}:80"
+    environment:
+      - EXPOSE_PORT_SERVER=${EXPOSE_PORT_SERVER}
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80"]
@@ -33,8 +35,12 @@ services:
     build:
       context: ./services/advanced
       dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
     depends_on:
       db:
+        condition: service_healthy
+      server:
         condition: service_healthy
     networks:
       - server-tier
@@ -50,9 +56,48 @@ services:
       context: ./services/about
       dockerfile: Dockerfile
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/about.json"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-action:
+    build:
+      context: ./services/action
+      dockerfile: Dockerfile
+    depends_on:
+      csharp_service:
+        condition: service_healthy
+    networks:
+      - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
+
+  service-reaction:
+    build:
+      context: ./services/reaction
+      dockerfile: Dockerfile
+    depends_on:
+      csharp_service:
+        condition: service_healthy
+    networks:
+      - server-tier
+    volumes:
+      - services-storage:/var/service_storage
+      - ./lib/protocol:/usr/src/app/protocol
+      - ./lib/serviceconf:/usr/src/app/serviceconf
+      - ./lib/service_mod:/usr/src/app/service_mod
 
   db:
     image: "postgres:15"
@@ -73,8 +118,34 @@ services:
       retries: 5
     restart: on-failure
 
+  docs:
+    build:
+      context: ./area-doc
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+
+  swagger-doc:
+    build:
+      context: ./services/swagger
+      dockerfile: Dockerfile
+    networks:
+      - server-tier
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/swagger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   server-tier:
 
 volumes:
   postgres-data:
+
+  services-storage:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: 'data/service_storage'

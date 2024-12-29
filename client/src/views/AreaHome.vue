@@ -55,10 +55,16 @@ export default {
         }
     },
     components: {
-        NavBar
+        NavBar,
     },
     methods: {
         // methods
+    },
+    onMounted() {
+        const expirationTime = localStorage.getItem('expirationTime');
+        if (token && expirationTime && currentTime >= expirationTime) {
+            localStorage.setItem('Status', 'LoggedOut');
+        }
     }
 }
 </script>

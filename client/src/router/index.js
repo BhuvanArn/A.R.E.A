@@ -4,17 +4,22 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/AreaHome.vue')
+    component: () => import('@/views/AreaHome.vue')
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/Login.vue')
+    component: () => import('@/views/Login.vue')
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import('../views/Register.vue')
+    component: () => import('@/views/Register.vue')
+  },
+  {
+    path: '/services',
+    name: 'services',
+    component: () => import('@/views/ServicePage.vue')
   },
   {
     path: '/reset-password',
@@ -26,6 +31,11 @@ const routes = [
     name: 'forgot-password',
     component: () => import('../views/ForgotPwd.vue')
   },
+  {
+    path: '/mobile-services',
+    name: 'mobile-services',
+    component: () => import('../views/MobileServicePage.vue')
+  }
 ]
 
 const router = createRouter({

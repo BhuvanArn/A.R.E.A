@@ -16,17 +16,15 @@
         </div>
       </div>
       <div v-show="mobileNav" class="mobile-menu-container">
-        <div class="user-info-container">
+        <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
             <h2 class="username-txt">{{ username }}</h2>
             <span @click="goToProfilePage" class="user-avatar-img-container">
                 <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
             </span>
         </div>
         <hr class="horizontal-hr">
-        <button>Sample</button> <!-- To replace with the correct links/buttons -->
-        <button>Sample</button> <!-- To replace with the correct links/buttons -->
-        <button>Sample</button> <!-- To replace with the correct links/buttons -->
-        <button>Sample</button> <!-- To replace with the correct links/buttons -->
+        <button @click="navigateToServices" class="nvb-btn-style">Services</button>
+        <button @click="navigateToWidgets" class="nvb-btn-style">Widgets</button>
       </div>
       <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
       </div>
@@ -78,6 +76,16 @@ export default {
             this.mobileNavButton = false;
           }, 0);
         }
+      },
+
+      navigateToServices(event) {
+        event.preventDefault()
+        this.$router.push('/mobile-services');
+      },
+
+      navigateToWidgets(event) {
+        event.preventDefault()
+        this.$router.push('/services');
       },
 
       toggleMenu() {
@@ -487,8 +495,29 @@ export default {
     background-color: transparent;
     justify-content: center;
     width: auto;
-    height: 100%;
+    height: auto;
     margin-right: 1rem;
     padding: 0;
+}
+
+.user-info-container-mobile {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nvb-btn-style {
+    width: 100%;
+    height: 3rem;
+    background-color: transparent;
+    border: transparent;
+    transition: box-shadow 0.35s ease;
+    font-family: 'inter', sans-serif;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: large;
+    cursor: pointer;
+}
+
+.nvb-btn-style:active {
+    background-color: #c6c9c4;
 }
 </style>
