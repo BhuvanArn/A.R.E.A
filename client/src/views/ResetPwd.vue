@@ -15,6 +15,9 @@
                     <img src="@/assets/key.png" class="img-style1">
                     <input type="password" class="input-style1" placeholder="Confirm password" v-model="confirmPassword">
                 </div>
+                <div v-if="errorMessage" class="error-message">
+                    <span>{{ errorMessage }}</span>
+                </div>
                 <button @click="changePwd" class="send-btn">CONFIRM</button>
             </div>
         </div>
@@ -31,6 +34,7 @@ export default {
             email: '',
             newPassword: '',
             confirmPassword: '',
+            errorMessage: ''
         }
     },
     mounted() {
@@ -49,9 +53,11 @@ export default {
 
         async changePwd() {
             if (this.newPassword !== this.confirmPassword) {
-                // Display an error message
+                this.errorMessage = 'Passwords do not match';
+                return;
             }
-            // Send the request to the backend to reset the password
+            this.errorMessage = '';
+            // Send the request to the backend to change the password
         }
     }
 }
@@ -351,13 +357,11 @@ body {
     text-align: center;
 }
 
-.pwd-msg-error {
+.error-message {
+    color: red;
     font-family: 'inter', sans-serif;
     font-size: medium;
-    color: #d40404;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+    margin-bottom: -1rem;
 }
 
 </style>
