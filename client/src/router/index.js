@@ -22,6 +22,11 @@ const routes = [
     component: () => import('@/views/ServicePage.vue')
   },
   {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('../views/ResetPwd.vue')
+  },
+  {
     path: '/forgot-password',
     name: 'forgot-password',
     component: () => import('../views/ForgotPwd.vue')
@@ -30,11 +35,6 @@ const routes = [
     path: '/mobile-services',
     name: 'mobile-services',
     component: () => import('../views/MobileServicePage.vue')
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('../views/ProfilePage.vue')
   }
 ]
 
