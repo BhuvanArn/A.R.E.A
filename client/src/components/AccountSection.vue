@@ -10,14 +10,22 @@
                 <div class="filler02"></div>
                 <hr class="hr-style01">
                 <div class="filler01"></div>
-                <div class="user-name-container">
-                    <img src="@/assets/user.png" class="img-style1">
-                    <input type="text" class="input-style1" placeholder="Username" v-model="userName">
+                <div class="section-container">
+                    <h2 class="profile-title-txt-style">Username</h2>
+                    <div class="filler03"></div>
+                    <div class="user-name-container">
+                        <img src="@/assets/user.png" class="img-style1">
+                        <input type="text" class="input-style1" placeholder="Username" v-model="userName">
+                    </div>
                 </div>
                 <div class="filler03"></div>
-                <div class="user-pwd-container">
-                    <img src="@/assets/key.png" class="img-style1">
-                    <button class="change-pwd-btn">Change Password</button>
+                <div class="section-container">
+                    <h2 class="profile-title-txt-style">Password</h2>
+                    <div class="filler03"></div>
+                    <div class="user-pwd-container">
+                        <img src="@/assets/key.png" class="img-style1">
+                        <button class="change-pwd-btn">Change</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,7 +71,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 25rem;
+    height: 30rem;
     width: 25rem;
     background-color: #efefef;
     border-radius: 10px;
@@ -121,7 +129,7 @@ export default {
 .user-name-container {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     background-color: transparent;
     height: auto;
     width: 17rem;
@@ -130,7 +138,7 @@ export default {
 .user-pwd-container {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     background-color: transparent;
     height: auto;
     width: 17rem;
@@ -170,24 +178,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #969696;
     border-radius: 5px;
     border: none;
-    width: 13rem;
+    width: 7rem;
     height: 2rem;
     color: #efefef;
     font-family: 'inter', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .change-pwd-btn:hover {
-    background-color: #3a9cb1;
+    background-color: #bcc1ba;
 }
 
 .change-pwd-btn:active {
-    background-color: #2e7f8f;
+    background-color: #969696;
 }
 
 .hr-style01 {
@@ -203,6 +212,23 @@ export default {
     font-family: 'inter', sans-serif;
     font-weight: 400;
     cursor: pointer;
+}
+
+.profile-title-txt-style {
+    font-size: 1rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 500;
+}
+
+.section-container {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    width: auto;
+    height: auto;
 }
 
 </style>
