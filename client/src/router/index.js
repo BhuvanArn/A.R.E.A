@@ -35,6 +35,11 @@ const routes = [
     path: '/mobile-services',
     name: 'mobile-services',
     component: () => import('../views/MobileServicePage.vue')
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/ProfilePage.vue')
   }
 ]
 
