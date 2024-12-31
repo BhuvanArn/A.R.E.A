@@ -3,15 +3,18 @@
         <div class="account-section-container">
             <div class="account-section">
                 <span class="account-avatar-container">
-                    <img src="@/assets/user.png" class="avatar-img">
+                    <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
+                    <h2 class="user-avatar-ini">{{ userAvatar }}</h2>
                 </span>
                 <h2 class="email-txt"> {{ userEmail }} </h2>
+                <div class="filler02"></div>
+                <hr class="hr-style01">
                 <div class="filler01"></div>
                 <div class="user-name-container">
                     <img src="@/assets/user.png" class="img-style1">
                     <input type="text" class="input-style1" placeholder="Username" v-model="userName">
                 </div>
-                <div class="filler02"></div>
+                <div class="filler03"></div>
                 <div class="user-pwd-container">
                     <img src="@/assets/key.png" class="img-style1">
                     <button class="change-pwd-btn">Change Password</button>
@@ -29,9 +32,16 @@ export default {
             mobile: false,
             userEmail: 'test@test.com',
             userName: 'Pablo',
+            userAvatar: ''
         }
     },
     methods: {
+        getAvatarLetter() {
+            this.userAvatar = this.userName.charAt(0);
+        },
+    },
+    mounted() {
+        this.getAvatarLetter();
     }
 }
 </script>
@@ -53,8 +63,8 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 30rem;
-    width: 40rem;
+    height: 25rem;
+    width: 25rem;
     background-color: #efefef;
     border-radius: 10px;
     box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.1);
@@ -64,13 +74,14 @@ export default {
 
 .account-avatar-container {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 6rem;
     border-radius: 50%;
-    height: 7rem;
-    width: 7rem;
-    border: 2px solid rgb(0, 0, 0);
-    background-color: transparent;
+    background-color: #9fb7b9;
+    border: 1px solid #969696;
+    margin-left: 1rem;
     overflow: hidden;
     cursor: pointer;
 }
@@ -86,23 +97,24 @@ export default {
 }
 
 .input-style1 {
-    width: 17rem;
+    width: 13rem;
     height: 2rem;
     background-color: transparent;
     border: none;
-    border-bottom: 2px solid #bcc1ba;
+    border-color: #bcc1ba;
     font-family: 'inter', sans-serif;
     font-size: medium;
     color: #313030;
-    margin-right: 1rem;
     outline: none;
-    transition: border-bottom 0.35s ease;
+}
+
+.input-style1:focus {
+    border-bottom: 2px solid #bcc1ba;
 }
 
 .img-style1 {
     width: 1.5rem;
     height: 1.5rem;
-    margin-left: 1rem;
     margin-right: 1rem;
 }
 
@@ -112,16 +124,16 @@ export default {
     justify-content: center;
     background-color: transparent;
     height: auto;
-    width: 20rem;
+    width: 17rem;
 }
 
 .user-pwd-container {
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: center;
     background-color: transparent;
     height: auto;
-    width: 20rem;
+    width: 17rem;
 }
 
 .email-txt {
@@ -147,6 +159,13 @@ export default {
     border: transparent;
 }
 
+.filler03 {
+    width: 90%;
+    height: 0.5rem;
+    background-color: transparent;
+    border: transparent;
+}
+
 .change-pwd-btn {
     display: flex;
     align-items: center;
@@ -154,15 +173,13 @@ export default {
     background-color: #46b1c9;
     border-radius: 5px;
     border: none;
-    width: 12rem;
+    width: 13rem;
     height: 2rem;
     color: #efefef;
     font-family: 'inter', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
 }
 
 .change-pwd-btn:hover {
@@ -171,6 +188,21 @@ export default {
 
 .change-pwd-btn:active {
     background-color: #2e7f8f;
+}
+
+.hr-style01 {
+    width: 90%;
+    background-color: #bcc1ba;
+}
+
+.user-avatar-ini {
+    font-size: 3rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
 }
 
 </style>
