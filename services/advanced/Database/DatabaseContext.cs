@@ -14,6 +14,8 @@ public class DatabaseContext : DbContext
     
     public DbSet<Reaction> Reactions { get; set; }
     
+    public DbSet<PasswordReset> PasswordReset { get; set; }
+    
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
     }

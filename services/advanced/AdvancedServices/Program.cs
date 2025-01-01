@@ -51,6 +51,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>, UserResetPasswordEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<ForgotPasswordEvent, (string, ResultType)>, ForgotPasswordEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>, SubscribeServiceEventHandler>();
@@ -97,6 +98,8 @@ public static class Program
         eventBus.Subscribe(userRegisteredHandler);
         var userResetPasswordHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>>();
         eventBus.Subscribe(userResetPasswordHandler);
+        var userForgotPasswordHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ForgotPasswordEvent, (string, ResultType)>>();
+        eventBus.Subscribe(userForgotPasswordHandler);
         var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>>();
         eventBus.Subscribe(actionReactionHandler);
         var getServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>>();

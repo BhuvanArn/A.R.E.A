@@ -1,4 +1,6 @@
-﻿public class ResponseBufferingMiddleware
+﻿namespace AdvancedServices;
+
+public class ResponseBufferingMiddleware
 {
     private readonly RequestDelegate _next;
 

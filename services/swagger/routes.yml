@@ -116,6 +116,33 @@ routes:
       500:
         description: Internal server error (bad JWT token, etc).
 
+    - name: auth-forget-password
+        host: csharp_service
+        port: 8080
+        condition: ^/auth/forget-password$
+      
+        realPath: /auth/forget-password
+        summary: Forgot Password
+        description: Send a email to user in case they lost password.
+        method: POST
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Email:
+                    type: string
+                    example: "area@gmail.com"
+        responses:
+          200:
+            description: Email sent successful.
+          401:
+            description: Invalid datas (wrong email, couldn't connect to smtp ect).
+          500:
+            description: Internal server error (email couldn't be sent ect).
+
   - name: area-list
     host: csharp_service
     port: 8080
