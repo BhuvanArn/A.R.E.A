@@ -98,11 +98,11 @@ export default {
                     Email: this.email,
                     Password: this.password
                 });
-                if (!response.data || !response.data.responses || response.data.responses.length === 0) {
+                if (response.status != 200 || !response.data) {
                     this.errorMessage = 'Invalid email or password';
                     return;
                 }
-                const token = response.data.responses[0];
+                const token = response.data;
                 console.log(token);
                 localStorage.setItem('token', token);
                 localStorage.setItem('Status', 'Logged In');
