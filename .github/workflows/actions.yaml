@@ -83,10 +83,69 @@ jobs:
         if: always()
         run: docker compose down -v --remove-orphans
 
-  push_to_mirror:
+  tests_run:
     runs-on: ubuntu-latest
     needs:
       - check_health
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Create .env file from Secret
+      - name: get environment variables
+        id: import-env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" >> .env
+      - uses: cardinalby/export-env-action@v2
+        id: exportEnv
+        with:
+          mask: true
+          export: false
+          envFile: '.env'
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
+
+      - name: Start Docker Compose services
+        id: startServices
+        run: docker compose up -d --wait
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+
+        # run tests for every service
+      - name: Run tests for services
+        run: |
+          services=$(docker compose config --services)
+            for service in $services; do
+              echo "Checking for tests in $service"
+              if docker compose exec $service test -x /app/tests.sh; then
+                echo "Running tests for $service"
+                docker compose exec $service /app/tests.sh
+              else
+                echo "No tests found for $service"
+              fi
+            done
+        env:
+          POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
+          POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          EXPOSE_PORT_CLIENT: ${{ steps.exportEnv.outputs.EXPOSE_PORT_CLIENT }}
+          EXPOSE_PORT_SERVER: ${{ steps.exportEnv.outputs.EXPOSE_PORT_SERVER }}
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    needs:
+      - tests_run
 
     if: ${{ github.event_name == 'push' }}
 
