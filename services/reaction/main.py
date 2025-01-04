@@ -83,9 +83,9 @@ class Handler(object):
 
     def get_module_middleware(self, name: str):
         if (not self.mods_middleware.get_module(name)):
-            self.mods_middleware.load_module(name, name)
-        else:
-            return (self.mods_middleware.get_module(name))
+            self.load_module_middleware(name, name)
+
+        return (self.mods_middleware.get_module(name))
 
     def register_reaction(self, reaction):
         self.registered_reactions.append(reaction)

@@ -1,16 +1,13 @@
 using System.Text;
 using ActionReactionService;
+using AuthService;
 using Database;
-using Database.Dao;
 using Database.Entities;
-using Database.Service;
 using EventBus;
 using EventBus.Event;
-using LoginService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using RegisterService;
 using Action = Database.Entities.Action;
 
 namespace AdvancedServices;
@@ -23,7 +20,7 @@ public static class Program
 
         var configuration = builder.Configuration;
 
-        builder.Services.AddDbContext<DatabaseContext>(options =>
+        builder.Services.AddDbContextFactory<DatabaseContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         var jwtSettings = configuration.GetSection("JwtSettings");
@@ -53,17 +50,15 @@ public static class Program
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>, UserResetPasswordEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>, SubscribeServiceEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
-        builder.Services.AddScoped<DaoFactory>();
-        builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<ActionService>();
-        builder.Services.AddScoped<ReactionService>();
-        builder.Services.AddScoped<ServiceService>();
+        builder.Services.AddTransient<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>, GoogleLoginEventHandler>();
+        builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
         
         builder.Services.AddCors(options =>
         {
@@ -100,6 +95,8 @@ public static class Program
         eventBus.Subscribe(userLoginHandler);
         var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
         eventBus.Subscribe(userRegisteredHandler);
+        var userResetPasswordHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>>();
+        eventBus.Subscribe(userResetPasswordHandler);
         var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>>();
         eventBus.Subscribe(actionReactionHandler);
         var getServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>>();
@@ -112,6 +109,8 @@ public static class Program
         eventBus.Subscribe(getActionHandler);
         var getReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>>();
         eventBus.Subscribe(getReactionHandler);
+        var googleLoginEventHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>>();
+        eventBus.Subscribe(googleLoginEventHandler);
 
         await app.RunAsync();
     }

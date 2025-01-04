@@ -10,6 +10,8 @@ pub struct Route {
     pub host: String,
     pub port: u16,
     pub name: String,
+    pub method: String,
+    pub path: String,
 }
 
 impl Route {
@@ -19,6 +21,8 @@ impl Route {
             host: String::from("127.0.0.1"),
             port: 80,
             name: String::from("default"),
+            method: String::from("GET"),
+            path: String::from("/"),
         }
     }
 }
@@ -56,6 +60,8 @@ impl RouteLoader {
             created_route.host = route["host"].as_str().expect("cannot parse host").to_string();
             created_route.port = route["port"].as_i64().expect("cannot parse port") as u16;
             created_route.name = route["name"].as_str().expect("cannot parse name").to_string();
+            created_route.method = route["method"].as_str().unwrap_or("GET").to_string();
+            created_route.path = route["path"].as_str().unwrap_or("/").to_string();
 
             route_loader.routes.push(created_route);
         }
@@ -71,5 +77,9 @@ impl RouteLoader {
             return Some(&route);
         }
         return None
+    }
+
+    pub fn get_all_routes(&self) -> &[Route] {
+        &self.routes
     }
 }

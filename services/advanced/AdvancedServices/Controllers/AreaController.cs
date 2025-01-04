@@ -25,9 +25,9 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("Action reaction event triggered.");
         
-        var responses = await _eventBus.PublishAsync<ActionReactionEvent, (List<Service>, ResultType)>(new ActionReactionEvent());
-
-        return Ok(responses.Select(s => s.Item1));
+        var response = await _eventBus.PublishAsync<ActionReactionEvent, (List<Service>, ResultType)>(new ActionReactionEvent());
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
     [HttpGet("{user_token}/services")]
@@ -35,12 +35,12 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetServices event triggered.");
 
-        var responses = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
+        var response = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
         {
             JwtToken = user_token
         });
         
-        return Ok(responses.Select(s => s.Item1));
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
     [HttpPost("{user_token}/subscribe_service")]
@@ -63,13 +63,13 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetActionsReactions event triggered");
         
-        var responses = await _eventBus.PublishAsync<GetActionsReactionsEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionsReactionsEvent
+        var response = await _eventBus.PublishAsync<GetActionsReactionsEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionsReactionsEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
         });
 
-        return Ok(responses.Select(s => s.Item1));
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
     [HttpGet("{user_token}/services/{service_name}/action")]
@@ -77,13 +77,13 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetActions event triggered");
         
-        var responses = await _eventBus.PublishAsync<GetActionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionEvent
+        var response = await _eventBus.PublishAsync<GetActionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
         });
         
-        return Ok(responses.Select(s => s.Item1));
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
     
     [HttpGet("{user_token}/services/{service_name}/reaction")]
@@ -91,12 +91,12 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetReaction event triggered");
         
-        var responses = await _eventBus.PublishAsync<GetReactionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetReactionEvent
+        var response = await _eventBus.PublishAsync<GetReactionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetReactionEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
         });
         
-        return Ok(responses.Select(s => s.Item1));
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 }

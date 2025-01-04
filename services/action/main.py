@@ -162,15 +162,15 @@ class Watcher(object):
 
     def get_module_strategy(self, name: str):
         if (not self.mods_strategy.get_module(name)):
-            self.mods_strategy.load_module(name, name)
-        else:
-            return (self.mods_strategy.get_module(name))
+            self.load_module_strategy(name, name)
+
+        return (self.mods_strategy.get_module(name))
 
     def get_module_middleware(self, name: str):
         if (not self.mods_middleware.get_module(name)):
-            self.mods_middleware.load_module(name, name)
-        else:
-            return (self.mods_middleware.get_module(name))
+            self.load_module_middleware(name, name)
+
+        return (self.mods_middleware.get_module(name))
 
     def from_request(self, url):
         self.failed_update = True
@@ -246,7 +246,7 @@ def main() -> int:
             print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
             retry += 1
             sleep(7.4)
-    #watcher.register_action(RegisteredAction("2343354", "45543", "discord", "new_message", {"channel_id": "1303739948171526246", "token": ""}))
+    #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2024-12-10T22::15.0Z"}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
     print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)
