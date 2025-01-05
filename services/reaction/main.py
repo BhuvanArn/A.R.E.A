@@ -37,8 +37,13 @@ class RegisteredReaction(object):
         reaction: Reaction = handler.services.get_service(self.service).get_reaction(self.name)
         middlewares = []
 
+        if (not reaction):
+            self._discard(handler, reaction, "reaction not found.")
+            return
+
         if (not reaction.commit):
             self._discard(handler, reaction, "no commit entry found, skipping.")
+            return
 
         if (reaction.commit.endpoint):
             middlewares.append(self._build_middleware(handler, reaction, handler.get_module_middleware("endpoint")))
@@ -102,7 +107,7 @@ class Handler(object):
 
         json = req.json()
 
-        for item in json[0]:
+        for item in json:
             for action in item["Reactions"]:
                 _vars = {}
 
@@ -132,7 +137,9 @@ def main() -> int:
             print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
             retry += 1
             sleep(7.4)
-    #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1303739948171526246", "message": "test reaction from reaction-service.", "token": ""}))
+
+    #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1314613132894670981", "message": "test reaction from reaction-service.", "token": "token"}))
+    handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "test", "log", {}))
 
     connected = False
     retry = 0

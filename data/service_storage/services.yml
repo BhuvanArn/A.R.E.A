@@ -1,4 +1,11 @@
 services:
+  - name: test
+    reactions:
+      - name: log
+        description: log to console as a reaction for testing
+        commit:
+          middleware: log
+
   - name: discord
     credentials:
       - name: token

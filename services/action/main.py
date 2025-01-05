@@ -77,8 +77,13 @@ class RegisteredAction(object):
         action: Action = watcher.services.get_service(self.service).get_action(self.name)
         middlewares = []
 
+        if (not action):
+            self._discard(watcher, action, "action not found.")
+            return
+
         if (not action.fetch):
             self._discard(watcher, action, "no fetch entry found, skipping.")
+            return
 
         if (action.fetch.endpoint):
             middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware("endpoint")))
@@ -186,7 +191,7 @@ class Watcher(object):
 
         json = req.json()
 
-        for item in json[0]:
+        for item in json:
             for action in item["Actions"]:
                 _vars = {}
 
@@ -246,7 +251,7 @@ def main() -> int:
             print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
             retry += 1
             sleep(7.4)
-    #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2024-12-10T22::15.0Z"}))
+    watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
     print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)
@@ -269,7 +274,7 @@ def main() -> int:
 
                     if (message.type == INVM):
                         connection.close_client()
-                        print(f"[PYTHON (service-action)] - reaction disconnected", flush=True)
+                        print(f"[PYTHON (service-action)] - reaction disconnected (invalid message received)", flush=True)
 
                     if (message.type == ACTI):
                         name_id = message.payload.split(b' ')[0].decode()
