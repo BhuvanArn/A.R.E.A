@@ -26,21 +26,27 @@
                     <div class="user-pwd-container">
                         <img src="@/assets/key.png" class="img-style1">
                         <button v-show="!changePwdMenu" @click="activateChangePwdMenu" class="change-pwd-btn">Change</button>
-                        <input v-show="changePwdMenu" type="text" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
+                        <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
                     </div>
                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
-                        <input type="text" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
+                        <input type="password" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
                     </div>
                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
-                        <input type="text" class="input-pwd-style1" placeholder="Confirm new password" v-model="confirmNewPwd">
+                        <input type="password" class="input-pwd-style1" placeholder="Confirm new password" v-model="confirmNewPwd">
+                    </div>
+                    <div v-show="errorMessage" class="filler02"></div>
+                    <div v-if="errorMessage" class="error-message-section">
+                        <div v-if="errorMessage" class="error-message">
+                            {{ errorMessage }}
+                        </div>
                     </div>
                     <div v-show="changePwdMenu" class="filler01"></div>
                     <div v-show="changePwdMenu" class="change-pwd-btn-section">
-                        <button @click="" class="save-pwd-btn">Save</button>
+                        <button @click="changePwd" class="save-pwd-btn">Save</button>
                         <div class="filler05"></div>
                         <button @click="cancelChangePwd" class="cancel-pwd-btn">Cancel</button>
                     </div>
@@ -52,6 +58,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'AccountSection',
     data() {
@@ -63,7 +70,8 @@ export default {
             userAvatar: '',
             oldPwd: '',
             newPwd: '',
-            confirmNewPwd: ''
+            confirmNewPwd: '',
+            errorMessage: ''
         }
     },
     methods: {
@@ -77,6 +85,16 @@ export default {
 
         cancelChangePwd() {
             this.changePwdMenu = false;
+            this.errorMessage = '';
+        },
+
+        async changePwd() {
+            if (this.newPwd !== this.confirmNewPwd) {
+                this.errorMessage = 'Passwords do not match';
+                return;
+            }
+            this.errorMessage = '';
+            // Send the request to the backend to change the password
         }
     },
     mounted() {
@@ -351,6 +369,21 @@ export default {
     height: 100%;
     background-color: transparent;
     border: transparent;
+}
+
+.error-message {
+    color: red;
+    font-family: 'inter', sans-serif;
+    font-size: medium;
+}
+
+.error-message-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    width: 17rem;
+    height: auto;
 }
 
 </style>
