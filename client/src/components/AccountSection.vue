@@ -2,6 +2,7 @@
     <body>
         <div class="account-section-container">
             <div class="account-section">
+                <div class="filler01"></div>
                 <span class="account-avatar-container">
                     <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
                     <h2 class="user-avatar-ini">{{ userAvatar }}</h2>
@@ -24,9 +25,27 @@
                     <div class="filler03"></div>
                     <div class="user-pwd-container">
                         <img src="@/assets/key.png" class="img-style1">
-                        <button class="change-pwd-btn">Change</button>
+                        <button v-show="!changePwdMenu" @click="activateChangePwdMenu" class="change-pwd-btn">Change</button>
+                        <input v-show="changePwdMenu" type="text" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
+                    </div>
+                    <div v-show="changePwdMenu" class="filler02"></div>
+                    <div v-show="changePwdMenu" class="user-pwd-container">
+                        <div class="filler04"></div>
+                        <input type="text" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
+                    </div>
+                    <div v-show="changePwdMenu" class="filler02"></div>
+                    <div v-show="changePwdMenu" class="user-pwd-container">
+                        <div class="filler04"></div>
+                        <input type="text" class="input-pwd-style1" placeholder="Confirm new password" v-model="confirmNewPwd">
+                    </div>
+                    <div v-show="changePwdMenu" class="filler01"></div>
+                    <div v-show="changePwdMenu" class="change-pwd-btn-section">
+                        <button @click="" class="save-pwd-btn">Save</button>
+                        <div class="filler05"></div>
+                        <button @click="cancelChangePwd" class="cancel-pwd-btn">Cancel</button>
                     </div>
                 </div>
+                <div class="filler01"></div>
             </div>
         </div>
     </body>
@@ -38,15 +57,27 @@ export default {
     data() {
         return {
             mobile: false,
+            changePwdMenu: false,
             userEmail: 'test@test.com',
             userName: 'Pablo',
-            userAvatar: ''
+            userAvatar: '',
+            oldPwd: '',
+            newPwd: '',
+            confirmNewPwd: ''
         }
     },
     methods: {
         getAvatarLetter() {
             this.userAvatar = this.userName.charAt(0);
         },
+
+        activateChangePwdMenu() {
+            this.changePwdMenu = true;
+        },
+
+        cancelChangePwd() {
+            this.changePwdMenu = false;
+        }
     },
     mounted() {
         this.getAvatarLetter();
@@ -71,7 +102,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 30rem;
+    height: auto;
     width: 25rem;
     background-color: #efefef;
     border-radius: 10px;
@@ -229,6 +260,97 @@ export default {
     background-color: transparent;
     width: auto;
     height: auto;
+}
+
+.input-pwd-style1 {
+    width: 17rem;
+    height: 2rem;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid #bcc1ba;
+    font-family: 'inter', sans-serif;
+    font-size: medium;
+    color: #313030;
+    margin-right: 1rem;
+    outline: none;
+    transition: border-bottom 0.35s ease;
+}
+
+.filler04 {
+    width: 2rem;
+    min-width: 1.5rem;
+    margin-right: 1rem;
+    height: 100%;
+    background-color: transparent;
+    border: transparent;
+}
+
+.change-pwd-btn-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    width: 17rem;
+    height: 2rem;
+}
+
+.save-pwd-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #46b1c9;
+    border-radius: 5px;
+    border: none;
+    width: 6rem;
+    height: 2rem;
+    color: #efefef;
+    font-family: 'inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 5px;
+}
+
+.save-pwd-btn:hover {
+    background-color: #3a9cb1;
+}
+
+.save-pwd-btn:active {
+    background-color: #2e7f8f;
+}
+
+.cancel-pwd-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #969696;
+    border-radius: 5px;
+    border: none;
+    width: 6rem;
+    height: 2rem;
+    color: #efefef;
+    font-family: 'inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 5px;
+}
+
+.cancel-pwd-btn:hover {
+    background-color: #bcc1ba;
+}
+
+.cancel-pwd-btn:active {
+    background-color: #969696;
+}
+
+.filler05 {
+    width: 1rem;
+    height: 100%;
+    background-color: transparent;
+    border: transparent;
 }
 
 </style>
