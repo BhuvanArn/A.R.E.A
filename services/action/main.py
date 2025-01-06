@@ -251,7 +251,8 @@ def main() -> int:
             print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
             retry += 1
             sleep(7.4)
-    watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
+    #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
+    watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
 
     print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
     print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)

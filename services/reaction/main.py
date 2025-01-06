@@ -62,8 +62,9 @@ class RegisteredReaction(object):
         middlewares[0](data)
 
     def start_worker(self, handler: object, data):
-        self.workers.append(Worker(lambda d = data: self._run_reaction(handler, d)))
-        self.workers[-1].start()
+        temp = Worker(lambda d = data: self._run_reaction(handler, d))
+        temp.start()
+        self.workers.append(temp)
 
 class Handler(object):
     def __init__(self, connection):
@@ -160,9 +161,9 @@ def main() -> int:
 
     print(f"[PYTHON (service-reaction)] - connected to service-action on port 2727", flush=True)
 
-    while 1:
-        try:
-            read_ready_sockets, _, _ = select([connection.connected], [], [], 0)
+    try:
+        while 1:
+            read_ready_sockets, _, _ = select([connection.connected], [], [], None)
 
             if (read_ready_sockets):
                 message = connection.get_message()
@@ -183,17 +184,17 @@ def main() -> int:
 
                     #print(data, flush=True)
 
-                if (connection.get_message() == UPDT):
+                if (message.type == UPDT):
                     print(f"[PYTHON (service-reaction)] - receive update request from action", flush=True)
                     try:
                         handler.from_request("http://csharp_service:8080/area")
                     except Exception as e:
                         print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f"[PYTHON (service-reaction)] - {e}", flush=True)
-            return (84)
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"[PYTHON (service-reaction)] - {e}", flush=True)
+        return (84)
 
     return (0)
 
