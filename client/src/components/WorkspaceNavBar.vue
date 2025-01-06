@@ -136,7 +136,7 @@ export default {
 
       goToProfilePage(event) {
         event.preventDefault()
-        this.$router.push('/profile');
+        window.location.href = this.$router.resolve({ name: 'profile' }).href;
       },
 
       displayMenu() {
