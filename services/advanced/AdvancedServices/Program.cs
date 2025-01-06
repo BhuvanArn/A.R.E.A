@@ -55,6 +55,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>, SubscribeServiceEventHandler>();
+        builder.Services.AddTransient<IIntegrationEventHandler<UnsubscribeServiceEvent, (List<Service>, ResultType)>, UnsubscribeServiceEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
@@ -106,6 +107,8 @@ public static class Program
         eventBus.Subscribe(getServiceHandler);
         var subscribeServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>>();
         eventBus.Subscribe(subscribeServiceHandler);
+        var unsubscribeServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UnsubscribeServiceEvent, (List<Service>, ResultType)>>();
+        eventBus.Subscribe(unsubscribeServiceHandler);
         var getActionsReactionsHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>>();
         eventBus.Subscribe(getActionsReactionsHandler);
         var getActionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>>();

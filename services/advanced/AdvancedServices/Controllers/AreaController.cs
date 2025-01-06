@@ -57,6 +57,21 @@ public class AreaController : ControllerBase
 
         return Ok();
     }
+    
+    [HttpPost("{user_token}/unsubscribe_service")]
+    public async Task<IActionResult> UnsubscribeService(string user_token, [FromBody] UnsubscribeServiceRequest request)
+    {
+        _logger.LogInformation($"UnsubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
+
+        await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
+        {
+            JwtToken = user_token,
+            Name = request.Name,
+            Credentials = request.Credentials
+        });
+
+        return Ok();
+    }
 
     [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
     public async Task<IActionResult> GetActionsReactions(string user_token, string service_name)

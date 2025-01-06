@@ -200,6 +200,39 @@ routes:
       400:
         description: Invalid subscription data.
 
+  - name: unsubscribe-service
+    host: csharp_service
+    port: 8080
+    condition: ^/area/([^/]+)/unsubscribe_service$
+    realPath: /area/{jwtToken}/unsubscribe_service
+    summary: Unsubscribe Service
+    description: Unsubscribes to a service in an area.
+    method: POST
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "facebook"
+              credentials:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "example@app.com"
+                  password:
+                    type: string
+                    example: "password"
+    responses:
+      201:
+        description: Unsubscription successful.
+      400:
+        description: Invalid subscription data.
+
   - name: actions-reactions
     host: csharp_service
     port: 8080
