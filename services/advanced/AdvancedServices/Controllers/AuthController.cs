@@ -38,7 +38,12 @@ public class AuthController : ControllerBase
     {
         _logger.LogInformation("Forgot password event triggered.");
 
-        return Ok();
+        var response = await _eventBus.PublishAsync<ForgotPasswordEvent, (string, ResultType)>(new ForgotPasswordEvent
+        {
+            Email = request.Email
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
     [HttpPost("reset-password")]
