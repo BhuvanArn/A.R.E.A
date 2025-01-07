@@ -130,6 +130,21 @@ public class AreaController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
-    
+
     [HttpPost("addreactions")]
+    public async Task<IActionResult> AddReaction([FromBody] AddReactionRequest request)
+    {
+        _logger.LogInformation("AddReactions event triggered");
+
+        var response = await _eventBus.PublishAsync<AddReactionEvent, (string, ResultType)>(new AddReactionEvent
+        {
+            ServiceId = request.ServiceId,
+            ActionId = request.ActionId,
+            Name = request.Name,
+            ExecutionConfig = request.ExecutionConfig,
+            JwtToken = request.JwtToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }

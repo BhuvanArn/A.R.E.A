@@ -3,19 +3,20 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
-public class AddActionRequestHandler : IIntegrationEventHandler<AddActionEvent, (string, ResultType)>
+public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent, (string, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
 
-    public AddActionRequestHandler(IDatabaseHandler dbHandler)
+    public AddReactionEventHandler(IDatabaseHandler dbHandler)
     {
         _dbHandler = dbHandler;
     }
     
-    public async Task<(string, ResultType)> HandleAsync(AddActionEvent @event)
+    public async Task<(string, ResultType)> HandleAsync(AddReactionEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
 
@@ -30,15 +31,23 @@ public class AddActionRequestHandler : IIntegrationEventHandler<AddActionEvent, 
         {
             return ("Service cannot be found", ResultType.Fail);
         }
+        
+        var action = (await _dbHandler.GetAsync<Action>(s => s.Id == @event.ActionId)).FirstOrDefault();
 
-        var action = new Database.Entities.Action
+        if (action == null || action.ServiceId != service.Id)
+        {
+            return ("Action cannot be found", ResultType.Fail);
+        }
+
+        var reaction = new Reaction
         {
             ServiceId = @event.ServiceId,
+            ActionId = @event.ActionId,
             Name = @event.Name,
-            TriggerConfig = @event.TriggerConfig
+            ExecutionConfig = @event.ExecutionConfig
         };
         
-        await _dbHandler.AddAsync(action);
+        await _dbHandler.AddAsync(reaction);
         return ("Ok", ResultType.Success);
     }
 }

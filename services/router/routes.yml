@@ -264,6 +264,42 @@ routes:
       401:
         description: "Unauthorized or invalid data."
 
+  - name: "add-reactions"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/addreactions$"
+    realPath: "/addreactions"
+    summary: "Add Reaction"
+    description: "Adds a new reaction for a given service and action."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ServiceId:
+                type: "number"
+                example: 101
+              ActionId:
+                type: "number"
+                example: 202
+              Name:
+                type: "string"
+                example: "MyCustomReaction"
+              ExecutionConfig:
+                type: "string"
+                example: "some-execution-configuration"
+              JwtToken:
+                type: "string"
+                example: "jwt_token_here"
+    responses:
+      200:
+        description: "Reaction added successfully."
+      401:
+        description: "Unauthorized or invalid data."
+
   - name: "actions-reactions"
     host: "csharp_service"
     port: 8080
