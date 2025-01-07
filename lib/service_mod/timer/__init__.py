@@ -57,3 +57,60 @@ def strategy_on_time_daily(register: object, data: bytes):
         return (register.cache)
     else:
         return (None)
+
+def middleware_on_date_monthly(register: object, action: Action, discard, valid, data = None):
+    actual_time = datetime.now()
+    looking_for = datetime.fromisoformat(f'{actual_time.year}-{actual_time.month:02}-{register.vars["marker"]}Z')
+
+    if (actual_time.timestamp() >= looking_for):
+        valid(actual_time)
+        return
+    valid(None)
+
+def strategy_on_date_monthly(register: object, data: bytes):
+    if (register.cache and data and (datetime.fromisoformat(register.cache).month == data.month)):
+        return (None)
+
+    if (data):
+        register.cache = data.isoformat()
+        return (register.cache)
+    else:
+        return (None)
+
+
+def middleware_on_date_yearly(register: object, action: Action, discard, valid, data = None):
+    actual_time = datetime.now()
+    looking_for = datetime.fromisoformat(f'{actual_time.year}-{register.vars["marker"]}Z')
+
+    if (actual_time.timestamp() >= looking_for):
+        valid(actual_time)
+        return
+    valid(None)
+
+def strategy_on_date_yearly(register: object, data: bytes):
+    if (register.cache and data and (datetime.fromisoformat(register.cache).year == data.year)):
+        return (None)
+
+    if (data):
+        register.cache = data.isoformat()
+        return (register.cache)
+    else:
+        return (None)
+
+def middleware_on_date_yearly(register: object, action: Action, discard, valid, data = None):
+    actual_time = datetime.now()
+
+    if (("monday", "tuesday", "wednesay", "thursday", "friday", "saturday", "sunday")[actual_time.weekday()] == register.vars["marker"].tolower()):
+        valid(actual_time)
+        return
+    valid(None)
+
+def strategy_on_date_yearly(register: object, data: bytes):
+    if (register.cache and data and (datetime.fromisoformat(register.cache).isocalendar()[1] == data.isocalendar()[1])):
+        return (None)
+
+    if (data):
+        register.cache = data.isoformat()
+        return (register.cache)
+    else:
+        return (None)
