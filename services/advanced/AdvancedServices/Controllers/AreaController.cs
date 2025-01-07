@@ -52,7 +52,7 @@ public class AreaController : ControllerBase
         {
             JwtToken = user_token,
             Name = request.Name,
-            Credentials = request.Credentials
+            Auth = request.Auth
         });
 
         return Ok();

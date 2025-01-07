@@ -4,6 +4,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Newtonsoft.Json;
 
 namespace ActionReactionService;
 
@@ -40,7 +41,7 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         {
             Name = @event.Name,
             UserId = userId,
-            Auth = System.Text.Json.JsonSerializer.Serialize(@event.Credentials)
+            Auth = JsonConvert.SerializeObject(@event.Auth)
         };
         
         await _dbHandler.AddAsync(service);
