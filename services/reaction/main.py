@@ -6,6 +6,7 @@ from serviceconf import *
 from service_mod import *
 from requests import get
 from json import dumps
+from signal import signal, SIGTERM
 
 class RegisteredReaction(object):
     def __init__(self, service_id, reaction_id, linked_to, service, name, _vars = {}):
@@ -121,80 +122,112 @@ class Handler(object):
 
         self.failed_update = False
 
+class ReactionService(object):
+    def __init__(self):
+        self.connection = AreaConnect(host="service-action")
+        self.handler = Handler(self.connection)
+
+        self.running = False
+
+        signal(SIGTERM, lambda: self.close())
+
+        self._update_datas()
+        self._connect_action()
+
+    def _update_datas(self):
+        retry = 0
+        start = True
+
+        while ((start or self.handler.failed_update)) and retry < 3:
+            start = False
+            try:
+                self.handler.from_request("http://csharp_service:8080/area")
+                print(f"[PYTHON (service-reaction)] - updated data", flush=True)
+            except Exception as e:
+                print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
+                retry += 1
+                sleep(7.4)
+
+        self.running = not self.handler.failed_update
+
+    def _connect_action(self):
+        connected = False
+        retry = 0
+
+        while (not connected) and retry < 3:
+            try:
+                self.connection.set_connect()
+                if (not self.connection.connected):
+                    raise RuntimeError("invalid service")
+                connected = True
+            except Exception as e:
+                retry += 1
+                print(f"[PYTHON (service-reaction)] - Failed to connect to service-action:2727 ({e}), retrying...", flush=True)
+                sleep(7.4)
+
+        self.running = connected
+
+        if (not connected):
+            print(f"[PYTHON (service-reaction)] - failed to connect to service-action:2727", flush=True)
+            return
+
+        print(f"[PYTHON (service-reaction)] - connected to service-action on port 2727", flush=True)
+
+    def _handle_request_from_action(self):
+        message = self.connection.get_message()
+
+        if (message.type == INVM):
+            print(f"[PYTHON (service-reaction)] - action disconnected, closing", flush=True)
+            self.close()
+
+        if (message.type == ACTI):
+            service_id = message.payload.split(b' ')[0].decode()
+            service = message.payload.split(b' ')[1].decode()
+            name_id = message.payload.split(b' ')[2].decode()
+            name = message.payload.split(b' ')[3].decode()
+            data = b' '.join(message.payload.split(b' ')[4:]).decode()
+
+            self.handler.activate(name_id, data)
+
+        if (message.type == UPDT):
+            print(f"[PYTHON (service-reaction)] - receive update request from action", flush=True)
+            try:
+                self.handler.from_request("http://csharp_service:8080/area")
+            except Exception as e:
+                print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
+
+    def mainloop(self):
+        while self.running:
+            read_ready_sockets, _, _ = select([self.connection.connected], [], [], None)
+
+            if (read_ready_sockets):
+                self._handle_request_from_action()
+
+        print(f"[PYTHON (service-reaction)] - stopping service.", flush=True)
+
+    def close(self):
+        self.running = False
+
+        self.connection.close()
+
 def main() -> int:
     print(f"[PYTHON (service-reaction)] - starting...", flush=True)
 
-    connection = AreaConnect(host="service-action")
-    handler = Handler(connection)
-
-    retry = 0
-    start = True
-    while ((start or handler.failed_update)) and retry < 3:
-        start = False
-        try:
-            handler.from_request("http://csharp_service:8080/area")
-            print(f"[PYTHON (service-reaction)] - updated data", flush=True)
-        except Exception as e:
-            print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
-            retry += 1
-            sleep(7.4)
+    rs: ReactionService = ReactionService()
 
     #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1314613132894670981", "message": "test reaction from reaction-service.", "token": "token"}))
-    handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "test", "log", {}))
-
-    connected = False
-    retry = 0
-    while (not connected) and retry < 3:
-        try:
-            connection.set_connect()
-            if (not connection.connected):
-                raise RuntimeError("invalid service")
-            connected = True
-        except Exception as e:
-            retry += 1
-            print(f"[PYTHON (service-reaction)] - Failed to connect to service-action:2727 ({e}), retrying...", flush=True)
-            sleep(7.4)
-
-    if (not connected):
-        print(f"[PYTHON (service-reaction)] - failed to connect to service-action:2727", flush=True)
-        return (84)
-
-    print(f"[PYTHON (service-reaction)] - connected to service-action on port 2727", flush=True)
+    rs.handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "test", "log", {}))
 
     try:
-        while 1:
-            read_ready_sockets, _, _ = select([connection.connected], [], [], None)
-
-            if (read_ready_sockets):
-                message = connection.get_message()
-
-                if (message.type == INVM):
-                    print(f"[PYTHON (service-reaction)] - action disconnected, closing", flush=True)
-                    connection.close_client()
-                    return (0)
-
-                if (message.type == ACTI):
-                    service_id = message.payload.split(b' ')[0].decode()
-                    service = message.payload.split(b' ')[1].decode()
-                    name_id = message.payload.split(b' ')[2].decode()
-                    name = message.payload.split(b' ')[3].decode()
-                    data = b' '.join(message.payload.split(b' ')[4:]).decode()
-
-                    handler.activate(name_id, data)
-
-                    #print(data, flush=True)
-
-                if (message.type == UPDT):
-                    print(f"[PYTHON (service-reaction)] - receive update request from action", flush=True)
-                    try:
-                        handler.from_request("http://csharp_service:8080/area")
-                    except Exception as e:
-                        print(f"[PYTHON (service-reaction)] - failed to update db datas {e}", flush=True)
+        rs.mainloop()
     except KeyboardInterrupt:
         pass
     except Exception as e:
         print(f"[PYTHON (service-reaction)] - {e}", flush=True)
+        rs.close()
         return (84)
+
+    rs.close()
 
     return (0)
 
