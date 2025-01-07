@@ -231,13 +231,13 @@ routes:
       400:
         description: "Invalid unsubscription data."
 
-  - name: "add-services"
+  - name: "add-actions"
     host: "csharp_service"
     port: 8080
-    condition: "^/addservices$"
-    realPath: "/addservices"
-    summary: "Add Action"
-    description: "Adds a new action for a given service."
+    condition: "^/addactions$"
+    realPath: "/addactions"
+    summary: "Add actions"
+    description: "Adds a new actions for a given service."
     method: "POST"
     requestBody:
       required: true
@@ -247,8 +247,8 @@ routes:
             type: "object"
             properties:
               ServiceId:
-                type: "number"
-                example: 123
+                type: "guid"
+                example: "432432-84932-4893894-87348"
               Name:
                 type: "string"
                 example: "MyCustomAction"

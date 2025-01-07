@@ -115,7 +115,7 @@ public class AreaController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpPost("addservices")]
+    [HttpPost("addactions")]
     public async Task<IActionResult> AddAction([FromBody] AddActionRequest request)
     {
         _logger.LogInformation("AddActions event triggered");
@@ -130,4 +130,6 @@ public class AreaController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+    
+    [HttpPost("addreactions")]
 }
