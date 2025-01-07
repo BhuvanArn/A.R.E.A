@@ -1,9 +1,9 @@
 name: AWS Deployment
 
-on:
-  push:
-    branches:
-      - 'AREA-93-Automate-Deployment-of-AREA-to-AWS'
+on: workflow_dispatch
+  # push:
+  #   branches:
+  #     - 'main'
 
 jobs:
   deploy:
@@ -13,10 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # - name: Set up SSH
-      #   uses: webfactory/ssh-agent@v0.5.4
-      #   with:
-      #     ssh-private-key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+      - name: Install docker compose
+        run: sudo apt-get install docker-compose
 
       - name: Set up ssh private key file
         run: |
@@ -24,15 +22,12 @@ jobs:
           echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/area-serv.pem
           chmod 400 ~/.ssh/area-serv.pem
 
-      - name: Install docker compose
-        run: sudo apt-get install docker-compose
-
       - name: Deploy to AWS
         run: |
           ssh -i "~/.ssh/area-serv.pem" -o "StrictHostKeyChecking no" admin@ec2-15-188-14-84.eu-west-3.compute.amazonaws.com << EOF
             cd /home/admin/A.R.E.A/
             git fetch
-            git switch AREA-93-Automate-Deployment-of-AREA-to-AWS
-            git pull
+            git switch main
+            git pull --force
             sudo docker-compose up -d
           EOF
