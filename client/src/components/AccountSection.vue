@@ -1,7 +1,11 @@
 <template>
-    <body>
         <div class="account-section-container">
-            <div class="account-section">
+            <div class="main-container-top">
+                <h2 class="account-title-txt">Profile</h2>
+                <div class="filler01"></div>
+                <img src="@/assets/logo.png" class="logo-account">
+            </div>
+            <div class="main-container-bottom">
                 <div class="filler01"></div>
                 <span class="account-avatar-container">
                     <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
@@ -54,7 +58,6 @@
                 <div class="filler01"></div>
             </div>
         </div>
-    </body>
 </template>
 
 <script>
@@ -109,23 +112,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     height: auto;
     width: 100%;
     background-color: #efefef;
-    z-index: 1;
-}
-
-.account-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: auto;
-    width: 25rem;
-    background-color: #efefef;
-    border-radius: 10px;
-    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.1);
-    gap: 0.5rem;
     z-index: 1;
 }
 
@@ -384,6 +374,55 @@ export default {
     background-color: transparent;
     width: 17rem;
     height: auto;
+}
+
+.main-container-top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 25rem;
+    height: 7rem;
+    background-color: #bcc1ba;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-color: black;
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
+    border-bottom-color: #000000;
+}
+
+.main-container-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    width: 25rem;
+    background-color: #efefef;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.1);
+    gap: 0.5rem;
+}
+
+.logo-account {
+    width: 5rem;
+    height: 5rem;
+    margin-left: 1rem;
+    margin-right: 1.5rem;
+}
+
+
+.account-title-txt {
+    font-size: 3rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    margin-left: 1.5rem;
+    margin-right: 1rem;
+    font-family: 'inter', sans-serif;
+    font-weight: 400;
 }
 
 </style>
