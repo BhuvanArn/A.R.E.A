@@ -183,15 +183,12 @@ routes:
               name:
                 type: "string"
                 example: "facebook"
-              credentials:
+              auth:
                 type: "object"
                 properties:
-                  email:
+                  token:
                     type: "string"
-                    example: "example@app.com"
-                  password:
-                    type: "string"
-                    example: "password"
+                    example: "3421432423"
     responses:
       201:
         description: "Subscription successful."

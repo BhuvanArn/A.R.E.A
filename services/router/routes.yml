@@ -183,19 +183,16 @@ routes:
               name:
                 type: "string"
                 example: "facebook"
-              credentials:
+              auth:
                 type: "object"
                 properties:
-                  email:
+                  token:
                     type: "string"
-                    example: "example@app.com"
-                  password:
-                    type: "string"
-                    example: "password"
+                    example: "3421432423"
     responses:
-      200:
-        description: "Subscription successful (no data)."
-      401:
+      201:
+        description: "Subscription successful."
+      400:
         description: "Invalid subscription data."
 
   - name: "unsubscribe-service"
