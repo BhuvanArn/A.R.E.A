@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using ActionReactionService.AboutParser;
+using Database;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
@@ -9,10 +10,12 @@ namespace ActionReactionService;
 public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<UnsubscribeServiceEvent, (List<Service>, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
+    private readonly IAboutParserService _aboutParserService;
 
-    public UnsubscribeServiceEventHandler(IDatabaseHandler dbHandler)
+    public UnsubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService)
     {
         _dbHandler = dbHandler;
+        _aboutParserService = aboutParserService;
     }
     
     public async Task<(List<Service>, ResultType)> HandleAsync(UnsubscribeServiceEvent @event)
@@ -20,6 +23,13 @@ public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<Unsubscri
         string id = @event.JwtToken.GetJwtSubClaim();
 
         if (!Guid.TryParse(id, out Guid userId))
+        {
+            return (new(), ResultType.Fail);
+        }
+
+        var services = _aboutParserService.GetServices();
+
+        if (services.All(s => s.Name != @event.Name))
         {
             return (new(), ResultType.Fail);
         }

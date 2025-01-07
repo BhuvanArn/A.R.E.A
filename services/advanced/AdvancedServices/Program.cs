@@ -1,5 +1,6 @@
 using System.Text;
 using ActionReactionService;
+using ActionReactionService.AboutParser;
 using AuthService;
 using Database;
 using Database.Entities;
@@ -46,6 +47,10 @@ public static class Program
             });
 
         builder.Services.AddControllers();
+        builder.Services.AddHttpClient("ServiceAbout", client =>
+        {
+            client.BaseAddress = new Uri("http://service-about:80");
+        });
         builder.Services.AddLogging(configure => configure.AddConsole());
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
         builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
@@ -61,6 +66,7 @@ public static class Program
         builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
         builder.Services.AddTransient<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>, GoogleLoginEventHandler>();
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+        builder.Services.AddScoped<IAboutParserService, AboutParserService>();
         
         builder.Services.AddCors(options =>
         {
@@ -80,6 +86,9 @@ public static class Program
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<DatabaseContext>();
             await context.Database.MigrateAsync();
+            
+            var aboutParserService = services.GetRequiredService<IAboutParserService>();
+            await aboutParserService.ParseAndStoreAboutJsonAsync();
         }
 
         app.UseMiddleware<ResponseBufferingMiddleware>();
