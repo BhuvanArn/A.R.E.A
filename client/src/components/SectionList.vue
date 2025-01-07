@@ -1,63 +1,69 @@
 <template>
-    <body>
-        <div class="service-list" v-show="!mobile">
-            <h1 class="service-txt-title">Services</h1>
-            <!-- <p>&nbsp</p> -->
-            <ul>
-                <li v-for="(section, index) in services" class=" section-item">
-                    <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
-                </li>
-            </ul>
-            <div class="add-services" @click="showForm = true">
-                ADD SERVICE
+    <div class="service-list" v-show="!mobile">
+        <h1 class="service-txt-title">Services</h1>
+        <!-- <p>&nbsp</p> -->
+        <ul>
+            <li v-for="(section, index) in services" class="section-item">
+                <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
+            </li>
+        </ul>
+        <div class="add-services" @click="showForm = true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 1V15M1 8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            ADD SERVICE
+        </div>
+    </div>
+    <AddServiceModal
+      v-if="showForm"
+      :services="filteredServices"
+      @close="cancelForm"
+    />
+    <!-- <div v-if="showForm" class="modal-overlay">
+        <div class="modal">
+            <h3>Add New Service</h3>
+            <p>&nbsp;</p>
+            <div v-if="filteredServices.length === 0">
+                No other services available
+                <p>&nbsp;</p>
+                <button type="button" @click="cancelForm">Cancel</button>
             </div>
-            <div v-if="showForm" class="modal-overlay">
-                <div class="modal">
-                    <h3>Add New Service</h3>
-                    <p>&nbsp;</p>
-                    <div v-if="filteredServices.length === 0">
-                        No other services available
+            <div v-else>
+                <form @submit.prevent="createService">
+                    <div>
+                        <label for="service">Services: </label>
+                        <select id="service" v-model="selectedService">
+                            <option v-for="(service, id) in filteredServices" :key="id" :value="id">
+                                {{ service.name }}
+                            </option>
+                        </select>
                         <p>&nbsp;</p>
-                        <button type="button" @click="cancelForm">Cancel</button>
-                    </div>
-                    <div v-else>
-                        <form @submit.prevent="createService">
-                            <div>
-                                <label for="service">Services: </label>
-                                <select id="service" v-model="selectedService">
-                                    <option v-for="(service, id) in filteredServices" :key="id" :value="id">
-                                        {{ service.name }}
-                                    </option>
-                                </select>
-                                <p>&nbsp;</p>
-                                <label for="credentials">Credentials: </label>
-                                <div v-if="selectedService !== null">
-                                    <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
-                                        :key="index">
-                                        <label for="credential">{{ credential }}: </label>
-                                        <input id="credential" type="text" v-model="credentials[credential]"
-                                            placeholder="Enter value" />
-                                    </div>
-                                </div>
+                        <label for="credentials">Credentials: </label>
+                        <div v-if="selectedService !== null">
+                            <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
+                                :key="index">
+                                <label for="credential">{{ credential }}: </label>
+                                <input id="credential" type="text" v-model="credentials[credential]"
+                                    placeholder="Enter value" />
                             </div>
-                            <button type="submit">Create Service</button>
-                            <button type="button" @click="cancelForm">Cancel</button>
-                        </form>
-                    </div>
-                </div>
+                        </div>
+                        </div>
+                    <button type="submit">Create Service</button>
+                    <button type="button" @click="cancelForm">Cancel</button>
+                </form>
             </div>
         </div>
-    </body>
+    </div> -->
 </template>
 
 <script>
-import WidgetList from '@/components/WidgetList.vue';
+import AddServiceModal from './AddServiceModal.vue';
 
 export default {
 
     name: "SectionList",
     components: {
-        WidgetList,
+        AddServiceModal,
     },
     mounted() {
         this.checkScreen();
@@ -91,6 +97,9 @@ export default {
     },
     computed: {
         filteredServices() {
+            if (this.services.length === 0) {
+                return this.available_services;
+            }
             return this.available_services.filter(
                 (service) => !this.services.includes(service.name)
             );
@@ -105,8 +114,8 @@ export default {
                 this.mobile = false;
             }
         },
-        getColor(index) {
-            const colors = ["#77cbda", "#ff9e99", "#dbcc79", "#8cbd8c"];  //["blue", "red", "yellow", "green"]
+            getColor(index) {
+            const colors = ["#77c   bda", "#ff9e99", "#dbcc79", "#8cbd8c"];  //["blue", "red", "yellow", "green"]
             return colors[index % colors.length];
         },
         createService() {
@@ -130,83 +139,97 @@ export default {
             this.showForm = false;
             this.selectedServiceId = null;
         },
-    },
-    mounted() {
-        const about_data = {
-            client: {
-                host: "10.101.53.35"
-            },
-            server: {
-                current_time: 1531680780,
-                services: [
-                {
-                    name: "facebook",
-                    credentials: ["email", "password"],
-                    actions: [
-                        {
-                            name: "new_message_in_group",
-                            description: "A new message is posted in the group",
-                            inputs: ["Group Link", "Username"]
-                        },
-                        {
-                            name: "new_message_inbox",
-                            description: "A new private message is received by the user",
-                            inputs: ["Profile"]
-                        }
-                    ],
-                    reactions: [
-                        {
-                            name: "like_message",
-                            description: "The user likes a message",
-                            inputs: ["Profile"]
-                        }
-                    ]
-                },
-                {
-                    "name": "Discord",
-                    "credentials": [
-                        "token",
-                    ],
-                    actions: [
-                        {
-                            name: "new_message_in_group",
-                            description: "A new message is posted in the group",
-                            inputs: ["Group Link", "Username"]
-                        },
-                        {
-                            name: "ping_everyone",
-                            description: "You were pinged by a @everyone",
-                            inputs: ["Profile"]
-                        }
-                    ],
-                    reactions: [
-                        {
-                            name: "send_message",
-                            description: "The user sends a message",
-                            inputs: ["Message"]
-                        }
-                    ]
-                },
-                ]
+
+        async fetchAbout() {
+            try {
+                const res = await this.$axios.get("/about.json");
+                console.log(res);
+                this.available_services = res.data.server.services;
+            } catch (error) {
+                console.error(error);
             }
-        };
-        localStorage.setItem("available_services", JSON.stringify(about_data.server.services));
-        this.available_services = about_data.server.services;
+        },
 
-        // GET /users/{user_token}/services
-        const user_services = {
-            services: [
-                "Discord",
-                "Google",
-            ]
-        }
-        localStorage.setItem("user_services", JSON.stringify(user_services));
+        async fetchServices() {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await this.$axios.get(`/area/${token}/services`);
+                console.log(res);
+                if (res.data.services) {
+                    this.services = res.data.services;
+                } else {
+                    this.services = [];
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+    },
+    async mounted() {
+        // const about_data = {
+        //     client: {
+        //         host: "10.101.53.35"
+        //     },
+        //     server: {
+        //         current_time: 1531680780,
+        //         services: [
+        //         {
+        //             name: "facebook",
+        //             credentials: ["email", "password"],
+        //             actions: [
+        //                 {
+        //                     name: "new_message_in_group",
+        //                     description: "A new message is posted in the group",
+        //                     inputs: ["Group Link", "Username"]
+        //                 },
+        //                 {
+        //                     name: "new_message_inbox",
+        //                     description: "A new private message is received by the user",
+        //                     inputs: ["Profile"]
+        //                 }
+        //             ],
+        //             reactions: [
+        //                 {
+        //                     name: "like_message",
+        //                     description: "The user likes a message",
+        //                     inputs: ["Profile"]
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "name": "Discord",
+        //             "credentials": [
+        //                 "token",
+        //             ],
+        //             actions: [
+        //                 {
+        //                     name: "new_message_in_group",
+        //                     description: "A new message is posted in the group",
+        //                     inputs: ["Group Link", "Username"]
+        //                 },
+        //                 {
+        //                     name: "ping_everyone",
+        //                     description: "You were pinged by a @everyone",
+        //                     inputs: ["Profile"]
+        //                 }
+        //             ],
+        //             reactions: [
+        //                 {
+        //                     name: "send_message",
+        //                     description: "The user sends a message",
+        //                     inputs: ["Message"]
+        //                 }
+        //             ]
+        //         },
+        //         ]
+        //     }
+        // };
 
-        for (let i = 0; i < user_services.services.length; i++) {
-            // GET /users/{user_token}/services/{service_name}/actions_reactions
-            // fetched_data = ...
-            // user_actions_reactions[user_services.services[i]] = fetched_data
-        }
+        // get services from API ABOUT
+        await this.fetchAbout();
+
+        // get services already subscribed by the user
+        await this.fetchServices();
 
         const user_actions_reactions =
         {
@@ -252,20 +275,14 @@ export default {
 
 
 <style scoped>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    background-color: transparent;
-    height: auto;
-}
 
 .service-list {
     width: 20vw;
     height: 100%;
     overflow-y: auto;
     background-color: #f4f4f4;
-    border-right: 1px solid #ccc;
+    border-right: 2px solid #888585;
+    position: relative;
 }
 
 .service-section-name {
@@ -284,20 +301,36 @@ body {
 }
 
 .add-services {
-    width: 20vw;
-    text-align: center;
-    font-weight: bold;
-    font-size: 20px;
-    padding: 20px;
-    box-shadow: 0 -1px 0 #000;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #46b1c9;
+    border-radius: 5px;
+    border: none;
+    width: 10rem;
+    height: 2rem;
+    color: #efefef;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    position: absolute;
+    bottom: 1.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.add-services svg {
+    margin-right: 0.6rem;
 }
 
 .add-services:hover {
-    background-color: #bcc1ba;
+    background-color: #3a9cb1;
+}
+
+.add-services:active {
+    background-color: #2e7f8f;
 }
 
 

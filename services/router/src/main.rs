@@ -43,7 +43,7 @@ fn handle_connection(mut stream: TcpStream) {
 
                     let mut res = parser::collect_response(&socket);
 
-                    res.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
+                    res.headers.insert("access-control-allow-origin".to_string(), "*".to_string());
 
                     stream.write_all(&res.build_request()).unwrap();
                     return ();

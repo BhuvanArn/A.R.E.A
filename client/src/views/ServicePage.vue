@@ -1,9 +1,11 @@
 <template>
-    <NavBar class="navbar"></NavBar>
-    <div class="services-page">
-        <SectionList/>
-        <WidgetList></WidgetList>
-    </div>
+        <div class="main-page">
+            <NavBar class="navbar"></NavBar>
+            <div class="services-page">
+                <SectionList/>
+                <WidgetList></WidgetList>
+            </div>
+        </div>
 </template>
 
 <script>
@@ -33,17 +35,20 @@ export default {
 
 <style scoped>
 
-.navbar {
+.main-page {
+    font-family: 'inter', sans-serif;
     position: relative;
-    z-index: 10;
+    z-index: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 .services-page {
+    height: calc(100vh - 5rem);
+    outline: none;
     position: relative;
+    z-index: -1;
     display: flex;
-    flex-direction: row;
-    font-family: 'inter', sans-serif;
-    z-index: 1;
 }
 
 @media (max-width: 920px) {

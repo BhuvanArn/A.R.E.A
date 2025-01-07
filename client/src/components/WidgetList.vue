@@ -1,5 +1,4 @@
 <template>
-    <body>
         <div class="widget-list">
             <div class="grid-container">
                 <!-- Existing widgets -->
@@ -66,7 +65,6 @@
                 </div>
             </div>
         </div>
-    </body>
 </template>
 
 
