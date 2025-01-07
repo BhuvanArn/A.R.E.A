@@ -22,6 +22,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/area-serv.pem
+          chmod 400 ~/.ssh/area-serv.pem
 
       - name: Deploy to AWS
         run: |
