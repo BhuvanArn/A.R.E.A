@@ -231,6 +231,39 @@ routes:
       400:
         description: "Invalid unsubscription data."
 
+  - name: "add-services"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/addservices$"
+    realPath: "/addservices"
+    summary: "Add Action"
+    description: "Adds a new action for a given service."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ServiceId:
+                type: "number"
+                example: 123
+              Name:
+                type: "string"
+                example: "MyCustomAction"
+              TriggerConfig:
+                type: "string"
+                example: "some-trigger-data"
+              JwtToken:
+                type: "string"
+                example: "jwt_token"
+    responses:
+      200:
+        description: "Action added successfully."
+      401:
+        description: "Unauthorized or invalid data."
+
   - name: "actions-reactions"
     host: "csharp_service"
     port: 8080
