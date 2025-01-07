@@ -39,3 +39,21 @@ def strategy_every(register: object, data: bytes):
     else:
         return (None)
 
+def middleware_on_time_daily(register: object, action: Action, discard, valid, data = None):
+    actual_time = datetime.now()
+    looking_for = datetime.fromisoformat(f'{actual_time.year}-{actual_time.month:02}-{actual_time.day:02}T{register.vars["marker"]}Z')
+
+    if (actual_time.timestamp() >= looking_for):
+        valid(actual_time)
+        return
+    valid(None)
+
+def strategy_on_time_daily(register: object, data: bytes):
+    if (register.cache and data and (datetime.fromisoformat(register.cache).weekday() == data.weekday())):
+        return (None)
+
+    if (data):
+        register.cache = data.isoformat()
+        return (register.cache)
+    else:
+        return (None)
