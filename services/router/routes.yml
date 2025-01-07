@@ -225,9 +225,7 @@ routes:
                   Name:
                     type: "string"
                     example: "resd"
-                  Credentials:
-                    type: "list"
-                    example: "[username: test, password: test]"
+
     responses:
       200:
         description: "Unsubscription successful (no data)."

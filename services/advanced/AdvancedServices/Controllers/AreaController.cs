@@ -66,8 +66,7 @@ public class AreaController : ControllerBase
         await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
         {
             JwtToken = user_token,
-            Name = request.Name,
-            Credentials = request.Credentials
+            Name = request.Name
         });
 
         return Ok();

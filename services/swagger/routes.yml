@@ -225,9 +225,6 @@ routes:
                   Name:
                     type: "string"
                     example: "resd"
-                  Credentials:
-                    type: "list"
-                    example: "[username: test, password: test]"
 
   - name: "add-actions"
     host: "csharp_service"
