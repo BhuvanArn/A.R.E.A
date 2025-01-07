@@ -24,7 +24,7 @@ jobs:
 
       - name: Deploy to AWS
         run: |
-          ssh -i "~/.ssh/area-serv.pem" -o "StrictHostKeyChecking no" admin@ec2-15-188-14-84.eu-west-3.compute.amazonaws.com << EOF
+          ssh -i "~/.ssh/area-serv.pem" -o "StrictHostKeyChecking no" admin@${{ secrets.AWS_MACHINE_ADDRESS }} << EOF
             cd /home/admin/A.R.E.A/
             git fetch
             git switch main
