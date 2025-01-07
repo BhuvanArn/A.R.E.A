@@ -6,5 +6,5 @@ public class SubscribeServiceRequest
 {
     public string Name { get; set; }
     
-    public object Auth { get; set; }
+    public object? Auth { get; set; }
 }

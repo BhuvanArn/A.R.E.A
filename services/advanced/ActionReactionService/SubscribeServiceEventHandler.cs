@@ -41,7 +41,7 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         {
             Name = @event.Name,
             UserId = userId,
-            Auth = JsonConvert.SerializeObject(@event.Auth)
+            Auth = JsonConvert.SerializeObject(@event.Auth ?? "")
         };
         
         await _dbHandler.AddAsync(service);
