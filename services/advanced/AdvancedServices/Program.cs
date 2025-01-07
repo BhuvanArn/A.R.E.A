@@ -53,18 +53,15 @@ public static class Program
         });
         builder.Services.AddLogging(configure => configure.AddConsole());
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>, UserResetPasswordEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<ForgotPasswordEvent, (string, ResultType)>, ForgotPasswordEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>, SubscribeServiceEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UnsubscribeServiceEvent, (List<Service>, ResultType)>, UnsubscribeServiceEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>, GoogleLoginEventHandler>();
+        builder.Services.Scan(scan =>
+            scan.FromAssemblies(
+                    typeof(ActionReactionEventHandler).Assembly,
+                    typeof(ForgotPasswordEventHandler).Assembly
+                )
+                .AddClasses(classes => classes.AssignableTo(typeof(IIntegrationEventHandler<,>)))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime()
+        );
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
         builder.Services.AddScoped<IAboutParserService, AboutParserService>();
         
