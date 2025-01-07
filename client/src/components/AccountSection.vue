@@ -97,7 +97,17 @@ export default {
                 return;
             }
             this.errorMessage = '';
-            // Send the request to the backend to change the password
+            try {
+                const response = await this.$axios.post('/auth/change-password', {
+                    JwtToken: localStorage.getItem('token'),
+                    Password: this.oldPwd,
+                    NewPassword: this.newPwd
+                });
+                this.changePwdMenu = false;
+                console.log(response);
+            } catch (error) {
+                this.errorMessage = 'An error occurred. Please try again later.';
+            }
         }
     },
     mounted() {
