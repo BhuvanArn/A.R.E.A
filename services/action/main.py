@@ -77,8 +77,13 @@ class RegisteredAction(object):
         action: Action = watcher.services.get_service(self.service).get_action(self.name)
         middlewares = []
 
+        if (not action):
+            self._discard(watcher, action, "action not found.")
+            return
+
         if (not action.fetch):
             self._discard(watcher, action, "no fetch entry found, skipping.")
+            return
 
         if (action.fetch.endpoint):
             middlewares.append(self._build_middleware(watcher, action, watcher.get_module_middleware("endpoint")))
@@ -186,7 +191,7 @@ class Watcher(object):
 
         json = req.json()
 
-        for item in json[0]:
+        for item in json:
             for action in item["Actions"]:
                 _vars = {}
 
@@ -224,87 +229,120 @@ class Watcher(object):
     def __del__(self):
         self.save()
 
+class ActionService(object):
+    def __init__(self):
+        self.connection = AreaConnect()
+        self.connection.set_listen()
+
+        print(f"[PYTHON (service-action)] - lisening on {self.connection.port}", flush=True)
+
+        self.db_connect = AreaConnect(port=2728)
+        self.db_connect.set_listen()
+
+        print(f"[PYTHON (service-action)] - lisening for db on {self.db_connect.port}", flush=True)
+
+        self.watcher = Watcher(self.connection)
+
+        self.running = False
+
+        signal(SIGTERM, lambda: self.close())
+
+        self._update_datas()
+
+    def _update_datas(self):
+        retry = 0
+        start = True
+        while (start or (self.watcher.failed_update)) and retry < 3:
+            start = False
+            try:
+                self.watcher.from_request("http://csharp_service:8080/area")
+                print(f"[PYTHON (service-action)] - updated data", flush=True)
+            except Exception as e:
+                print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
+                retry += 1
+                sleep(7.4)
+
+        self.running = not self.watcher.failed_update
+
+    def _handle_request_from_reaction(self):
+        message = self.connection.get_message()
+
+        if (message.type == INVM):
+            self.connection.close_client()
+            print(f"[PYTHON (service-action)] - reaction disconnected (invalid message received)", flush=True)
+
+        if (message.type == ACTI):
+            name_id = message.payload.split(b' ')[0].decode()
+
+            self.watcher.update(name_id)
+
+    def _handle_request_from_db(self):
+        self.db_connect.accept_if_not_connected()
+        print(f"[PYTHON (service-action)] - db requested connection", flush=True)
+
+        message = self.db_connect.get_message()
+
+        if (self.db_connect.get_message() == INVM):
+            self.db_connect.close_client()
+            print(f"[PYTHON (service-action)] - closing db connect", flush=True)
+
+        if (self.db_connect.get_message() == UPDT):
+            print(f"[PYTHON (service-action)] - db requested data update", flush=True)
+            try:
+                self.watcher.from_request("http://csharp_service:8080/area")
+            except Exception as e:
+                print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
+            self.db_connect.close_client()
+            print(f"[PYTHON (service-action)] - closing db connect", flush=True)
+            self.connection.send_message(Message(UPDT))
+            print(f"[PYTHON (service-action)] - forwading to reaction", flush=True)
+
+    def mainloop(self):
+        while (self.running):
+            read_ready_sockets, _, _ = select(
+                [self.connection.socket, self.db_connect.socket] if not self.connection.connected else [self.connection.socket, self.db_connect.socket, self.connection.connected]
+            , [], [], 0)
+
+            if (self.connection.socket in read_ready_sockets):
+                self.connection.accept_if_not_connected()
+                print(f"[PYTHON (service-action)] - connected to reaction", flush=True)
+
+            if (self.connection.connected and self.connection.connected in read_ready_sockets):
+                self._handle_request_from_reaction()
+
+            self.watcher.watch()
+
+            if (self.db_connect.socket in read_ready_sockets):
+                self._handle_request_from_db()
+
+        print(f"[PYTHON (service-action)] - stopping service.", flush=True)
+
+    def close(self):
+        self.watcher.save()
+
+        self.db_connect.close()
+        self.connection.close()
+
+        self.running = False
+
 def main() -> int:
     print(f"[PYTHON (service-action)] - starting...", flush=True)
 
-    connection = AreaConnect()
-    connection.set_listen()
+    asrv: ActionService = ActionService()
 
-    db_connect = AreaConnect(port=2728)
-    db_connect.set_listen()
+    #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
+    asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
 
-    watcher = Watcher(connection)
+    try:
+        asrv.mainloop()
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"[PYTHON (service-action)] - {e}", flush=True)
+        asrv.close()
+        return (84)
 
-    retry = 0
-    start = True
-    while (start or (watcher.failed_update)) and retry < 3:
-        start = False
-        try:
-            watcher.from_request("http://csharp_service:8080/area")
-            print(f"[PYTHON (service-action)] - updated data", flush=True)
-        except Exception as e:
-            print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
-            retry += 1
-            sleep(7.4)
-    #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2024-12-10T22::15.0Z"}))
-
-    print(f"[PYTHON (service-action)] - lisening on {connection.port}", flush=True)
-    print(f"[PYTHON (service-action)] - lisening for db on {db_connect.port}", flush=True)
-
-    signal(SIGTERM, lambda: watcher.save() and exit(0))
-
-    while 1:
-        try:
-            read_ready_sockets, _, _ = select([connection.socket], [], [], 0)
-
-            if (read_ready_sockets):
-                connection.accept_if_not_connected()
-                print(f"[PYTHON (service-action)] - connected to reaction", flush=True)
-
-            if (connection.connected):
-                read_ready_sockets, _, _ = select([connection.connected], [], [], 0)
-
-                if (read_ready_sockets):
-                    message = connection.get_message()
-
-                    if (message.type == INVM):
-                        connection.close_client()
-                        print(f"[PYTHON (service-action)] - reaction disconnected", flush=True)
-
-                    if (message.type == ACTI):
-                        name_id = message.payload.split(b' ')[0].decode()
-
-                        watcher.update(name_id)
-
-            watcher.watch()
-
-            read_ready_sockets, _, _ = select([db_connect.socket], [], [], 0)
-
-            if (read_ready_sockets):
-                db_connect.accept_if_not_connected()
-                print(f"[PYTHON (service-action)] - db requested connection", flush=True)
-
-                message = db_connect.get_message()
-
-                if (db_connect.get_message() == INVM):
-                    db_connect.close_client()
-                    print(f"[PYTHON (service-action)] - closing db connect", flush=True)
-
-                if (db_connect.get_message() == UPDT):
-                    print(f"[PYTHON (service-action)] - db requested data update", flush=True)
-                    try:
-                        watcher.from_request("http://csharp_service:8080/area")
-                    except Exception as e:
-                        print(f"[PYTHON (service-action)] - failed to update db datas {e}", flush=True)
-                    db_connect.close_client()
-                    print(f"[PYTHON (service-action)] - closing db connect", flush=True)
-                    connection.send_message(Message(UPDT))
-                    print(f"[PYTHON (service-action)] - forwading to reaction", flush=True)
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f"[PYTHON (service-action)] - {e}", flush=True)
-            return (84)
+    asrv.close()
 
     return (0)
 
