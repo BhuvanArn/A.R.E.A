@@ -467,8 +467,8 @@ export default {
     flex-direction: row;
     width: 80%;
     height: 100%;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .profile-info-txt {
