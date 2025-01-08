@@ -201,7 +201,7 @@ class Config(object):
                 for reaction in item["reactions"]:
                     name = reaction["name"] if "name" in reaction else "new_reaction"
                     description = reaction["description"] if "description" in reaction else "placeholder"
-                    middleware: str = reaction["fetch"]["commit"] if "middleware" in reaction["commit"] else "custom"
+                    middleware: str = reaction["commit"]["middleware"] if "middleware" in reaction["commit"] else "custom"
                     redo_action: bool = reaction["update_action"] if "update_action" in reaction else False
 
                     commit = None
