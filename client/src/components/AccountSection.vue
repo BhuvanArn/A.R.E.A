@@ -120,9 +120,6 @@ export default {
         }
     },
     mounted() {
-/*         if (localStorage.getItem('token') === null) {
-            this.$router.push('/login');
-        } */
         if (localStorage.getItem('AccountType') === 'Area') {
             this.isAreaAccount = true;
             this.getAvatarLetter();
