@@ -96,7 +96,6 @@ export default {
 				callback: this.handleCredentialResponse,
 			});
 			google.accounts.id.prompt()
-            localStorage.setItem('AccountType', 'Google');
 		},
 
         async handleCredentialResponse(response) {
@@ -114,6 +113,7 @@ export default {
                 localStorage.setItem('Status', 'Logged In');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
+                localStorage.setItem('AccountType', 'Google');
                 window.location.href = this.$router.resolve({ name: 'services' }).href;
             } catch (error) {
                 console.error(error);
