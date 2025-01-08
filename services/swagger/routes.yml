@@ -195,6 +195,31 @@ routes:
       400:
         description: "Invalid subscription data."
 
+
+  - name: "user-information"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/userinformation$"
+    realPath: "/userinformation"
+    summary: "Get User Information"
+    description: "Retrieves information about the user based on the provided JWT token."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              JwtToken:
+                type: "string"
+                example: "jwt_token_here"
+    responses:
+      200:
+        description: "User information retrieved successfully."
+      401:
+        description: "Unauthorized or invalid JWT token."
+
   - name: "unsubscribe-service"
     host: "csharp_service"
     port: 8080

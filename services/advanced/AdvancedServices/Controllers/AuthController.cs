@@ -90,4 +90,17 @@ public class AuthController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPost("userinformation")]
+    public async Task<IActionResult> GetUserInformation([FromBody] GetUserInformationRequest request)
+    {
+        _logger.LogInformation("Get user information event triggered.");
+        
+        var response = await _eventBus.PublishAsync<GetUserInformationEvent, (string, ResultType)>(new GetUserInformationEvent
+        {
+            JwtToken = @request.JwtToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }
