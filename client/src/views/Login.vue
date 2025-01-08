@@ -88,7 +88,7 @@ export default {
 		async signInWithGoogle() {
 			if (!window.google || !google.accounts) {
 				console.error('Google Identity Services not initialized');
-			return;
+			    return;
 			}
             console.log('client_id', this.client_id);
 			google.accounts.id.initialize({
