@@ -1,268 +1,383 @@
 routes:
-  - name: auth-login
-    host: csharp_service
+  - name: "auth-login"
+    host: "csharp_service"
     port: 8080
-    condition: ^/auth/login$
-    realPath: /auth/login
-    summary: User Login
-    description: Authenticates a user and provides an access token.
-    method: POST
+    condition: "^/auth/login$"
+    realPath: "/auth/login"
+    summary: "User Login"
+    description: "Authenticates a user and provides an access token."
+    method: "POST"
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
+            type: "object"
             properties:
               Email:
-                type: string
+                type: "string"
                 example: "example@app.com"
               Password:
-                type: string
+                type: "string"
                 example: "password"
     responses:
       200:
-        description: Login successful and access token provided.
+        description: "Login successful and access token provided."
       401:
-        description: Invalid credentials.
+        description: "Invalid credentials."
 
-
-  - name: auth-register
-    host: csharp_service
+  - name: "auth-register"
+    host: "csharp_service"
     port: 8080
-    condition: ^/auth/register$
-    realPath: /auth/register
-    summary: User Registration
-    description: Registers a new user.
-    method: POST
+    condition: "^/auth/register$"
+    realPath: "/auth/register"
+    summary: "User Registration"
+    description: "Registers a new user."
+    method: "POST"
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
+            type: "object"
             properties:
               Username:
-                type: string
+                type: "string"
                 example: "username"
               Email:
-                type: string
+                type: "string"
                 example: "example@app.com"
               Password:
-                type: string
+                type: "string"
                 example: "password"
               ConfirmedPassword:
-                type: string
+                type: "string"
                 example: "password"
     responses:
       200:
-        description: Registration successful.
+        description: "Registration successful."
       401:
-        description: Invalid datas (passwords do not match, email already exists, etc).
+        description: "Invalid data (passwords do not match, email already exists, etc)."
 
-  - name: auth-google-login
-    host: csharp_service
+  - name: "auth-google-login"
+    host: "csharp_service"
     port: 8080
-    condition: ^/auth/google-login$
-    realPath: /auth/google-login
-    summary: Google Login
-    description: Authenticates a user using Google OAuth and provides an access token.
-    method: POST
+    condition: "^/auth/google-login$"
+    realPath: "/auth/google-login"
+    summary: "Google Login"
+    description: "Authenticates a user using Google OAuth and provides an access token."
+    method: "POST"
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
+            type: "object"
             properties:
               Token:
-                type: string
+                type: "string"
                 example: "google_oauth_token"
     responses:
       200:
-        description: Login successful and access token provided.
+        description: "Login successful and access token provided."
       500:
-        description: Invalid Google OAuth token.
+        description: "Invalid Google OAuth token."
 
-  - name: auth-reset-password
-    host: csharp_service
+  - name: "auth-reset-password"
+    host: "csharp_service"
     port: 8080
-    condition: ^/auth/reset-password$
-    realPath: /auth/reset-password
-    summary: Reset Password
-    description: Resets a user's password. The user must be logged in to reset their password.
-    method: POST
+    condition: "^/auth/reset-password$"
+    realPath: "/auth/reset-password"
+    summary: "Reset Password"
+    description: "Resets a user's password. The user must be logged in to reset their password."
+    method: "POST"
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
+            type: "object"
             properties:
               JwtToken:
-                type: string
+                type: "string"
                 example: "jwt_token"
               Password:
-                type: string
+                type: "string"
                 example: "password"
               NewPassword:
-                type: string
+                type: "string"
                 example: "new_password"
     responses:
       200:
-        description: Password reset successful.
+        description: "Password reset successful."
       401:
-        description: Invalid datas (old password incorrect, etc).
+        description: "Invalid data (old password incorrect, etc)."
       500:
-        description: Internal server error (bad JWT token, etc).
+        description: "Internal server error (bad JWT token, etc)."
 
-  - name: area-list
-    host: csharp_service
+  - name: "auth-forget-password"
+    host: "csharp_service"
     port: 8080
-    condition: ^/area$
-    realPath: /area
-    summary: Get Areas
-    description: Retrieves a list of available areas.
-    method: GET
-    responses:
-      200:
-        description: List of areas.
-
-  - name: get-services
-    host: csharp_service
-    port: 8080
-    condition: ^/area/([^/]+)/services$
-    realPath: /area/{jwtToken}/services
-    summary: Get Services
-    description: Retrieves a list of services that you subscribed to.
-    method: GET
-    responses:
-      200:
-        description: List of services.
-
-  - name: subscribe-service
-    host: csharp_service
-    port: 8080
-    condition: ^/area/([^/]+)/subscribe_service$
-    realPath: /area/{jwtToken}/subscribe_service
-    summary: Subscribe Service
-    description: Subscribes to a service in an area.
-    method: POST
+    condition: "^/auth/forget-password$"
+    realPath: "/auth/forget-password"
+    summary: "Forgot Password"
+    description: "Send an email to user in case they lost their password."
+    method: "POST"
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: object
+            type: "object"
+            properties:
+              Email:
+                type: "string"
+                example: "area@gmail.com"
+    responses:
+      200:
+        description: "Email sent successfully."
+      401:
+        description: "Invalid data (wrong email, couldn't connect to SMTP, etc)."
+      500:
+        description: "Internal server error (email couldn't be sent, etc)."
+
+  - name: "area-list"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area$"
+    realPath: "/area"
+    summary: "Get Areas"
+    description: "Retrieves a list of available areas."
+    method: "GET"
+    responses:
+      200:
+        description: "List of areas."
+
+  - name: "get-services"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/([^/]+)/services$"
+    realPath: "/area/{jwtToken}/services"
+    summary: "Get Services"
+    description: "Retrieves a list of services that you subscribed to."
+    method: "GET"
+    responses:
+      200:
+        description: "List of services."
+
+  - name: "subscribe-service"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/([^/]+)/subscribe_service$"
+    realPath: "/area/{jwtToken}/subscribe_service"
+    summary: "Subscribe Service"
+    description: "Subscribes to a service in an area."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
             properties:
               name:
-                type: string
+                type: "string"
+                example: "facebook"
+              auth:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+                    example: "3421432423"
+    responses:
+      201:
+        description: "Subscription successful."
+      400:
+        description: "Invalid subscription data."
+
+  - name: "unsubscribe-service"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/([^/]+)/unsubscribe_service$"
+    realPath: "/area/{jwtToken}/unsubscribe_service"
+    summary: "Unsubscribe Service"
+    description: "Unsubscribes from a service in an area."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              name:
+                type: "string"
                 example: "facebook"
               credentials:
-                type: object
+                type: "object"
                 properties:
-                  email:
-                    type: string
-                    example: "example@app.com"
-                  password:
-                    type: string
-                    example: "password"
+                  JwtToken:
+                    type: "string"
+                    example: "9321903912kkkiezd89032"
+                  Name:
+                    type: "string"
+                    example: "resd"
+
     responses:
       200:
-        description: Subscription successful (no data).
+        description: "Unsubscription successful (no data)."
       401:
-        description: Invalid subscription data.
+        description: "Invalid unsubscription data."
 
-  - name: actions-reactions
-    host: csharp_service
+  - name: "add-actions"
+    host: "csharp_service"
     port: 8080
-    condition: ^/area/([^/]+)/services/([^/]+)/actions_reactions$
-    realPath: /area/{jwtToken}/services/{serviceName}/actions_reactions
-    summary: Get Actions and Reactions
-    description: Retrieves a list of actions and reactions available in a service (you must be subscribed to the service).
-    method: GET
+    condition: "^/addactions$"
+    realPath: "/addactions"
+    summary: "Add actions"
+    description: "Adds a new actions for a given service."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ServiceId:
+                type: "guid"
+                example: "432432-84932-4893894-87348"
+              Name:
+                type: "string"
+                example: "MyCustomAction"
+              TriggerConfig:
+                type: "string"
+                example: "some-trigger-data"
+              JwtToken:
+                type: "string"
+                example: "jwt_token"
     responses:
       200:
-        description: List of actions and reactions.
+        description: "Action added successfully."
       401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
+        description: "Unauthorized or invalid data."
 
-  - name: action
-    host: csharp_service
+  - name: "add-reactions"
+    host: "csharp_service"
     port: 8080
-    condition: ^/area/([^/]+)/services/([^/]+)/action$
-    realPath: /area/{jwtToken}/services/{serviceName}/action
-    summary: Get all actions of the service
-    description: Retrieves a list of actions available in a service (you must be subscribed to the service).
-    method: GET
+    condition: "^/addreactions$"
+    realPath: "/addreactions"
+    summary: "Add Reaction"
+    description: "Adds a new reaction for a given service and action."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ServiceId:
+                type: "number"
+                example: 101
+              ActionId:
+                type: "number"
+                example: 202
+              Name:
+                type: "string"
+                example: "MyCustomReaction"
+              ExecutionConfig:
+                type: "string"
+                example: "some-execution-configuration"
+              JwtToken:
+                type: "string"
+                example: "jwt_token_here"
     responses:
       200:
-        description: List of actions.
+        description: "Reaction added successfully."
       401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
+        description: "Unauthorized or invalid data."
 
-  - name: reaction
-    host: csharp_service
+  - name: "actions-reactions"
+    host: "csharp_service"
     port: 8080
-    condition: ^/area/([^/]+)/services/([^/]+)/reaction$
-    realPath: /area/{jwtToken}/services/{serviceName}/reaction
-    summary: Get all reactions of the service
-    description: Retrieves a list of reactions available in a service (you must be subscribed to the service).
-    method: GET
+    condition: "^/area/([^/]+)/services/([^/]+)/actions_reactions$"
+    realPath: "/area/{jwtToken}/services/{serviceName}/actions_reactions"
+    summary: "Get Actions and Reactions"
+    description: "Retrieves a list of actions and reactions available in a service (you must be subscribed to the service)."
+    method: "GET"
     responses:
       200:
-        description: List of reactions.
+        description: "List of actions and reactions."
       401:
-        description: Not subscribed to the service/bad service name/ bad JWT token.
+        description: "Not subscribed to the service/bad service name/bad JWT token."
 
-  - name: about
-    host: service-about
+  - name: "action"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/([^/]+)/services/([^/]+)/action$"
+    realPath: "/area/{jwtToken}/services/{serviceName}/action"
+    summary: "Get all actions of the service"
+    description: "Retrieves a list of actions available in a service (you must be subscribed to the service)."
+    method: "GET"
+    responses:
+      200:
+        description: "List of actions."
+      401:
+        description: "Not subscribed to the service/bad service name/bad JWT token."
+
+  - name: "reaction"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/([^/]+)/services/([^/]+)/reaction$"
+    realPath: "/area/{jwtToken}/services/{serviceName}/reaction"
+    summary: "Get all reactions of the service"
+    description: "Retrieves a list of reactions available in a service (you must be subscribed to the service)."
+    method: "GET"
+    responses:
+      200:
+        description: "List of reactions."
+      401:
+        description: "Not subscribed to the service/bad service name/bad JWT token."
+
+  - name: "about"
+    host: "service-about"
     port: 80
-    condition: ^/about.json$
-    realPath: /about.json
-    summary: About Information
-    description: Provides information about the backend services. All implemented services, their actions and reactions are listed here.
-    method: GET
+    condition: "^/about.json$"
+    realPath: "/about.json"
+    summary: "About Information"
+    description: "Provides information about the backend services. All implemented services, their actions, and reactions are listed here."
+    method: "GET"
     responses:
       200:
-        description: About details.
+        description: "About details."
 
-  # Add new routes here
-
-
-
-
-
-
-
-  ###------------------ Swagger ------------------###
-
-  - name: swagger-doc
-    host: swagger-doc
+  - name: "swagger-doc"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/$
+    condition: "^/swagger/$"
 
-  - name: swagger-ui-css
-    host: swagger-doc
+  - name: "swagger-ui-css"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/swagger-ui.css$
+    condition: "^/swagger/swagger-ui.css$"
 
-  - name: swagger-ui-bundle-js
-    host: swagger-doc
+  - name: "swagger-ui-bundle-js"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/swagger-ui-bundle.js$
+    condition: "^/swagger/swagger-ui-bundle.js$"
 
-  - name: swagger-ui-standalone-preset-js
-    host: swagger-doc
+  - name: "swagger-ui-standalone-preset-js"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/swagger-ui-standalone-preset.js$
+    condition: "^/swagger/swagger-ui-standalone-preset.js$"
 
-  - name: swagger-ui-init-js
-    host: swagger-doc
+  - name: "swagger-ui-init-js"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/swagger-ui-init.js$
+    condition: "^/swagger/swagger-ui-init.js$"
 
-  - name: swagger-json
-    host: swagger-doc
+  - name: "swagger-json"
+    host: "swagger-doc"
     port: 3000
-    condition: ^/swagger/swagger.json$
+    condition: "^/swagger/swagger.json$"

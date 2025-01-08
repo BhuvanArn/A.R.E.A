@@ -52,7 +52,21 @@ public class AreaController : ControllerBase
         {
             JwtToken = user_token,
             Name = request.Name,
-            Credentials = request.Credentials
+            Auth = request.Auth
+        });
+
+        return Ok();
+    }
+    
+    [HttpPost("{user_token}/unsubscribe_service")]
+    public async Task<IActionResult> UnsubscribeService(string user_token, [FromBody] UnsubscribeServiceRequest request)
+    {
+        _logger.LogInformation($"UnsubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
+
+        await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
+        {
+            JwtToken = user_token,
+            Name = request.Name
         });
 
         return Ok();
@@ -95,6 +109,39 @@ public class AreaController : ControllerBase
         {
             ServiceName = service_name,
             JwtToken = user_token
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPost("addactions")]
+    public async Task<IActionResult> AddAction([FromBody] AddActionRequest request)
+    {
+        _logger.LogInformation("AddActions event triggered");
+
+        var response = await _eventBus.PublishAsync<AddActionRequest, (string, ResultType)>(new AddActionRequest
+        {
+            ServiceId = request.ServiceId,
+            Name = request.Name,
+            TriggerConfig = request.TriggerConfig,
+            JwtToken = request.JwtToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPost("addreactions")]
+    public async Task<IActionResult> AddReaction([FromBody] AddReactionRequest request)
+    {
+        _logger.LogInformation("AddReactions event triggered");
+
+        var response = await _eventBus.PublishAsync<AddReactionEvent, (string, ResultType)>(new AddReactionEvent
+        {
+            ServiceId = request.ServiceId,
+            ActionId = request.ActionId,
+            Name = request.Name,
+            ExecutionConfig = request.ExecutionConfig,
+            JwtToken = request.JwtToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
