@@ -199,8 +199,8 @@ routes:
   - name: "user-information"
     host: "csharp_service"
     port: 8080
-    condition: "^/userinformation$"
-    realPath: "/userinformation"
+    condition: "^/auth/userinformation$"
+    realPath: "/auth/userinformation"
     summary: "Get User Information"
     description: "Retrieves information about the user based on the provided JWT token."
     method: "POST"
@@ -251,8 +251,8 @@ routes:
   - name: "add-actions"
     host: "csharp_service"
     port: 8080
-    condition: "^/addactions$"
-    realPath: "/addactions"
+    condition: "^/area/addactions$"
+    realPath: "/area/addactions"
     summary: "Add actions"
     description: "Adds a new actions for a given service."
     method: "POST"
@@ -284,8 +284,8 @@ routes:
   - name: "add-reactions"
     host: "csharp_service"
     port: 8080
-    condition: "^/addreactions$"
-    realPath: "/addreactions"
+    condition: "^/area/addreactions$"
+    realPath: "/area/addreactions"
     summary: "Add Reaction"
     description: "Adds a new reaction for a given service and action."
     method: "POST"
