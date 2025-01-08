@@ -139,6 +139,33 @@ routes:
       500:
         description: "Internal server error (bad JWT token, etc)."
 
+  - name: "discord-login"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/discord-login$"
+    realPath: "/auth/discord-login"
+    summary: "Discord Login"
+    description: "Authenticates a user via Discord credentials and provides a Discord token."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              Email:
+                type: "string"
+                example: "user@example.com"
+              Password:
+                type: "string"
+                example: "password123"
+    responses:
+      200:
+        description: "Discord token retrieved successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
   - name: "auth-forget-password"
     host: "csharp_service"
     port: 8080
