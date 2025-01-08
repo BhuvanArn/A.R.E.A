@@ -5,7 +5,7 @@
                 <div class="filler01"></div>
                 <img src="@/assets/logo.png" class="logo-account">
             </div>
-            <div class="main-container-bottom">
+            <div v-if="isAreaAccount" class="main-container-bottom">
                 <div class="filler01"></div>
                 <span class="account-avatar-container">
                     <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
@@ -57,6 +57,12 @@
                 </div>
                 <div class="filler01"></div>
             </div>
+            <div v-else class="main-container-bottom">
+                <div class="profile-info-container">
+                    <img src="@/assets/info.png" class="info-img">
+                    <h2 class="profile-info-txt">This is not an Area account. You cannot modify your account information here. </h2>
+                </div>
+            </div>
         </div>
 </template>
 
@@ -68,6 +74,9 @@ export default {
         return {
             mobile: false,
             changePwdMenu: false,
+            isAreaAccount: false,
+            isGoogleAccount: false,
+            isDiscordAccount: false,
             userEmail: 'test@test.com',
             userName: 'Pablo',
             userAvatar: '',
@@ -111,7 +120,18 @@ export default {
         }
     },
     mounted() {
-        this.getAvatarLetter();
+/*         if (localStorage.getItem('token') === null) {
+            this.$router.push('/login');
+        } */
+        if (localStorage.getItem('AccountType') === 'Area') {
+            this.isAreaAccount = true;
+            this.getAvatarLetter();
+        } else if (localStorage.getItem('AccountType') === 'Google') {
+            this.isGoogleAccount = true;
+        } else if (localStorage.getItem('AccountType') === 'Discord') {
+            this.isDiscordAccount = true;
+        }
+
     }
 }
 </script>
@@ -433,6 +453,32 @@ export default {
     margin-right: 1rem;
     font-family: 'inter', sans-serif;
     font-weight: 400;
+}
+
+.info-img {
+    width: 3.5rem;
+    height: 3.5rem;
+}
+
+.profile-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 80%;
+    height: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.profile-info-txt {
+    font-family: 'inter', sans-serif;
+    font-size: medium;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 </style>
