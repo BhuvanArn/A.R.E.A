@@ -28,7 +28,7 @@
                     <div class="oauth-ind-container-fk">
                         <img src="@/assets/oauth/facebook_logo.png" class="img-style2">
                     </div>
-                    <div class="oauth-ind-container-gg">
+                    <div class="oauth-ind-container-gg" @click="signInWithGoogle">
                         <img src="@/assets/oauth/google_logo.png" class="img-style2">
                     </div>
                     <div class="oauth-ind-container-mc">
@@ -55,7 +55,8 @@ export default {
             mobile: false,
             email: '',
             password: '',
-            errorMessage: ''
+            errorMessage: '',
+            client_id: import.meta.env.VITE_APP_GOOGLE_CLIENT_ID,
         }
     },
     mounted() {
@@ -83,6 +84,42 @@ export default {
                 this.mobile = false;
             }
         },
+
+		async signInWithGoogle() {
+			if (!window.google || !google.accounts) {
+				console.error('Google Identity Services not initialized');
+			return;
+			}
+            console.log('client_id', this.client_id);
+			google.accounts.id.initialize({
+				client_id: this.client_id,
+				callback: this.handleCredentialResponse,
+			});
+			google.accounts.id.prompt()
+            localStorage.setItem('AccountType', 'Google');
+		},
+
+        async handleCredentialResponse(response) {
+            if (response.error) {
+                console.error(response.error);
+                return;
+            }
+            const credential = response.credential;
+            try {
+                const response = await this.$axios.post('/auth/google-login', {
+                    Token: credential,
+                });
+
+                localStorage.setItem('token', credential);
+                localStorage.setItem('Status', 'Logged In');
+                const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
+                localStorage.setItem('expirationTime', expirationTime);
+                window.location.href = this.$router.resolve({ name: 'services' }).href;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
         async loginClient(event) {
             if (!this.email || !this.password) {
                 this.errorMessage = 'Please fill all the fields';
@@ -106,6 +143,7 @@ export default {
                 console.log(token);
                 localStorage.setItem('token', token);
                 localStorage.setItem('Status', 'Logged In');
+                localStorage.setItem('AccountType', 'Area');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
                 this.navigateToHome(event);
