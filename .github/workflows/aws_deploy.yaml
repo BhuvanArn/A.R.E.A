@@ -1,0 +1,30 @@
+name: AWS Deployment
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up ssh private key file
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/area-serv.pem
+          chmod 400 ~/.ssh/area-serv.pem
+
+      - name: Deploy to AWS
+        run: |
+          ssh -i "~/.ssh/area-serv.pem" -o "StrictHostKeyChecking no" admin@${{ secrets.AWS_MACHINE_ADDRESS }} << EOF
+            cd /home/admin/A.R.E.A/
+            git switch main
+            sudo docker-compose down -v
+            git fetch
+            git pull --force
+            sudo docker-compose up -d
+          EOF
