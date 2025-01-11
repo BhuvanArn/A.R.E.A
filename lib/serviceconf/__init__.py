@@ -175,8 +175,8 @@ class Config(object):
 
                     fetch = None
                     if ("fetch" in action):
-                        strategy: str = action["fetch"]["strategy"] if "strategy" in action["fetch"] else "custom"
-                        middleware: str = action["fetch"]["middleware"] if "middleware" in action["fetch"] else "custom"
+                        strategy: str = action["fetch"]["strategy"] if "strategy" in action["fetch"] else None
+                        middleware: str = action["fetch"]["middleware"] if "middleware" in action["fetch"] else None
                         endpoint = None
 
                         if ("endpoint" in action["fetch"]):
@@ -201,7 +201,7 @@ class Config(object):
                 for reaction in item["reactions"]:
                     name = reaction["name"] if "name" in reaction else "new_reaction"
                     description = reaction["description"] if "description" in reaction else "placeholder"
-                    middleware: str = reaction["commit"]["middleware"] if "middleware" in reaction["commit"] else "custom"
+                    middleware: str = reaction["commit"]["middleware"] if "middleware" in reaction["commit"] else None
                     redo_action: bool = reaction["update_action"] if "update_action" in reaction else False
 
                     commit = None
