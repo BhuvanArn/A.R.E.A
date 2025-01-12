@@ -48,14 +48,14 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation($"SubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
 
-        await _eventBus.PublishAsync<SubscribeServiceEvent, (List<Service>, ResultType)>(new SubscribeServiceEvent
+        var response = await _eventBus.PublishAsync<SubscribeServiceEvent, (string, ResultType)>(new SubscribeServiceEvent
         {
             JwtToken = user_token,
             Name = request.Name,
             Auth = request.Auth
         });
 
-        return Ok();
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
     
     [HttpPost("{user_token}/unsubscribe_service")]
@@ -63,13 +63,13 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation($"UnsubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
 
-        await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
+        var response = await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
         {
             JwtToken = user_token,
             Name = request.Name
         });
 
-        return Ok();
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
     [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
