@@ -47,6 +47,73 @@ services:
                 {"Authorization": "$+token", "Content-Type": "application/json"}
               data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
+  
+  - name: spotify
+    credentials:
+      - name: token
+        regex: "^*$"
+    
+    actions:
+      - name: artist_albums
+        description: action new album of artist
+        time: 30
+        inputs:
+          - name: artist_id
+            regex: "^*$"
+
+        fetch:
+          strategy: hash
+          middleware: log
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/artists/$+artist_id/albums
+            headers: |
+              {"Authorization": "Bearer $+token"}
+
+      - name: playback_playing
+        description: action playback playing
+        time: 5
+
+        fetch:
+          strategy: spotify.strategy_playback_playing
+          middleware: spotify.middleware_playback_playing
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/me/player
+            headers: |
+              {"Authorization": "Bearer $+token"}
+    
+    reactions:
+      - name: save_albums
+        description: save a list of albums into user profile
+        update_action: true
+        inputs:
+          - name: album_ids
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: put
+              url: https://api.spotify.com/v1/me/albums
+              headers: |
+                {"Authorization": "Bearer $+token"}
+              data: |
+                {"ids": $+album_ids}
+      - name: delete_albums
+        description: delete a list of albums from user profile
+        update_action: true
+        inputs:
+          - name: album_ids
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: delete
+              url: https://api.spotify.com/v1/me/albums
+              headers: |
+                {"Authorization": "Bearer $+token"}
+              data: |
+                {"ids": $+album_ids}
 
   - name: timer
     actions:
