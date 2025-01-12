@@ -4,6 +4,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Microsoft.AspNetCore.Mvc;
+using Action = Database.Entities.Action;
 
 namespace AdvancedServices.Controllers;
 
@@ -75,9 +76,9 @@ public class AreaController : ControllerBase
     [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
     public async Task<IActionResult> GetActionsReactions(string user_token, string service_name)
     {
-        _logger.LogInformation("GetActionsReactions event triggered");
+        _logger.LogInformation($"GetActionsReactions event triggered with token {user_token} and service {service_name}");
         
-        var response = await _eventBus.PublishAsync<GetActionsReactionsEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionsReactionsEvent
+        var response = await _eventBus.PublishAsync<GetActionsReactionsEvent, (object, ResultType)>(new GetActionsReactionsEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
@@ -91,7 +92,7 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetActions event triggered");
         
-        var response = await _eventBus.PublishAsync<GetActionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetActionEvent
+        var response = await _eventBus.PublishAsync<GetActionEvent, (List<Action>, ResultType)>(new GetActionEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
@@ -105,7 +106,7 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("GetReaction event triggered");
         
-        var response = await _eventBus.PublishAsync<GetReactionEvent, (List<GetActionsReactionsEventHandler.ActionsReactionsResponse>, ResultType)>(new GetReactionEvent
+        var response = await _eventBus.PublishAsync<GetReactionEvent, (List<Reaction>, ResultType)>(new GetReactionEvent
         {
             ServiceName = service_name,
             JwtToken = user_token
