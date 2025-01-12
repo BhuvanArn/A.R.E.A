@@ -1,5 +1,7 @@
+using System.Reflection;
 using System.Text;
 using ActionReactionService;
+using ActionReactionService.AboutParser;
 using AuthService;
 using Database;
 using Database.Entities;
@@ -46,19 +48,24 @@ public static class Program
             });
 
         builder.Services.AddControllers();
+        builder.Services.AddHttpClient("ServiceAbout", client =>
+        {
+            client.BaseAddress = new Uri("http://service-about:80");
+        });
         builder.Services.AddLogging(configure => configure.AddConsole());
         builder.Services.AddSingleton<IEventBus, EventBus.EventBus>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>, UserCreatedEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>, UserRegisteredEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>, UserResetPasswordEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>, ActionReactionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>, GetServicesEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>, SubscribeServiceEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>, GetActionsReactionsEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>, GetActionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>, GetReactionEventHandler>();
-        builder.Services.AddTransient<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>, GoogleLoginEventHandler>();
+        builder.Services.Scan(scan =>
+            scan.FromAssemblies(
+                    typeof(ActionReactionEventHandler).Assembly,
+                    typeof(ForgotPasswordEventHandler).Assembly
+                )
+                .AddClasses(classes => classes.AssignableTo(typeof(IIntegrationEventHandler<,>)))
+                .AsImplementedInterfaces()
+                .AsSelf()
+                .WithTransientLifetime()
+        );
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
+        builder.Services.AddScoped<IAboutParserService, AboutParserService>();
         
         builder.Services.AddCors(options =>
         {
@@ -78,6 +85,9 @@ public static class Program
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<DatabaseContext>();
             await context.Database.MigrateAsync();
+            
+            var aboutParserService = services.GetRequiredService<IAboutParserService>();
+            await aboutParserService.ParseAndStoreAboutJsonAsync();
         }
 
         app.UseMiddleware<ResponseBufferingMiddleware>();
@@ -91,26 +101,48 @@ public static class Program
         });
 
         var eventBus = app.Services.GetRequiredService<IEventBus>();
-        var userLoginHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserCreatedEvent, (string, ResultType)>>();
-        eventBus.Subscribe(userLoginHandler);
-        var userRegisteredHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserRegisteredEvent, (string, ResultType)>>();
-        eventBus.Subscribe(userRegisteredHandler);
-        var userResetPasswordHandler = app.Services.GetRequiredService<IIntegrationEventHandler<UserResetPasswordEvent, (string, ResultType)>>();
-        eventBus.Subscribe(userResetPasswordHandler);
-        var actionReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<ActionReactionEvent, (List<Service>, ResultType)>>();
-        eventBus.Subscribe(actionReactionHandler);
-        var getServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>>();
-        eventBus.Subscribe(getServiceHandler);
-        var subscribeServiceHandler = app.Services.GetRequiredService<IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>>();
-        eventBus.Subscribe(subscribeServiceHandler);
-        var getActionsReactionsHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>>();
-        eventBus.Subscribe(getActionsReactionsHandler);
-        var getActionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetActionEvent, (List<Action>, ResultType)>>();
-        eventBus.Subscribe(getActionHandler);
-        var getReactionHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GetReactionEvent, (List<Reaction>, ResultType)>>();
-        eventBus.Subscribe(getReactionHandler);
-        var googleLoginEventHandler = app.Services.GetRequiredService<IIntegrationEventHandler<GoogleLoginEvent, (string, ResultType)>>();
-        eventBus.Subscribe(googleLoginEventHandler);
+        var assembliesToScan = new[]
+        {
+            typeof(ActionReactionEventHandler).Assembly,
+            typeof(ForgotPasswordEventHandler).Assembly
+        };
+        
+        var handlerTypes = assembliesToScan
+            .SelectMany(a => a.GetTypes())
+            .Where(t => !t.IsAbstract && t.GetInterfaces()
+                .Any(i => i.IsGenericType &&
+                          i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<,>)))
+            .ToList();
+        
+        foreach (var handlerType in handlerTypes)
+        {
+            var handlerInstance = app.Services.GetRequiredService(handlerType);
+
+            var interfaces = handlerType.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<,>))
+                .ToList();
+
+            foreach (var iface in interfaces)
+            {
+                var genericArgs = iface.GetGenericArguments();
+                var eventType = genericArgs[0];
+                var resultType = genericArgs[1];
+
+                var subscribeMethod = typeof(IEventBus).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .FirstOrDefault(m =>
+                        m.Name == "Subscribe"
+                        && m.IsGenericMethod
+                        && m.GetGenericArguments().Length == 2
+                    );
+
+                if (subscribeMethod == null)
+                    continue;
+
+                var genericSubscribeMethod = subscribeMethod.MakeGenericMethod(eventType, resultType);
+
+                genericSubscribeMethod.Invoke(eventBus, new[] { handlerInstance });
+            }
+        }
 
         await app.RunAsync();
     }
