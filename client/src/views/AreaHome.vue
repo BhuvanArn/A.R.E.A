@@ -283,6 +283,7 @@ body {
     width: auto;
     height: auto;
     flex-wrap: wrap;
+    max-width: 30rem;
 }
 
 </style>
