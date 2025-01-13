@@ -3,6 +3,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
@@ -31,20 +32,42 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
             return (new(), ResultType.Fail);
         }
 
-        List<Area> list = new();
+        var areaInfos = new List<AreaInfo>();
         
         foreach (var service in services)
         {
             var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id)).FirstOrDefault();
-
-            if (area is null)
+            
+            if (area == null)
             {
                 continue;
             }
-            
-            list.Add(area);
+
+            var action = area.ActionId != null 
+                ? await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId) 
+                : null;
+
+            var reaction = area.ReactionId != null 
+                ? await _dbHandler.GetAsync<Reaction>(r => r.Id == area.ReactionId) 
+                : null;
+
+            areaInfos.Add(new AreaInfo
+            {
+                Area = area,
+                Action = action?.FirstOrDefault(),
+                Reaction = reaction?.FirstOrDefault(),
+                ServiceName = service.Name
+            });
         }
         
         return (services.ToList(), ResultType.Success);
+    }
+
+    private class AreaInfo
+    {
+        public Area Area { get; set; }
+        public Action? Action { get; set; }
+        public Reaction? Reaction { get; set; }
+        public string ServiceName { get; set; }
     }
 }
