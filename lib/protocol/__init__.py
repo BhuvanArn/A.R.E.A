@@ -1,5 +1,6 @@
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from select import select
+from os import read, write
 
 INVM = -1
 NOOP = 0
@@ -67,15 +68,16 @@ class AreaConnect(object):
 
     def send_message(self, message: Message = Message(NOOP)):
         if (self.connected):
-            self.connected.sendall(message.to_bytes() + (b"\0" * (1024 - len(message.to_bytes()))))
+            values = message.to_bytes()
+
+            write(self.connected.fileno(), values + (b"\0" * (1024 - len(values))))
 
     def get_message(self) -> Message:
         if (self.connected):
-            message: bytes = self.connected.recv(1024)
+            message: bytes = read(self.connected.fileno(), 1024)
+            parsed = Message.from_byte(message)
 
-            if (Message.from_byte(message) == INVM):
-                return (Message(INVM))
-            return (Message.from_byte(message))
+            return (parsed)
         return (None)
 
     def accept(self):

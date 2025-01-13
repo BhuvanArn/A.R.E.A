@@ -1,4 +1,11 @@
 services:
+  - name: test
+    reactions:
+      - name: log
+        description: log to console as a reaction for testing
+        commit:
+          middleware: log
+
   - name: discord
     credentials:
       - name: token
@@ -51,4 +58,54 @@ services:
         fetch:
           strategy: timer.strategy_only_time
           middleware: timer.middleware_only_time
-        time: 0
+        time: 1
+
+      - name: on_time_daily
+        description: reached time in day marker
+        inputs:
+          - name: marker
+            regex: "^*$"
+        fetch:
+          strategy: timer.strategy_on_time_daily
+          middleware: timer.middleware_on_time_daily
+        time: 1
+
+      - name: on_date_monthly
+        description: reached date in month marker
+        inputs:
+          - name: marker
+            regex: "^*$"
+        fetch:
+          strategy: timer.strategy_on_date_monthly
+          middleware: timer.middleware_on_date_monthly
+        time: 1
+
+      - name: on_date_yearly
+        description: reached date in month marker
+        inputs:
+          - name: marker
+            regex: "^*$"
+        fetch:
+          strategy: timer.strategy_on_date_yearly
+          middleware: timer.middleware_on_date_yearly
+        time: 1
+
+      - name: on_day
+        description: reached certain day of the week marker
+        inputs:
+          - name: marker
+            regex: "^*$"
+        fetch:
+          strategy: timer.strategy_on_day
+          middleware: timer.middleware_on_day
+        time: 1
+
+      - name: every
+        description: every x time action
+        inputs:
+          - name: time
+            regex: "^*$"
+        fetch:
+          strategy: timer.strategy_every
+          middleware: timer.middleware_every
+        time: 1

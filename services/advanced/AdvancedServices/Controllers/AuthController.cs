@@ -33,6 +33,19 @@ public class AuthController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordEventRequest request)
+    {
+        _logger.LogInformation("Forgot password event triggered.");
+
+        var response = await _eventBus.PublishAsync<ForgotPasswordEvent, (string, ResultType)>(new ForgotPasswordEvent
+        {
+            Email = request.Email
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
