@@ -47,6 +47,82 @@ services:
                 {"Authorization": "$+token", "Content-Type": "application/json"}
               data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
+  
+  - name: dropbox
+    credentials:
+      - name: token
+        regex: "^*$"
+
+    actions:
+      - name: search_file
+        description: action when a file given in parameters is found in files
+        time: 15
+        inputs:
+          - name: file_name     # File path : /my_icon_file.png
+            regex: "^*$"
+
+        fetch:
+          strategy: dropbox.strategy_file_search
+          middleware: dropbox.middleware_file_search
+          endpoint:
+            method: post
+            url: https://api.dropboxapi.com/2/files/search_v2
+            headers: |
+              {"Authorization": "Bearer $+token", "Content-Type": "application/json"}
+            data: |
+              {"query": "$+file_name"}
+
+    reactions:
+      - name: create_folders
+        description: creates one or multiple folders
+        update_action: true
+        inputs:
+          - name: folders_name  # List of folder :  ["/folder1", "/folder2"]
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://api.dropboxapi.com/2/files/create_folder_batch
+              headers: |
+                {"Authorization": "Bearer $+token", "Content-Type": "application/json"}
+              data: |
+                {"paths": $+folders_name}
+
+      - name: delete_files_and_folders
+        description: delete one or multiple files or folders
+        update_action: true
+        inputs:
+          - name: path_names   # List of path :  [{"path":"/folder1"}, {"path":"/folder2"}, {"path":"/file1.txt"}]
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://api.dropboxapi.com/2/files/delete_batch
+              headers: |
+                {"Authorization": "Bearer $+token", "Content-Type": "application/json"}
+              data: |
+                {"entries": $+path_names}
+
+      - name: copy_file_or_folder
+        description: copy a file or folder into another file or folder
+        update_action: true
+        inputs:
+          - name: from_path   # File path : /my_icon_file.png
+            regex: "^*$"
+
+          - name: to_path     # File path : /my_new_icon_file.png
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://api.dropboxapi.com/2/files/copy_v2
+              headers: |
+                {"Authorization": "Bearer $+token", "Content-Type": "application/json"}
+              data: |
+                {"from_path": "$+from_path", "to_path": "$+to_path"}
 
   - name: timer
     actions:
