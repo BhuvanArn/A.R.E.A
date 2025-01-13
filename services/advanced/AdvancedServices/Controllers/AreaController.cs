@@ -148,4 +148,20 @@ public class AreaController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+    
+    [HttpDelete("delete_areas")]
+    public async Task<IActionResult> DeleteAreas(string user_token, [FromBody] DeleteAreaRequest request)
+    {
+        _logger.LogInformation("DeleteAreas event triggered.");
+
+        var response = await _eventBus.PublishAsync<DeleteAreaEvent, (string, ResultType)>(new DeleteAreaEvent
+        {
+            JwtToken = request.JwtToken,
+            ServiceId = request.ServiceId,
+            ActionId = request.ActionId,
+            ReactionId = request.ReactionId
+        });
+
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }

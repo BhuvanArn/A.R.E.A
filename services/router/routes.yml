@@ -316,6 +316,44 @@ routes:
       401:
         description: "Unauthorized or invalid data."
 
+  - name: "delete-areas"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/delete_areas$"
+    realPath: "/area/delete_areas"
+    summary: "Delete Areas"
+    description: "Deletes specified areas using user authentication."
+    method: "DELETE"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              user_token:
+                type: "string"
+                example: "user_token_example"
+              JwtToken:
+                type: "string"
+                example: "jwt_token_example"
+              ServiceId:
+                type: "number"
+                example: 1
+              ActionId:
+                type: "number"
+                example: 2
+              ReactionId:
+                type: "number"
+                example: 3
+    responses:
+      200:
+        description: "Deletion successful."
+      401:
+        description: "Unauthorized access or invalid token."
+      400:
+        description: "Bad request or invalid data."
+
   - name: "add-reactions"
     host: "csharp_service"
     port: 8080
