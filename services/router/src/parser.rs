@@ -3,6 +3,10 @@ use std::{
     net::TcpStream,
 };
 
+extern crate itertools;
+
+use self::itertools::join;
+
 use super::request::*;
 use super::response::*;
 
@@ -62,7 +66,7 @@ pub fn collect_response(mut stream: &TcpStream) -> Response {
             res.protocol = http_and_version[0].to_string();
             res.http_version = [version[0].parse::<u8>().unwrap(), version[1].parse::<u8>().unwrap()].to_vec();
             res.code = splitted[1].parse::<u16>().unwrap();
-            res.message = splitted[2].to_string();
+            res.message = join(splitted.into_iter().enumerate().filter(|&(i, _)| i >= 2 ).map(|(_, e)| e).collect::<Vec<&str>>(), " ");
         } else {
             let splitted = item.split(':').collect::<Vec<&str>>();
 
