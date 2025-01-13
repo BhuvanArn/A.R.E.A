@@ -8,6 +8,8 @@ public class Area
     
     public string DisplayName { get; set; }
     
+    public AreaState State { get; set; } 
+    
     public Guid ServiceId { get; set; }
     public Service Service { get; set; }
     
@@ -16,4 +18,10 @@ public class Area
     
     public Guid? ReactionId { get; set; }
     public Reaction? Reaction { get; set; }
+}
+
+public enum AreaState : byte
+{
+    Active = 1,
+    Inactive = 2
 }

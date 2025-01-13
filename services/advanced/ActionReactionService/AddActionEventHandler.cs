@@ -45,7 +45,8 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
             ServiceId = service.Id,
             DisplayName = @event.DisplayName,
             CreatedDate = DateTime.Now,
-            ActionId = addedAction.Id
+            ActionId = addedAction.Id,
+            State = AreaState.Active
         };
 
         await _dbHandler.AddAsync(area);
