@@ -296,6 +296,9 @@ routes:
               Name:
                 type: "string"
                 example: "MyCustomAction"
+              DisplayName:
+                type: "string"
+                example: "Discord"
               TriggerConfig:
                 type: "string"
                 example: "some-trigger-data"

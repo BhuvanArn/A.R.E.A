@@ -6,6 +6,8 @@ public class AddActionRequest
 
     public string Name { get; set; }
     
+    public string DisplayName { get; set; }
+    
     public string TriggerConfig { get; set; }
     
     public string JwtToken { get; set; }

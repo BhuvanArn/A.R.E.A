@@ -124,6 +124,7 @@ public class AreaController : ControllerBase
         {
             ServiceId = request.ServiceId,
             Name = request.Name,
+            DisplayName = request.DisplayName,
             TriggerConfig = request.TriggerConfig,
             JwtToken = request.JwtToken
         });
