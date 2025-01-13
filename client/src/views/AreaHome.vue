@@ -287,12 +287,7 @@ body {
 }
 
 .navbar {
-    background-color: #efefef;
-    width: 100%;
-    height: 5rem;
     position: fixed;
-    top: 0;
-    left: 0;
     z-index: 100;
 }
 
