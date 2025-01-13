@@ -9,6 +9,4 @@ public class AddReactionRequest
     public string Name { get; set; }
     
     public string ExecutionConfig { get; set; }
-    
-    public string JwtToken { get; set; }
 }

@@ -21,6 +21,16 @@ public class AreaController : ControllerBase
         _logger = logger;
     }
     
+    private string GetUserTokenFromHeaders()
+    {
+        if (Request.Headers.TryGetValue("X-User-Token", out var token))
+        {
+            return token.ToString();
+        }
+
+        throw new UnauthorizedAccessException("User token is missing from headers.");
+    }
+    
     [HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -31,27 +41,29 @@ public class AreaController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpGet("{user_token}/services")]
-    public async Task<IActionResult> GetServices(string user_token)
+    [HttpGet("services")]
+    public async Task<IActionResult> GetServices()
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("GetServices event triggered.");
 
         var response = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
         {
-            JwtToken = user_token
+            JwtToken = userToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpPost("{user_token}/subscribe_service")]
-    public async Task<IActionResult> SubscribeService(string user_token, [FromBody] SubscribeServiceRequest request)
+    [HttpPost("subscribe_service")]
+    public async Task<IActionResult> SubscribeService([FromBody] SubscribeServiceRequest request)
     {
-        _logger.LogInformation($"SubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
+        var userToken = GetUserTokenFromHeaders();
+        _logger.LogInformation($"SubscribeService event triggered for token: {userToken} and service: {request.Name}", userToken, request.Name);
 
         var response = await _eventBus.PublishAsync<SubscribeServiceEvent, (string, ResultType)>(new SubscribeServiceEvent
         {
-            JwtToken = user_token,
+            JwtToken = userToken,
             Name = request.Name,
             Auth = request.Auth
         });
@@ -59,57 +71,61 @@ public class AreaController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
     
-    [HttpPost("{user_token}/unsubscribe_service")]
-    public async Task<IActionResult> UnsubscribeService(string user_token, [FromBody] UnsubscribeServiceRequest request)
+    [HttpPost("unsubscribe_service")]
+    public async Task<IActionResult> UnsubscribeService([FromBody] UnsubscribeServiceRequest request)
     {
-        _logger.LogInformation($"UnsubscribeService event triggered for token: {user_token} and service: {request.Name}", user_token, request.Name);
+        var userToken = GetUserTokenFromHeaders();
+        _logger.LogInformation($"UnsubscribeService event triggered for token: {userToken} and service: {request.Name}", userToken, request.Name);
 
         var response = await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
         {
-            JwtToken = user_token,
+            JwtToken = userToken,
             Name = request.Name
         });
 
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpGet("{user_token}/services/{service_name}/actions_reactions")]
-    public async Task<IActionResult> GetActionsReactions(string user_token, string service_name)
+    [HttpGet("services/{service_name}/actions_reactions")]
+    public async Task<IActionResult> GetActionsReactions(string service_name)
     {
-        _logger.LogInformation($"GetActionsReactions event triggered with token {user_token} and service {service_name}");
+        var userToken = GetUserTokenFromHeaders();
+        _logger.LogInformation($"GetActionsReactions event triggered with token {userToken} and service {service_name}");
         
         var response = await _eventBus.PublishAsync<GetActionsReactionsEvent, (object, ResultType)>(new GetActionsReactionsEvent
         {
             ServiceName = service_name,
-            JwtToken = user_token
+            JwtToken = userToken
         });
 
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpGet("{user_token}/services/{service_name}/action")]
-    public async Task<IActionResult> GetAction(string user_token, string service_name)
+    [HttpGet("services/{service_name}/action")]
+    public async Task<IActionResult> GetAction(string service_name)
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("GetActions event triggered");
         
         var response = await _eventBus.PublishAsync<GetActionEvent, (List<Action>, ResultType)>(new GetActionEvent
         {
             ServiceName = service_name,
-            JwtToken = user_token
+            JwtToken = userToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
     
-    [HttpGet("{user_token}/services/{service_name}/reaction")]
-    public async Task<IActionResult> GetReaction(string user_token, string service_name)
+    [HttpGet("services/{service_name}/reaction")]
+    public async Task<IActionResult> GetReaction(string service_name)
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("GetReaction event triggered");
         
         var response = await _eventBus.PublishAsync<GetReactionEvent, (List<Reaction>, ResultType)>(new GetReactionEvent
         {
             ServiceName = service_name,
-            JwtToken = user_token
+            JwtToken = userToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
@@ -118,15 +134,16 @@ public class AreaController : ControllerBase
     [HttpPost("addactions")]
     public async Task<IActionResult> AddAction([FromBody] AddActionRequest request)
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("AddActions event triggered");
 
-        var response = await _eventBus.PublishAsync<AddActionRequest, (string, ResultType)>(new AddActionRequest
+        var response = await _eventBus.PublishAsync<AddActionEvent, (string, ResultType)>(new AddActionEvent
         {
             ServiceId = request.ServiceId,
             Name = request.Name,
             DisplayName = request.DisplayName,
             TriggerConfig = request.TriggerConfig,
-            JwtToken = request.JwtToken
+            JwtToken = userToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
@@ -135,6 +152,7 @@ public class AreaController : ControllerBase
     [HttpPost("addreactions")]
     public async Task<IActionResult> AddReaction([FromBody] AddReactionRequest request)
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("AddReactions event triggered");
 
         var response = await _eventBus.PublishAsync<AddReactionEvent, (string, ResultType)>(new AddReactionEvent
@@ -143,20 +161,21 @@ public class AreaController : ControllerBase
             ActionId = request.ActionId,
             Name = request.Name,
             ExecutionConfig = request.ExecutionConfig,
-            JwtToken = request.JwtToken
+            JwtToken = userToken
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
     
     [HttpDelete("delete_areas")]
-    public async Task<IActionResult> DeleteAreas(string user_token, [FromBody] DeleteAreaRequest request)
+    public async Task<IActionResult> DeleteAreas([FromBody] DeleteAreaRequest request)
     {
+        var userToken = GetUserTokenFromHeaders();
         _logger.LogInformation("DeleteAreas event triggered.");
 
         var response = await _eventBus.PublishAsync<DeleteAreaEvent, (string, ResultType)>(new DeleteAreaEvent
         {
-            JwtToken = request.JwtToken,
+            JwtToken = userToken,
             ServiceId = request.ServiceId,
             ActionId = request.ActionId,
             ReactionId = request.ReactionId

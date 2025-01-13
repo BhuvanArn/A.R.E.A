@@ -9,6 +9,4 @@ public class AddActionRequest
     public string DisplayName { get; set; }
     
     public string TriggerConfig { get; set; }
-    
-    public string JwtToken { get; set; }
 }
