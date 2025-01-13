@@ -37,6 +37,15 @@
                     </div>
                 </div>
             </div>
+            <div class="middle-02-container">
+                <div class="middle-02-container-content">
+                    <h2 class="middle-02-title" :class="{ 'middle-02-title-mobile': mobile }">Build YOUR powerful workflows</h2>
+                    <p class="middle-02-content" :class="{ 'middle-02-content-mobile': mobile }">Area puts the power of automation in your hands => no coding required! Take your workflows to the next level with our suite of automation tools.</p>
+                </div>
+                <div class="middle-02-container-img">
+                    <img src="@/assets/home-img-01.png" class="img-03-style" :class="{ 'img-03-style-mobile': mobile }">
+                </div>
+            </div>
             <div class="bottom-container">
 
             </div>
@@ -120,7 +129,7 @@ body {
     flex-direction: row;
     background-color: transparent;
     width: 100%;
-    margin-top: 5rem;
+    margin-top: 10rem;
     margin-bottom: 5rem;
 }
 
@@ -235,7 +244,7 @@ body {
     flex-direction: column;
     background-color: transparent;
     width: 100%;
-    margin-top: 5rem;
+    margin-top: 10rem;
     margin-bottom: 5rem;
 }
 
@@ -290,5 +299,94 @@ body {
     position: fixed;
     z-index: 100;
 }
+
+.middle-02-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+    background-color: #efefef;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+.middle-02-container-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 3.5rem;
+}
+
+.middle-02-title {
+    font-size: 3rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.middle-02-content {
+    font-size: 1.5rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 500;
+    width: 50%;
+}
+
+.middle-02-title-mobile {
+    font-size: 2rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.middle-02-content-mobile {
+    font-size: 1.2rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 500;
+    width: 80%;
+}
+
+.middle-02-container-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    background-color: #efefef;
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.4);
+}
+
+.img-03-style {
+    width: 60rem;
+    height: 30rem;
+}
+
+.img-03-style-mobile {
+    width: 25rem;
+    height: 14rem;
+}
+
 
 </style>
