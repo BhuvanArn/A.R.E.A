@@ -25,6 +25,9 @@ export default {
     },
 
     mounted() {
+        if (localStorage.getItem('token') === null) {
+            this.$router.push('/login');
+        }
     },
     methods: {
     },
