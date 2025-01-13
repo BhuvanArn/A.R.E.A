@@ -37,13 +37,6 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
             return ($"The service {@event.Name} doesnt exist, avalaible ones: {availableServices}", ResultType.Fail);
         }
         
-        var existingService = (await _dbHandler.GetAsync<Service>(s => s.Name == @event.Name && s.UserId == userId)).FirstOrDefault();
-
-        if (existingService is not null)
-        {
-            return ($"You already subscribed to {@event.Name}", ResultType.Fail);
-        }
-        
         var service = new Service
         {
             Name = @event.Name,

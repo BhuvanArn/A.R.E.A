@@ -25,6 +25,15 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         }
         
         var services = await _dbHandler.GetAsync<Service>(s => s.UserId == userId);
+
+        List<Area> list = new();
+        
+        foreach (var service in services)
+        {
+            
+        }
+        
+        var area = await _dbHandler.GetAsync<Area>(s => s.ServiceId == )
         
         return (services.ToList(), ResultType.Success);
     }
