@@ -38,7 +38,19 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
             TriggerConfig = @event.TriggerConfig
         };
         
-        await _dbHandler.AddAsync(action);
+        var addedAction = await _dbHandler.AddAsync(action);
+        
+        var area = new Area
+        {
+            ServiceId = service.Id,
+            DisplayName = @event.DisplayName,
+            CreatedDate = DateTime.Now,
+            ActionId = addedAction.Id,
+            State = AreaState.Active,
+            UserId = userId
+        };
+
+        await _dbHandler.AddAsync(area);
         return ("Ok", ResultType.Success);
     }
 }

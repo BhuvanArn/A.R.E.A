@@ -65,7 +65,7 @@ public static class Program
                 .WithTransientLifetime()
         );
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
-        builder.Services.AddScoped<IAboutParserService, AboutParserService>();
+        builder.Services.AddSingleton<IAboutParserService, AboutParserService>();
         
         builder.Services.AddCors(options =>
         {
