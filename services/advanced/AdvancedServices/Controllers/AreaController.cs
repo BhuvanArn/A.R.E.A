@@ -48,7 +48,7 @@ public class AreaController : ControllerBase
         
         _logger.LogInformation("GetServices event triggered.");
 
-        var response = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
+        var response = await _eventBus.PublishAsync<GetServiceEvent, (object, ResultType)>(new GetServiceEvent
         {
             JwtToken = userToken
         });
