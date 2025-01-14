@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
     {
         _logger.LogInformation("Google login event triggered.");
-        
+
         var response = await _eventBus.PublishAsync<GoogleLoginEvent, (string, ResultType)>(new GoogleLoginEvent
         {
             Token = request.Token
@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
         {
             Email = request.Email
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
@@ -50,14 +50,14 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         _logger.LogInformation("Reset password event triggered.");
-        
+
         var response = await _eventBus.PublishAsync<UserResetPasswordEvent, (string, ResultType)>(new UserResetPasswordEvent
         {
             JwtToken = request.JwtToken,
             Password = request.Password,
             NewPassword = request.NewPassword
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
@@ -65,13 +65,13 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         _logger.LogInformation("Login event triggered.");
-        
+
         var response = await _eventBus.PublishAsync<UserCreatedEvent, (string, ResultType)>(new UserCreatedEvent
         {
             Email = request.Email,
             Password = request.Password
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
@@ -87,23 +87,23 @@ public class AuthController : ControllerBase
             Password = request.Password,
             Username = request.Username
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpPost("userinformation")]
-    public async Task<IActionResult> GetUserInformation([FromBody] GetUserInformationRequest request)
+    [HttpGet("userinformation")]
+    public async Task<IActionResult> GetUserInformation([FromHeader(Name = "X-User-Token")] string jwtToken)
     {
         _logger.LogInformation("Get user information event triggered.");
-        
+
         var response = await _eventBus.PublishAsync<GetUserInformationEvent, (string, ResultType)>(new GetUserInformationEvent
         {
-            JwtToken = @request.JwtToken
+            JwtToken = jwtToken
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
-    
+
     [HttpPost("discord-login")]
     public async Task<IActionResult> DiscordLogin([FromBody] GetDiscordTokenEvent request)
     {
@@ -114,7 +114,7 @@ public class AuthController : ControllerBase
             Email = @request.Email,
             Password = @request.Password
         });
-        
+
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 }
