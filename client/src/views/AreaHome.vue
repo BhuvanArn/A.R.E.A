@@ -57,6 +57,7 @@
                     <img src="@/assets/oauth/dropbox_logo.png" class="img-04-style" alt="Dropbox logo">
                     <img src="@/assets/oauth/spotify_logo.png" class="img-04-style" alt="Spotify logo">
                 </div>
+                <button @click="navigateToRegister" class="start-btn">Start free</button>
                 <div class="filler04"></div>
             </div>
             <div class="bottom-container">
@@ -97,6 +98,11 @@ export default {
             } else {
                 this.tablet = false;
             }
+        },
+
+        navigateToRegister(event) {
+            event.preventDefault()
+            window.location.href = this.$router.resolve({ name: 'register' }).href;
         },
     },
 
@@ -245,7 +251,7 @@ body {
     flex-direction: row;
     background-color: transparent;
     width: 100%;
-    height: 20rem;
+    height: 5rem;
     background-color: #efefef;
 }
 
@@ -488,6 +494,32 @@ body {
     width: 100%;
     height: 2rem;
     background-color: transparent;
+}
+
+.start-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10rem;
+    height: 3.5rem;
+    background-color: #4a4a4a;
+    color: #efefef;
+    font-family: 'inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.5rem;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+}
+
+.start-btn:hover {
+    cursor: pointer;
+    background-color: #353535;
+}
+
+.start-btn:active {
+    background-color: #4a4a4a;
 }
 
 </style>
