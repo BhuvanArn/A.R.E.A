@@ -35,8 +35,13 @@ class RegisteredAction(object):
         if (not isdir(f'/var/service_storage/caches/{self.action_id}')):
             mkdir(f'/var/service_storage/caches/{self.action_id}')
         if (self.cache):
+            value = self.cache
+            if (isinstance(value, bytes)):
+                value = value.decode()
+            if (not isinstance(value, str)):
+                value = str(value)
             with open(f'/var/service_storage/caches/{self.action_id}/cache.tmp', 'w') as fp:
-                fp.write(self.cache)
+                fp.write(value)
 
     def read_cache(self):
         if (not isfile(f"/var/service_storage/caches/{self.action_id}/cache.tmp")):
