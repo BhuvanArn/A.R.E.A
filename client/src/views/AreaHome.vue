@@ -10,7 +10,7 @@
                 <div class="dialog-container">
                     <div class="title-dialog">
                         <img src="@/assets/service.png" class="img-02-style" alt="service">
-                        <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Several services available</h3>
+                        <h2 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Several services available</h2>
                     </div>
                     <div class="dialog-desc">
                         <p class="desc-dialog-txt" :class="{ 'desc-dialog-txt-tablet': tablet }">Our platform offers a wide range of services, to help you automate your daily tasks.</p>
@@ -20,7 +20,7 @@
                 <div class="dialog-container">
                     <div class="title-dialog">
                         <img src="@/assets/custom.png" class="img-02-style" alt="custom">
-                        <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Customization</h3>
+                        <h2 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Customization</h2>
                     </div>
                     <div class="dialog-desc">
                         <p class="desc-dialog-txt" :class="{ 'desc-dialog-txt-tablet': tablet }">Thanks to the Action and REAction components, available for each service, customize your automation as you wish.</p>
@@ -30,7 +30,7 @@
                 <div class="dialog-container">
                     <div class="title-dialog">
                         <img src="@/assets/perf.png" class="img-02-style" alt="perf">
-                        <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Strong performances</h3>
+                        <h2 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Strong performances</h2>
                     </div>
                     <div class="dialog-desc">
                         <p class="desc-dialog-txt" :class="{ 'desc-dialog-txt-tablet': tablet }">Our platform is designed to offer you the best performance possible.</p>
@@ -158,12 +158,11 @@ body {
 .middle-container {
     display: flex;
     justify-content: center;
-    align-items: center;
     flex-direction: row;
     background-color: transparent;
     width: 100%;
     height: auto;
-    min-height: 20rem;
+    min-height: 17rem;
     background-color: #bcc1ba;
 }
 
@@ -289,7 +288,7 @@ body {
 }
 
 .title-dialog-txt-tablet {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-family: 'inter', sans-serif;
     margin-left: 1rem;
     font-weight: 500;
@@ -297,7 +296,7 @@ body {
 }
 
 .desc-dialog-txt-tablet {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-family: 'inter', sans-serif;
     margin-left: 1rem;
     font-weight: 500;
