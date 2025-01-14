@@ -37,7 +37,7 @@ class RegisteredAction(object):
         if (self.cache):
             value = self.cache
             if (isinstance(value, bytes)):
-                value = value.decode()
+                value = value.decode(errors="ignore")
                 print(f"[PYTHON (service-action)] - saving bytes data as str, they will be read back as str, this may cause problems in the future when using your cache.", flush=True)
             if (not isinstance(value, str)):
                 value = str(value)
