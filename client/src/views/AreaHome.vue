@@ -3,13 +3,13 @@
     <body>
         <div class="page-container">
             <div class="top-container" :class="{ 'top-container-mobile': mobile }">
-                <img class="img-01-style" src="@/assets/icone-puzzle.png">
+                <img class="img-01-style" src="@/assets/icone-puzzle.png" alt="icone-puzzle">
                 <h1 class="title-home-page" :class="{ 'title-home-page-mobile': mobile }">Action REAction</h1>
             </div>
             <div class="middle-container" :class="{ 'middle-container-mobile': mobile }">
                 <div class="dialog-container">
                     <div class="title-dialog">
-                        <img src="@/assets/service.png" class="img-02-style">
+                        <img src="@/assets/service.png" class="img-02-style" alt="service">
                         <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Several services available</h3>
                     </div>
                     <div class="dialog-desc">
@@ -19,7 +19,7 @@
                 <div v-if="!mobile" class="filler02-homepage"></div>
                 <div class="dialog-container">
                     <div class="title-dialog">
-                        <img src="@/assets/custom.png" class="img-02-style">
+                        <img src="@/assets/custom.png" class="img-02-style" alt="custom">
                         <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Customization</h3>
                     </div>
                     <div class="dialog-desc">
@@ -29,7 +29,7 @@
                 <div v-if="!mobile" class="filler02-homepage"></div>
                 <div class="dialog-container">
                     <div class="title-dialog">
-                        <img src="@/assets/perf.png" class="img-02-style">
+                        <img src="@/assets/perf.png" class="img-02-style" alt="perf">
                         <h3 class="title-dialog-txt" :class="{ 'title-dialog-txt-tablet': tablet }">Strong performances</h3>
                     </div>
                     <div class="dialog-desc">
@@ -43,8 +43,21 @@
                     <p class="middle-02-content" :class="{ 'middle-02-content-mobile': mobile }">Area puts the power of automation in your hands => no coding required! Take your workflows to the next level with our suite of automation tools.</p>
                 </div>
                 <div class="middle-02-container-img">
-                    <img src="@/assets/home-img-01.png" class="img-03-style" :class="{ 'img-03-style-mobile': mobile }">
+                    <img src="@/assets/home-img-01.png" class="img-03-style" :class="{ 'img-03-style-mobile': mobile }" alt="Example of a workflow">
                 </div>
+            </div>
+            <div class="middle-03-container">
+                <div class="filler04"></div>
+                <h2 class="middle-03-title" :class="{ 'middle-03-title-mobile': mobile }">Get started right now with our list of services</h2>
+                <p class="middle-03-content" :class="{ 'middle-03-content-mobile': mobile }">Thanks to our platform, you can automate your daily tasks in a few clicks. Discover our list of services and start automating your tasks now!</p>
+                <div class="sample-services-list-container" :class="{ 'sample-services-list-container-mobile': mobile }">
+                    <img src="@/assets/oauth/google_logo.png" class="img-04-style" alt="Google logo">
+                    <img src="@/assets/oauth/discord_logo.png" class="img-04-style" alt="Discord logo">
+                    <img src="@/assets/oauth/github_logo.png" class="img-04-style" alt="GitHub logo">
+                    <img src="@/assets/oauth/dropbox_logo.png" class="img-04-style" alt="Dropbox logo">
+                    <img src="@/assets/oauth/spotify_logo.png" class="img-04-style" alt="Spotify logo">
+                </div>
+                <div class="filler04"></div>
             </div>
             <div class="bottom-container">
 
@@ -64,7 +77,7 @@ export default {
             tablet: false,
         }
     },
-    
+
     components: {
         NavBar,
     },
@@ -336,7 +349,19 @@ body {
     margin-bottom: 1rem;
 }
 
-.middle-02-content {
+.middle-03-title {
+    font-size: 3rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    width: 50rem;
+    text-align: center;
+}
+
+.middle-02-content, .middle-03-content {
     font-size: 1.5rem;
     font-family: 'inter', sans-serif;
     color: #353535;
@@ -344,6 +369,7 @@ body {
     padding: 0;
     font-weight: 500;
     width: 50%;
+    text-align: center;
 }
 
 .middle-02-title-mobile {
@@ -356,7 +382,19 @@ body {
     margin-bottom: 1rem;
 }
 
-.middle-02-content-mobile {
+.middle-03-title-mobile {
+    font-size: 2rem;
+    font-family: 'inter', sans-serif;
+    color: #353535;
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    width: 25rem;
+    text-align: center;
+}
+
+.middle-02-content-mobile, .middle-03-content-mobile {
     font-size: 1.2rem;
     font-family: 'inter', sans-serif;
     color: #353535;
@@ -364,6 +402,7 @@ body {
     padding: 0;
     font-weight: 500;
     width: 80%;
+    text-align: center;
 }
 
 .middle-02-container-img {
@@ -380,7 +419,7 @@ body {
 
 .img-03-style {
     width: 60rem;
-    height: 30rem;
+    height: 32rem;
 }
 
 .img-03-style-mobile {
@@ -388,5 +427,68 @@ body {
     height: 14rem;
 }
 
+.middle-03-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    background-color: #9fb7b9;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    min-height: 20rem;
+}
+
+.sample-services-list-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    margin-top: 2rem;
+    background-color: transparent;
+    gap: 2rem;
+    overflow: hidden;
+}
+
+.sample-services-list-container-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: transparent;
+    width: 20rem;
+    height: auto;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.sample-services-list-container-mobile .img-04-style {
+    width: calc(25% - 1rem);
+    height: auto;
+}
+
+.img-04-style {
+    width: 5rem;
+    height: 5rem;
+    margin: 1rem;
+    transition: transform 0.3s ease-in-out;
+    background-color: transparent;
+}
+
+.img-04-style:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.filler04 {
+    width: 100%;
+    height: 2rem;
+    background-color: transparent;
+}
 
 </style>
