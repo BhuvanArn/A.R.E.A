@@ -27,11 +27,6 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         
         var services = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId)).ToList();
 
-        if (services.Count == 0)
-        {
-            return (new(), ResultType.Fail);
-        }
-
         var areaInfos = new List<AreaInfo>();
         
         foreach (var service in services)
