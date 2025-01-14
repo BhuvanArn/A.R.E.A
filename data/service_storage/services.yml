@@ -56,7 +56,7 @@ services:
     actions:
       - name: artist_albums
         description: action when a new album is released by an artist
-        time: 30
+        time: 60
         inputs:
           - name: artist_id   # artist_id : 6e3pZKXUxrPfnUPJ960Hd9
             regex: "^*$"
@@ -70,13 +70,24 @@ services:
             headers: |
               {"Authorization": "Bearer $+token"}
 
-      - name: playback_playing
-        description: action when the playback is playing
-        time: 5
+      - name: playback_playing_continuously
+        description: action when the playback is playing (triggers continuously)
+        time: 1
 
         fetch:
-          strategy: spotify.strategy_playback_playing
-          middleware: spotify.middleware_playback_playing
+          strategy: spotify.strategy_playback_playing_continuously
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/me/player
+            headers: |
+              {"Authorization": "Bearer $+token"}
+
+      - name: playback_playing_once
+        description: action when the playback is playing (triggers only once)
+        time: 1
+
+        fetch:
+          strategy: spotify.strategy_playback_playing_once
           endpoint:
             method: get
             url: https://api.spotify.com/v1/me/player
