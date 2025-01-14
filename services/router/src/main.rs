@@ -35,27 +35,38 @@ fn handle_connection(mut stream: TcpStream) {
 
     match router.lock().unwrap().get_route(&req.route) {
         Some(&ref route) => {
-            let ip_lookup = format!("{}:{}", route.host, route.port).to_socket_addrs().expect("failed to connect to service").next().unwrap();
+            let ip_lookup = format!("{}:{}", route.host, route.port).to_socket_addrs();
 
-            match TcpStream::connect_timeout(&ip_lookup, Duration::from_millis(1024 * 10)) {
-                Ok(mut socket) => {
-                    socket.write_all(&req.build_request()).unwrap();
+            if ip_lookup.is_ok() {
+                let ip_lookup_value = ip_lookup.unwrap().next().unwrap();
 
-                    let mut res = parser::collect_response(&socket);
+                match TcpStream::connect_timeout(&ip_lookup_value, Duration::from_millis(1024 * 10)) {
+                    Ok(mut socket) => {
+                        socket.write_all(&req.build_request()).unwrap();
 
-                    res.headers.insert("access-control-allow-origin".to_string(), "*".to_string());
+                        let mut res = parser::collect_response(&socket);
 
-                    stream.write_all(&res.build_request()).unwrap();
-                    return ();
+                        res.headers.insert("access-control-allow-origin".to_string(), "*".to_string());
+
+                        stream.write_all(&res.build_request()).unwrap();
+                        return ();
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to connect to service at {}: {}: {}", route.host, route.port, e);
+                        response.set_body("Service Unavailable");
+                        response.code = 503;
+                        response.message = String::from("SERVICE UNAVAILABLE");
+
+                        stream.write_all(&response.build_request()).unwrap();
+                    }
                 }
-                Err(e) => {
-                    eprintln!("Failed to connect to service at {}: {}: {}", route.host, route.port, e);
-                    response.set_body("Service Unavailable");
-                    response.code = 503;
-                    response.message = String::from("SERVICE UNAVAILABLE");
+            } else {
+                eprintln!("Failed to connect to service at {}: {}", route.host, route.port);
+                response.set_body("Service Unavailable");
+                response.code = 503;
+                response.message = String::from("SERVICE UNAVAILABLE");
 
-                    stream.write_all(&response.build_request()).unwrap();
-                }
+                stream.write_all(&response.build_request()).unwrap();
             }
         },
         _ => {

@@ -3,6 +3,7 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250113003804_areatest")]
+    partial class areatest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ActionId")
+                    b.Property<Guid>("ActionId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -62,16 +65,10 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("ReactionId")
+                    b.Property<Guid>("ReactionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ServiceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<byte>("State")
-                        .HasColumnType("smallint");
-
-                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -205,12 +202,14 @@ namespace Database.Migrations
                     b.HasOne("Database.Entities.Action", "Action")
                         .WithMany()
                         .HasForeignKey("ActionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Database.Entities.Reaction", "Reaction")
                         .WithMany()
                         .HasForeignKey("ReactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Database.Entities.Service", "Service")
                         .WithMany()

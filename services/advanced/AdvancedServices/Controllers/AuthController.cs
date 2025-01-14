@@ -90,4 +90,31 @@ public class AuthController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPost("userinformation")]
+    public async Task<IActionResult> GetUserInformation([FromBody] GetUserInformationRequest request)
+    {
+        _logger.LogInformation("Get user information event triggered.");
+        
+        var response = await _eventBus.PublishAsync<GetUserInformationEvent, (string, ResultType)>(new GetUserInformationEvent
+        {
+            JwtToken = @request.JwtToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+    
+    [HttpPost("discord-login")]
+    public async Task<IActionResult> DiscordLogin([FromBody] GetDiscordTokenEvent request)
+    {
+        _logger.LogInformation("Get discord token event triggered");
+
+        var response = await _eventBus.PublishAsync<GetDiscordTokenEvent, (string, ResultType)>(new GetDiscordTokenEvent
+        {
+            Email = @request.Email,
+            Password = @request.Password
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }
