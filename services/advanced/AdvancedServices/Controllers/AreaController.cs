@@ -23,12 +23,7 @@ public class AreaController : ControllerBase
     
     private string GetUserTokenFromHeaders()
     {
-        if (Request.Headers.TryGetValue("X-User-Token", out var token))
-        {
-            return token.ToString();
-        }
-
-        throw new UnauthorizedAccessException("User token is missing from headers.");
+        return Request.Headers.TryGetValue("X-User-Token", out var token) ? token.ToString() : string.Empty;
     }
     
     [HttpGet]
