@@ -8,11 +8,11 @@
       <div class="filler01">
       </div>
       <div v-show="!isLogged && !mobile" class="nv-btn-container">
-        <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
-        <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+        <button @click="navigateToLogin" class="access-btn-style">Login</button>
+        <button @click="navigateToRegister" class="access-btn-style">Register</button>
       </div>
       <div v-show="isLogged && !mobile">
-        <router-link><button @click="navigateToPanel" class="access-btn-style">Your panel</button></router-link>
+        <button @click="navigateToPanel" class="access-btn-style">Your panel</button>
       </div>
       <hr v-show="!mobile" class="vertical-hr">
     </div>
