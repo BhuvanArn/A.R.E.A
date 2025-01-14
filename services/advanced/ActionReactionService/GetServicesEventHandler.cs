@@ -60,7 +60,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
             });
         }
         
-        return (services.ToList(), ResultType.Success);
+        return (areaInfos, ResultType.Success);
     }
 
     private class AreaInfo
