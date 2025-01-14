@@ -7,7 +7,7 @@ using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
-public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>
+public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent, (object, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
 
@@ -16,7 +16,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         _dbHandler = dbHandler;
     }
     
-    public async Task<(List<Service>, ResultType)> HandleAsync(GetServiceEvent @event)
+    public async Task<(object, ResultType)> HandleAsync(GetServiceEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
 
@@ -60,7 +60,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
             });
         }
         
-        return (services.ToList(), ResultType.Success);
+        return (areaInfos, ResultType.Success);
     }
 
     private class AreaInfo
