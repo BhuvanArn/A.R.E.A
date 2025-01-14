@@ -38,8 +38,10 @@ class RegisteredAction(object):
             value = self.cache
             if (isinstance(value, bytes)):
                 value = value.decode()
+                print(f"[PYTHON (service-action)] - saving bytes data as str, they will be read back as str, this may cause problems in the future when using your cache.", flush=True)
             if (not isinstance(value, str)):
                 value = str(value)
+                print(f"[PYTHON (service-action)] - saving other type data as str, they will be read back as str, this may cause problems in the future when using your cache.", flush=True)
             with open(f'/var/service_storage/caches/{self.action_id}/cache.tmp', 'w') as fp:
                 fp.write(value)
 
