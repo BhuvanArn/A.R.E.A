@@ -149,7 +149,7 @@ body {
 .title-home-page {
     font-size: 3rem;
     font-family: 'inter', sans-serif;
-    color: #969696;
+    color: #353535;
     margin-left: 1rem;
     font-weight: 700;
     font-size: 7rem;
@@ -263,7 +263,7 @@ body {
 .title-home-page-mobile {
     font-size: 3rem;
     font-family: 'inter', sans-serif;
-    color: #969696;
+    color: #353535;
     margin-left: 1rem;
     font-weight: 700;
     font-size: 5rem;
