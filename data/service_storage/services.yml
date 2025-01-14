@@ -55,10 +55,10 @@ services:
     
     actions:
       - name: artist_albums
-        description: action new album of artist
+        description: action when a new album is released by an artist
         time: 30
         inputs:
-          - name: artist_id
+          - name: artist_id   # artist_id : 6e3pZKXUxrPfnUPJ960Hd9
             regex: "^*$"
 
         fetch:
@@ -71,7 +71,7 @@ services:
               {"Authorization": "Bearer $+token"}
 
       - name: playback_playing
-        description: action playback playing
+        description: action when the playback is playing
         time: 5
 
         fetch:
@@ -88,7 +88,7 @@ services:
         description: save a list of albums into user profile
         update_action: true
         inputs:
-          - name: album_ids
+          - name: album_ids    # albums_ids : ["2kz6FGzMkZUyGZPywlkcOu", "3Iq43NGfIN8tc8AVJ9Konz", ...]
             regex: "^*$"
 
         commit:
@@ -99,11 +99,12 @@ services:
                 {"Authorization": "Bearer $+token"}
               data: |
                 {"ids": $+album_ids}
+
       - name: delete_albums
         description: delete a list of albums from user profile
         update_action: true
         inputs:
-          - name: album_ids
+          - name: album_ids   # albums_ids : ["2kz6FGzMkZUyGZPywlkcOu", "3Iq43NGfIN8tc8AVJ9Konz", ...]
             regex: "^*$"
 
         commit:
