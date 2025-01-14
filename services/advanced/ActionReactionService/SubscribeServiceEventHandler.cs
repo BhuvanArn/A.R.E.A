@@ -45,6 +45,7 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         };
         
         await _dbHandler.AddAsync(service);
+        
         return ($"You subscribed to {@event.Name}", ResultType.Success);
     }
 }
