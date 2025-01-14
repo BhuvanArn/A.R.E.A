@@ -23,12 +23,7 @@ public class AreaController : ControllerBase
     
     private string GetUserTokenFromHeaders()
     {
-        if (Request.Headers.TryGetValue("X-User-Token", out var token))
-        {
-            return token.ToString();
-        }
-
-        throw new UnauthorizedAccessException("User token is missing from headers.");
+        return Request.Headers.TryGetValue("X-User-Token", out var token) ? token.ToString() : string.Empty;
     }
     
     [HttpGet]
@@ -45,9 +40,15 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> GetServices()
     {
         var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("GetServices event triggered.");
 
-        var response = await _eventBus.PublishAsync<GetServiceEvent, (List<Service>, ResultType)>(new GetServiceEvent
+        var response = await _eventBus.PublishAsync<GetServiceEvent, (object, ResultType)>(new GetServiceEvent
         {
             JwtToken = userToken
         });
@@ -59,6 +60,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> SubscribeService([FromBody] SubscribeServiceRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation($"SubscribeService event triggered for token: {userToken} and service: {request.Name}", userToken, request.Name);
 
         var response = await _eventBus.PublishAsync<SubscribeServiceEvent, (string, ResultType)>(new SubscribeServiceEvent
@@ -75,6 +82,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> UnsubscribeService([FromBody] UnsubscribeServiceRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation($"UnsubscribeService event triggered for token: {userToken} and service: {request.Name}", userToken, request.Name);
 
         var response = await _eventBus.PublishAsync<UnsubscribeServiceEvent, (List<Service>, ResultType)>(new UnsubscribeServiceEvent
@@ -90,6 +103,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> GetActionsReactions(string service_name)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation($"GetActionsReactions event triggered with token {userToken} and service {service_name}");
         
         var response = await _eventBus.PublishAsync<GetActionsReactionsEvent, (object, ResultType)>(new GetActionsReactionsEvent
@@ -105,6 +124,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> GetAction(string service_name)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("GetActions event triggered");
         
         var response = await _eventBus.PublishAsync<GetActionEvent, (List<Action>, ResultType)>(new GetActionEvent
@@ -120,6 +145,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> GetReaction(string service_name)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("GetReaction event triggered");
         
         var response = await _eventBus.PublishAsync<GetReactionEvent, (List<Reaction>, ResultType)>(new GetReactionEvent
@@ -135,6 +166,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> AddAction([FromBody] AddActionRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("AddActions event triggered");
 
         var response = await _eventBus.PublishAsync<AddActionEvent, (string, ResultType)>(new AddActionEvent
@@ -153,6 +190,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> AddReaction([FromBody] AddReactionRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("AddReactions event triggered");
 
         var response = await _eventBus.PublishAsync<AddReactionEvent, (string, ResultType)>(new AddReactionEvent
@@ -171,6 +214,12 @@ public class AreaController : ControllerBase
     public async Task<IActionResult> DeleteAreas([FromBody] DeleteAreaRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
         _logger.LogInformation("DeleteAreas event triggered.");
 
         var response = await _eventBus.PublishAsync<DeleteAreaEvent, (string, ResultType)>(new DeleteAreaEvent
