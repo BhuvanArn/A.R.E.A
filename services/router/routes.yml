@@ -59,6 +59,24 @@ routes:
       401:
         description: "Invalid data (passwords do not match, email already exists, etc)."
 
+  - name: "user-information"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/userinformation$"
+    realPath: "/auth/userinformation"
+    summary: "Get User Information"
+    description: "Retrieves information about the user based on the provided JWT token."
+    method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    responses:
+      200:
+        description: "User information retrieved successfully."
+      401:
+        description: "Unauthorized or invalid JWT token."
+
   - name: "auth-google-login"
     host: "csharp_service"
     port: 8080
@@ -91,6 +109,10 @@ routes:
     summary: "Reset Password"
     description: "Resets a user's password. The user must be logged in to reset their password."
     method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     requestBody:
       required: true
       content:
@@ -98,9 +120,6 @@ routes:
           schema:
             type: "object"
             properties:
-              JwtToken:
-                type: "string"
-                example: "jwt_token"
               Password:
                 type: "string"
                 example: "password"
@@ -114,6 +133,33 @@ routes:
         description: "Invalid data (old password incorrect, etc)."
       500:
         description: "Internal server error (bad JWT token, etc)."
+
+  - name: "discord-login"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/discord-login$"
+    realPath: "/auth/discord-login"
+    summary: "Discord Login"
+    description: "Authenticates a user via Discord credentials and provides a Discord token."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              Email:
+                type: "string"
+                example: "user@example.com"
+              Password:
+                type: "string"
+                example: "password123"
+    responses:
+      200:
+        description: "Discord token retrieved successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
 
   - name: "auth-forget-password"
     host: "csharp_service"
@@ -156,11 +202,15 @@ routes:
   - name: "get-services"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/services$"
-    realPath: "/area/{jwtToken}/services"
+    condition: "^/area/services$"
+    realPath: "/area/services"
     summary: "Get Services"
     description: "Retrieves a list of services that you subscribed to."
     method: "GET"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     responses:
       200:
         description: "List of services."
@@ -168,11 +218,15 @@ routes:
   - name: "subscribe-service"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/subscribe_service$"
-    realPath: "/area/{jwtToken}/subscribe_service"
+    condition: "^/area/subscribe_service$"
+    realPath: "/area/subscribe_service"
     summary: "Subscribe Service"
     description: "Subscribes to a service in an area."
     method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     requestBody:
       required: true
       content:
@@ -198,11 +252,15 @@ routes:
   - name: "unsubscribe-service"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/unsubscribe_service$"
-    realPath: "/area/{jwtToken}/unsubscribe_service"
+    condition: "^/area/unsubscribe_service$"
+    realPath: "/area/unsubscribe_service"
     summary: "Unsubscribe Service"
     description: "Unsubscribes from a service in an area."
     method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     requestBody:
       required: true
       content:
@@ -216,9 +274,6 @@ routes:
               credentials:
                 type: "object"
                 properties:
-                  JwtToken:
-                    type: "string"
-                    example: "9321903912kkkiezd89032"
                   Name:
                     type: "string"
                     example: "resd"
@@ -232,11 +287,15 @@ routes:
   - name: "add-actions"
     host: "csharp_service"
     port: 8080
-    condition: "^/addactions$"
-    realPath: "/addactions"
+    condition: "^/area/addactions$"
+    realPath: "/area/addactions"
     summary: "Add actions"
     description: "Adds a new actions for a given service."
     method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     requestBody:
       required: true
       content:
@@ -250,26 +309,66 @@ routes:
               Name:
                 type: "string"
                 example: "MyCustomAction"
+              DisplayName:
+                type: "string"
+                example: "Discord"
               TriggerConfig:
                 type: "string"
                 example: "some-trigger-data"
-              JwtToken:
-                type: "string"
-                example: "jwt_token"
     responses:
       200:
         description: "Action added successfully."
       401:
         description: "Unauthorized or invalid data."
 
+  - name: "delete-areas"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/delete_areas$"
+    realPath: "/area/delete_areas"
+    summary: "Delete Areas"
+    description: "Deletes specified areas using user authentication."
+    method: "DELETE"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ServiceId:
+                type: "number"
+                example: 1
+              ActionId:
+                type: "number"
+                example: 2
+              ReactionId:
+                type: "number"
+                example: 3
+    responses:
+      200:
+        description: "Deletion successful."
+      401:
+        description: "Unauthorized access or invalid token."
+      400:
+        description: "Bad request or invalid data."
+
   - name: "add-reactions"
     host: "csharp_service"
     port: 8080
-    condition: "^/addreactions$"
-    realPath: "/addreactions"
+    condition: "^/area/addreactions$"
+    realPath: "/area/addreactions"
     summary: "Add Reaction"
     description: "Adds a new reaction for a given service and action."
     method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     requestBody:
       required: true
       content:
@@ -289,9 +388,6 @@ routes:
               ExecutionConfig:
                 type: "string"
                 example: "some-execution-configuration"
-              JwtToken:
-                type: "string"
-                example: "jwt_token_here"
     responses:
       200:
         description: "Reaction added successfully."
@@ -301,11 +397,15 @@ routes:
   - name: "actions-reactions"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/services/([^/]+)/actions_reactions$"
-    realPath: "/area/{jwtToken}/services/{serviceName}/actions_reactions"
+    condition: "^/area/services/([^/]+)/actions_reactions$"
+    realPath: "/area/services/{serviceName}/actions_reactions"
     summary: "Get Actions and Reactions"
     description: "Retrieves a list of actions and reactions available in a service (you must be subscribed to the service)."
     method: "GET"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     responses:
       200:
         description: "List of actions and reactions."
@@ -315,11 +415,15 @@ routes:
   - name: "action"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/services/([^/]+)/action$"
-    realPath: "/area/{jwtToken}/services/{serviceName}/action"
+    condition: "^/area/services/([^/]+)/action$"
+    realPath: "/area/services/{serviceName}/action"
     summary: "Get all actions of the service"
     description: "Retrieves a list of actions available in a service (you must be subscribed to the service)."
     method: "GET"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     responses:
       200:
         description: "List of actions."
@@ -329,11 +433,15 @@ routes:
   - name: "reaction"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/([^/]+)/services/([^/]+)/reaction$"
-    realPath: "/area/{jwtToken}/services/{serviceName}/reaction"
+    condition: "^/area/services/([^/]+)/reaction$"
+    realPath: "/area/services/{serviceName}/reaction"
     summary: "Get all reactions of the service"
     description: "Retrieves a list of reactions available in a service (you must be subscribed to the service)."
     method: "GET"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
     responses:
       200:
         description: "List of reactions."

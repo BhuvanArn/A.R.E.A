@@ -3,10 +3,11 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
-public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent, (List<Service>, ResultType)>
+public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent, (object, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
 
@@ -15,7 +16,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         _dbHandler = dbHandler;
     }
     
-    public async Task<(List<Service>, ResultType)> HandleAsync(GetServiceEvent @event)
+    public async Task<(object, ResultType)> HandleAsync(GetServiceEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
 
@@ -24,8 +25,44 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
             return (new(), ResultType.Fail);
         }
         
-        var services = await _dbHandler.GetAsync<Service>(s => s.UserId == userId);
+        var services = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId)).ToList();
+
+        var areaInfos = new List<AreaInfo>();
         
-        return (services.ToList(), ResultType.Success);
+        foreach (var service in services)
+        {
+            var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id)).FirstOrDefault();
+            
+            if (area == null)
+            {
+                continue;
+            }
+
+            var action = area.ActionId != null 
+                ? await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId) 
+                : null;
+
+            var reaction = area.ReactionId != null 
+                ? await _dbHandler.GetAsync<Reaction>(r => r.Id == area.ReactionId) 
+                : null;
+
+            areaInfos.Add(new AreaInfo
+            {
+                Area = area,
+                Action = action?.FirstOrDefault(),
+                Reaction = reaction?.FirstOrDefault(),
+                ServiceName = service.Name
+            });
+        }
+        
+        return (areaInfos, ResultType.Success);
+    }
+
+    private class AreaInfo
+    {
+        public Area Area { get; set; }
+        public Action? Action { get; set; }
+        public Reaction? Reaction { get; set; }
+        public string ServiceName { get; set; }
     }
 }

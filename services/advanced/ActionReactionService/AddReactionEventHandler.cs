@@ -47,7 +47,18 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
             ExecutionConfig = @event.ExecutionConfig
         };
         
-        await _dbHandler.AddAsync(reaction);
+        var addedReaction = await _dbHandler.AddAsync(reaction);
+        
+        var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == @event.ServiceId && s.ActionId == @event.ActionId)).FirstOrDefault();
+
+        if (area is null)
+        {
+            return ("Ok", ResultType.Success);
+        }
+        
+        area.ReactionId = addedReaction.Id;
+        await _dbHandler.UpdateAsync(area);
+
         return ("Ok", ResultType.Success);
     }
 }

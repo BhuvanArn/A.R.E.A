@@ -7,7 +7,7 @@ using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
 
-public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActionsReactionsEvent, (GetActionsReactionsEventHandler.ActionsReactionsResponse, ResultType)>
+public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActionsReactionsEvent, (object, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
 
@@ -16,7 +16,7 @@ public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActio
         _dbHandler = dbHandler;
     }
     
-    public async Task<(ActionsReactionsResponse, ResultType)> HandleAsync(GetActionsReactionsEvent @event)
+    public async Task<(object, ResultType)> HandleAsync(GetActionsReactionsEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
 
@@ -33,42 +33,22 @@ public class GetActionsReactionsEventHandler : IIntegrationEventHandler<GetActio
         }
         
         var actions = await _dbHandler.GetAsync<Action>(a => a.ServiceId == service.Id);
-        var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id);
+        var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id, r => r.Action);
 
-        var response = new ActionsReactionsResponse
+        var response = actions.Select(action => new
         {
-            Actions = actions.Select(a => new ActionDto
-            {
-                Name = a.Name,
-                Description = a.TriggerConfig
-            }).ToList(),
-            Reactions = reactions.Select(r => new ReactionDto
-            {
-                Name = r.Name,
-                Action = r.Action.Name,
-                Description = r.ExecutionConfig
-            }).ToList()
-        };
-    
+            ActionName = action.Name,
+            Description = action.TriggerConfig,
+            Reactions = reactions
+                .Where(reaction => reaction.ActionId == action.Id)
+                .Select(reaction => new
+                {
+                    ReactionName = reaction.Name,
+                    ActionName = reaction.Action?.Name ?? "Unknown Action",
+                    Description = reaction.ExecutionConfig
+                }).ToList()
+        }).ToList();
+
         return (response, ResultType.Success);
-    }
-    
-    public class ActionDto
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class ReactionDto
-    {
-        public string Name { get; set; }
-        public string Action { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class ActionsReactionsResponse
-    {
-        public List<ActionDto> Actions { get; set; }
-        public List<ReactionDto> Reactions { get; set; }
     }
 }
