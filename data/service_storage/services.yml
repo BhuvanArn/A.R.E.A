@@ -47,6 +47,85 @@ services:
                 {"Authorization": "$+token", "Content-Type": "application/json"}
               data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
+  
+  - name: spotify
+    credentials:
+      - name: token
+        regex: "^*$"
+    
+    actions:
+      - name: artist_albums
+        description: action when a new album is released by an artist
+        time: 60
+        inputs:
+          - name: artist_id   # artist_id : 6e3pZKXUxrPfnUPJ960Hd9
+            regex: "^*$"
+
+        fetch:
+          strategy: hash
+          middleware: log
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/artists/$+artist_id/albums
+            headers: |
+              {"Authorization": "Bearer $+token"}
+
+      - name: playback_playing_continuously
+        description: action when the playback is playing (triggers continuously)
+        time: 1
+
+        fetch:
+          strategy: spotify.strategy_playback_playing_continuously
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/me/player
+            headers: |
+              {"Authorization": "Bearer $+token"}
+
+      - name: playback_playing_once
+        description: action when the playback is playing (triggers only once)
+        time: 1
+
+        fetch:
+          strategy: spotify.strategy_playback_playing_once
+          endpoint:
+            method: get
+            url: https://api.spotify.com/v1/me/player
+            headers: |
+              {"Authorization": "Bearer $+token"}
+    
+    reactions:
+      - name: save_albums
+        description: save a list of albums into user profile
+        update_action: true
+        inputs:
+          - name: album_ids    # albums_ids : ["2kz6FGzMkZUyGZPywlkcOu", "3Iq43NGfIN8tc8AVJ9Konz", ...]
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: put
+              url: https://api.spotify.com/v1/me/albums
+              headers: |
+                {"Authorization": "Bearer $+token"}
+              data: |
+                {"ids": $+album_ids}
+
+      - name: delete_albums
+        description: delete a list of albums from user profile
+        update_action: true
+        inputs:
+          - name: album_ids   # albums_ids : ["2kz6FGzMkZUyGZPywlkcOu", "3Iq43NGfIN8tc8AVJ9Konz", ...]
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: delete
+              url: https://api.spotify.com/v1/me/albums
+              headers: |
+                {"Authorization": "Bearer $+token"}
+              data: |
+                {"ids": $+album_ids}
 
   - name: timer
     actions:
