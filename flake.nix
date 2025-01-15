@@ -20,6 +20,7 @@
           bashInteractiveFHS
           pkg-config
 
+          python3
           nodejs
           vue-language-server
         ];

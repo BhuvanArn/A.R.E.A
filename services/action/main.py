@@ -338,7 +338,11 @@ def main() -> int:
     asrv: ActionService = ActionService()
 
     #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
-    asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
+    # args = {
+    #     "token": "token_fetched_from_api"
+    # }
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "spotify", "playback_playing", args))
 
     try:
         asrv.mainloop()
