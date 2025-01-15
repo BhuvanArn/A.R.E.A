@@ -1,18 +1,18 @@
 <template>
   <header>
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
-      <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
+      <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="menu">
       <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-      <img src="@/assets/logo.png" class="logo">
+      <img src="@/assets/logo.png" class="logo" alt="logo of the app">
       <h2 class="title">Area</h2>
       <div class="filler01">
       </div>
       <div v-show="!isLogged && !mobile" class="nv-btn-container">
-        <router-link><button @click="navigateToLogin" class="access-btn-style">Login</button></router-link>
-        <router-link><button @click="navigateToRegister" class="access-btn-style">Register</button></router-link>
+        <button @click="navigateToLogin" class="access-btn-style">Login</button>
+        <button @click="navigateToRegister" class="access-btn-style">Register</button>
       </div>
       <div v-show="isLogged && !mobile">
-        <router-link><button @click="navigateToPanel" class="access-btn-style">Your panel</button></router-link>
+        <button @click="navigateToPanel" class="access-btn-style">Your panel</button>
       </div>
       <hr v-show="!mobile" class="vertical-hr">
     </div>
