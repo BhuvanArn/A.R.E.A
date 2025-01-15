@@ -67,7 +67,7 @@ body {
     align-items: center;
     flex-direction: column;
     width: 40rem;
-    height: 20rem;
+    height: 25rem;
     background-color: transparent;
 }
 
@@ -119,7 +119,7 @@ body {
 }
 
 .mobile-title {
-    font-size: 2.3rem;
+    font-size: 2rem;
 }
 
 .logo {
