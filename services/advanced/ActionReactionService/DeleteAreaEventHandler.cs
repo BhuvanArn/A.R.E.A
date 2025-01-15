@@ -3,16 +3,19 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
 
 namespace ActionReactionService;
 
 public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, (string, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
+    private readonly ISocketService _socketService;
 
-    public DeleteAreaEventHandler(IDatabaseHandler dbHandler)
+    public DeleteAreaEventHandler(IDatabaseHandler dbHandler, ISocketService socketService)
     {
         _dbHandler = dbHandler;
+        _socketService = socketService;
     }
     
     public async Task<(string, ResultType)> HandleAsync(DeleteAreaEvent @event)
@@ -36,6 +39,11 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             {
                 await _dbHandler.DeleteAsync(area);
             }
+            
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
 
             return ($"Deleted {areasToDelete.Count} areas for ServiceId {@event.ServiceId}.", ResultType.Success);
         }
@@ -52,6 +60,11 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             {
                 await _dbHandler.DeleteAsync(area);
             }
+            
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
 
             return ($"Deleted {areasToDelete.Count} areas for ActionId {@event.ActionId}.", ResultType.Success);
         }
@@ -69,6 +82,11 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 await _dbHandler.DeleteAsync(area);
             }
 
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+            
             return ($"Deleted {areasToDelete.Count} areas for ReactionId {@event.ReactionId}.", ResultType.Success);
         }
         
