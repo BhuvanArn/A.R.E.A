@@ -4,15 +4,15 @@
             <div class="main-container-top">
                 <h2 class="login-title-txt">Login</h2>
                 <div class="filler01"></div>
-                <img src="@/assets/logo.png" class="logo">
+                <img src="@/assets/logo.png" class="logo" alt="logo">
             </div>
             <div class="main-container-bottom">
                 <div class="email-container">
-                    <img src="@/assets/user.png" class="img-style1">
+                    <img src="@/assets/user.png" class="img-style1" alt="user">
                     <input type="text" class="input-style1" placeholder="Email" v-model="email">
                 </div>
                 <div class="pwd-container">
-                    <img src="@/assets/key.png" class="img-style1">
+                    <img src="@/assets/key.png" class="img-style1" alt="password">
                     <input type="password" class="input-style1" placeholder="Password" v-model="password">
                 </div>
                 <button @click="loginClient" class="login-btn">LOGIN</button>
@@ -26,20 +26,20 @@
                 </div>
                 <div class="oauth-container">
                     <div class="oauth-ind-container-fk">
-                        <img src="@/assets/oauth/facebook_logo.png" class="img-style2">
+                        <img src="@/assets/oauth/facebook_logo.png" class="img-style2" alt="facebook connection">
                     </div>
                     <div class="oauth-ind-container-gg" @click="signInWithGoogle">
-                        <img src="@/assets/oauth/google_logo.png" class="img-style2">
+                        <img src="@/assets/oauth/google_logo.png" class="img-style2" alt="google connection">
                     </div>
                     <div class="oauth-ind-container-mc">
-                        <img src="@/assets/oauth/microsoft_logo.png" class="img-style2">
+                        <img src="@/assets/oauth/microsoft_logo.png" class="img-style2" alt="microsoft connection">
                     </div>
                     <div class="oauth-ind-container-dc">
-                        <img src="@/assets/oauth/discord_logo.png" class="img-style2">
+                        <img src="@/assets/oauth/discord_logo.png" class="img-style2" alt="discord connection">
                     </div>
                 </div>
-                <div class="link"><h4 class="txt-link" @click="navigateToRegister">Register</h4></div>
-                <div class="link"><h4 class="txt-link" @click="navigateToForgotPwd">Forgot password ?</h4></div>
+                <div class="link"><p class="txt-link" @click="navigateToRegister">Register</p></div>
+                <div class="link"><p class="txt-link" @click="navigateToForgotPwd">Forgot password ?</p></div>
             </div>
         </div>
     </body>
@@ -295,7 +295,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #28728B;
     border-radius: 5px;
     border: none;
     width: 8rem;
@@ -426,6 +426,8 @@ body {
     cursor: pointer;
     margin: 0;
     padding: 0;
+    color: #28728B;
+    border-bottom: 1px solid #28728B;
 }
 
 .error-message {
