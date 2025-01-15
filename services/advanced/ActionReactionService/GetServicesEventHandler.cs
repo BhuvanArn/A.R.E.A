@@ -27,11 +27,16 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         
         var services = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId)).ToList();
 
+        if (@event.GetArea)
+        {
+            return (services, ResultType.Success);
+        }
+
         var areaInfos = new List<AreaInfo>();
         
         foreach (var service in services)
         {
-            var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id)).FirstOrDefault();
+            var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id && !string.IsNullOrEmpty(s.DisplayName))).FirstOrDefault();
             
             if (area == null)
             {
