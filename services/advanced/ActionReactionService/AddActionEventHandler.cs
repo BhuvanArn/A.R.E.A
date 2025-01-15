@@ -3,16 +3,19 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
 
 namespace ActionReactionService;
 
 public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (string, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
+    private readonly ISocketService _socketService;
 
-    public AddActionEventHandler(IDatabaseHandler dbHandler)
+    public AddActionEventHandler(IDatabaseHandler dbHandler, ISocketService socketService)
     {
         _dbHandler = dbHandler;
+        _socketService = socketService;
     }
     
     public async Task<(string, ResultType)> HandleAsync(AddActionEvent @event)
@@ -51,6 +54,12 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
         };
 
         await _dbHandler.AddAsync(area);
+        
+        _socketService.OpenSocket();
+        _socketService.SendHandshake();
+        _socketService.NotifyChange();
+        _socketService.CloseSocket();
+        
         return ("Ok", ResultType.Success);
     }
 }
