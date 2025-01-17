@@ -12,10 +12,10 @@
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(area, index) in testAreas" :key="index">
+                <template v-for="(area, index) in areas" :key="index">
                     <tr class="table-row">
                         <td class="status-column">
-                            <svg v-if="area.status == 'Active'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#1c7a20">
+                            <svg v-if="area.state === 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#1c7a20">
                                 <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/>
                             </svg>
                             <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#777">
@@ -23,11 +23,11 @@
                             </svg>
                         </td>
                         <td class="icon-column">
-                            <Iconify :icon="getServiceIcon(area.actionName)" class="service-icon" />
+                            <Iconify :icon="getServiceIcon(area.serviceName)" class="service-icon" />
                         </td>
-                        <td class="name-column">{{ area.areaName }}</td>
-                        <td class="number-column">{{ area.reactions.length }}</td>
-                        <td class="date-column">{{ formatDate(area.created_at) }}</td>
+                        <td class="name-column">{{ area.displayName }}</td>
+                        <td class="number-column">1</td>
+                        <td class="date-column">{{ formatDate(area.createdDate) }}</td>
                         <td class="actions-column">
                             <button class="action-btn update-btn" @click="updateArea(area)">
                                 <div class="icon-square">
@@ -74,40 +74,14 @@ export default {
     data() {
         return {
             showCreateModal: false,
-            testAreas: [
-                {
-                    "actionName": "Test Area 1",
-                    "description": "This is a test area",
-                    "created_at": "2025-01-12T00:00:00.000Z",
-                    "areaName": "Test Area 1",
-                    "status": "Active",
-                    "reactions": [
-                        {
-                            "reactionName": "Test Reaction 1",
-                            "actionName": "Test Area 1",
-                            "description": "This is a test reaction",
-                        }
-                    ]
-                },
-                {
-                    "actionName": "Test Area 2",
-                    "description": "This is a test area",
-                    "created_at": "2025-01-11T00:00:00.000Z",
-                    "areaName": "Area Name 2",
-                    "status": "Disabled",
-                    "reactions": [
-                        {
-                            "reactionName": "Test Reaction 2",
-                            "actionName": "Test Area 2",
-                            "description": "This is a test reaction",
-                        }
-                    ]
-                }
-            ]
+            areas: [],
         };
     },
     methods: {
         getServiceIcon(name) {
+            if (!name) {
+                return "mdi:help-circle";
+            }
             const lowerCased = name.toLowerCase();
             return `mdi:${lowerCased}`;
         },
@@ -116,42 +90,79 @@ export default {
             return new Date(dateString).toLocaleDateString(undefined, options);
         },
         updateArea(area) {
-            // Handle update logic here
             console.log("Update area:", area);
+
+            // Redirect to update page/modal
         },
         async deleteArea(area) {
-
             //debug
-            console.log("Deleting area:", area);
-            if (!area.serviceId || !area.actionId || !area.reactions[0].reactionId) {
-                console.error("Missing ID(s) for deletion");
-                // this.$router.go();
-                return;
-            }
+            console.log("Deleting area:", area.actionId);
 
             try {
+                const body = JSON.stringify({ "ActionId": area.actionId });
 
                 const token = localStorage.getItem("token");
-                // Call the API to delete the area
-                const res = await this.$axios.delete(`/area/delete_areas`, {
-                    ServiceId: area.serviceId,
-                    ActionId: area.actionId,
-                    ReactionId: area.reactions[0].reactionId // Assuming only one reaction
-                }, {
-                    headers: {
-                        'X-User-Token': token
-                    }
-                });
 
-                console.log("Area deleted:", res);
+                const res = await this.$axios.delete(`/area/delete_areas`,
+                    body,
+                    {
+                        headers: {
+                            'X-User-Token': token,
+                            'Content-Type': 'application/json',
+                            'accept': '*/*'
+                        }
+                    }
+                );
+
                 this.$router.go();
             } catch (error) {
                 console.error("Error deleting area:", error);
             }
         },
+
+        async getServiceNameWithId(serviceId) {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await this.$axios.get(`/area/services/false`, {
+                    headers: {
+                        'X-User-Token': token
+                    }
+                });
+
+                const service = res.data.find(service => service.id === serviceId);
+                return service.name;
+            } catch (error) {
+                console.error("Error getting service name:", error);
+            }
+        },
+
+        async getAreas() {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await this.$axios.get("/area/services/true", {
+                    headers: {
+                        'X-User-Token': token
+                    }
+                });
+
+                console.log("Areas:", res);
+
+                this.areas = res.data;
+
+                this.areas.forEach(async area => {
+                    const serviceName = await this.getServiceNameWithId(area.serviceId);
+                    area.serviceName = serviceName;
+                });
+            } catch (error) {
+                console.error("Error getting areas:", error);
+            }
+        },
         createArea() {
             this.showCreateModal = true;
         }
+    },
+    async mounted() {
+        await this.getAreas();
     }
 };
 </script>
@@ -178,7 +189,7 @@ export default {
 }
 
 .service-icon {
-    font-size: 24px;
+    font-size: 30px;
 }
 
 .action-btn {
@@ -227,6 +238,8 @@ export default {
 
     text-align: center;
 
+    padding-left: 0px!important;
+
     svg {
         width: 2.1rem;
     }
@@ -234,6 +247,8 @@ export default {
 
 .icon-column {
     width: 6%;
+    text-align: center;
+    padding-left: 0px!important;
 }
 
 .date-column {
@@ -282,8 +297,8 @@ export default {
     td {
         background-color: #fff;
         border: none;
-        color: #777;
-        font-weight: 300;
+        color: #101010;
+        font-weight: 450;
     }
 
     td:last-child {
