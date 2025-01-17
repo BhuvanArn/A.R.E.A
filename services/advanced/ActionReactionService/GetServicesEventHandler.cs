@@ -27,7 +27,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         
         var services = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId)).ToList();
 
-        if (@event.GetArea)
+        if (!@event.GetArea)
         {
             return (services, ResultType.Success);
         }
