@@ -36,30 +36,25 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
 
         foreach (var service in services)
         {
-            var area = (await _dbHandler.GetAsync<Area>(s =>
-                s.ServiceId == service.Id && !string.IsNullOrEmpty(s.DisplayName))).FirstOrDefault();
+            var areas = await _dbHandler.GetAsync<Area>(s =>
+                s.ServiceId == service.Id && !string.IsNullOrEmpty(s.DisplayName));
 
-            if (area == null)
+            foreach (var area in areas)
             {
-                continue;
+                if (area.ActionId is not null)
+                {
+                    area.Action = (await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId)).FirstOrDefault();
+                }
+
+                if (area.Action is not null)
+                {
+                    area.Action.Reactions = (await _dbHandler.GetAsync<Reaction>(r => r.ActionId == area.Action.Id)).ToList();
+                }
+
+                areasWithDetails.Add(area);
             }
-
-            area.Action = area.ActionId != null
-                ? (await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId)).FirstOrDefault()
-                : null;
-
-            area.Reaction = area.ReactionId != null
-                ? (await _dbHandler.GetAsync<Reaction>(r => r.Id == area.ReactionId)).FirstOrDefault()
-                : null;
-
-            areasWithDetails.Add(area);
         }
 
         return (areasWithDetails, ResultType.Success);
-    }
-
-    private class AreaInfo
-    {
-        public Area Area { get; set; }
     }
 }
