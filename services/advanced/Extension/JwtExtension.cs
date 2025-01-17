@@ -47,7 +47,7 @@ public static class JwtExtension
             issuer: jwtSettings["Issuer"],
             audience: jwtSettings["Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["TokenLifetimeMinutes"])),
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["TokenLifetimeMinutes"])),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

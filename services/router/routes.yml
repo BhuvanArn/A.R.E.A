@@ -59,14 +59,14 @@ routes:
       401:
         description: "Invalid data (passwords do not match, email already exists, etc)."
 
-  - name: "user-information"
+  - name: "auth-user-information"
     host: "csharp_service"
     port: 8080
     condition: "^/auth/userinformation$"
     realPath: "/auth/userinformation"
     summary: "Get User Information"
     description: "Retrieves information about the user based on the provided JWT token."
-    method: "POST"
+    method: "GET"
     headers:
       X-User-Token:
         description: "Bearer token for user authentication"
@@ -77,13 +77,13 @@ routes:
       401:
         description: "Unauthorized or invalid JWT token."
 
-  - name: "auth-google-login"
+  - name: "auth-forget-password"
     host: "csharp_service"
     port: 8080
-    condition: "^/auth/google-login$"
-    realPath: "/auth/google-login"
-    summary: "Google Login"
-    description: "Authenticates a user using Google OAuth and provides an access token."
+    condition: "^/auth/forget-password$"
+    realPath: "/auth/forget-password"
+    summary: "Forgot Password"
+    description: "Send an email to user in case they lost their password."
     method: "POST"
     requestBody:
       required: true
@@ -92,14 +92,16 @@ routes:
           schema:
             type: "object"
             properties:
-              Token:
+              Email:
                 type: "string"
-                example: "google_oauth_token"
+                example: "area@gmail.com"
     responses:
       200:
-        description: "Login successful and access token provided."
+        description: "Email sent successfully."
+      401:
+        description: "Invalid data (wrong email, couldn't connect to SMTP, etc)."
       500:
-        description: "Invalid Google OAuth token."
+        description: "Internal server error (email couldn't be sent, etc)."
 
   - name: "auth-reset-password"
     host: "csharp_service"
@@ -134,7 +136,31 @@ routes:
       500:
         description: "Internal server error (bad JWT token, etc)."
 
-  - name: "discord-login"
+  - name: "auth-google-login"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/google-login$"
+    realPath: "/auth/google-login"
+    summary: "Google Login"
+    description: "Authenticates a user using Google OAuth and provides an access token."
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              Token:
+                type: "string"
+                example: "google_oauth_token"
+    responses:
+      200:
+        description: "Login successful and access token provided."
+      500:
+        description: "Invalid Google OAuth token."
+
+  - name: "auth-discord-login"
     host: "csharp_service"
     port: 8080
     condition: "^/auth/discord-login$"
@@ -161,31 +187,9 @@ routes:
       401:
         description: "Unauthorized or invalid credentials."
 
-  - name: "auth-forget-password"
-    host: "csharp_service"
-    port: 8080
-    condition: "^/auth/forget-password$"
-    realPath: "/auth/forget-password"
-    summary: "Forgot Password"
-    description: "Send an email to user in case they lost their password."
-    method: "POST"
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: "object"
-            properties:
-              Email:
-                type: "string"
-                example: "area@gmail.com"
-    responses:
-      200:
-        description: "Email sent successfully."
-      401:
-        description: "Invalid data (wrong email, couldn't connect to SMTP, etc)."
-      500:
-        description: "Internal server error (email couldn't be sent, etc)."
+
+  #------------------ Area-Related Operations ------------------#
+
 
   - name: "area-list"
     host: "csharp_service"
@@ -202,8 +206,8 @@ routes:
   - name: "get-services"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/services$"
-    realPath: "/area/services"
+    condition: "^/area/services/(true|false)$"
+    realPath: "/area/services/{GetArea}"
     summary: "Get Services"
     description: "Retrieves a list of services that you subscribed to."
     method: "GET"
@@ -244,7 +248,7 @@ routes:
                     type: "string"
                     example: "3421432423"
     responses:
-      201:
+      200:
         description: "Subscription successful."
       400:
         description: "Invalid subscription data."
@@ -255,7 +259,7 @@ routes:
     condition: "^/area/unsubscribe_service$"
     realPath: "/area/unsubscribe_service"
     summary: "Unsubscribe Service"
-    description: "Unsubscribes from a service in an area."
+    description: "Unsubscribes from a service in an area. On success, It will return a list of the remaining services."
     method: "POST"
     headers:
       X-User-Token:
@@ -271,18 +275,11 @@ routes:
               name:
                 type: "string"
                 example: "facebook"
-              credentials:
-                type: "object"
-                properties:
-                  Name:
-                    type: "string"
-                    example: "resd"
-
     responses:
       200:
         description: "Unsubscription successful (no data)."
       401:
-        description: "Invalid unsubscription data."
+        description: "Invalid unsubscription data/not subscribed to the service."
 
   - name: "add-actions"
     host: "csharp_service"
@@ -459,6 +456,13 @@ routes:
     responses:
       200:
         description: "About details."
+
+
+
+
+
+
+  ###------------------ Swagger ------------------###
 
   - name: "swagger-doc"
     host: "swagger-doc"

@@ -11,7 +11,7 @@ function buildSwaggerDoc() {
     openapi: '3.0.0',
     info: {
       title: 'AREA - LastChance Backend API Documentation',
-      version: '1.0.0',
+      version: '1.1.0',
       description: 'API documentation for the LastChance backend of the AREA project',
     },
     paths: {},
@@ -52,11 +52,22 @@ function buildSwaggerDoc() {
         });
       }
 
+      // extract headers
+      const headers = route.headers ? Object.keys(route.headers).map(headerName => ({
+        name: headerName,
+        in: 'header',
+        required: route.headers[headerName].required,
+        description: route.headers[headerName].description,
+        schema: {
+          type: 'string',
+        },
+      })) : [];
+
       swaggerDoc.paths[path][method] = {
         tags: [tag],
         summary: route.summary || `Route for ${route.name}`,
         description: route.description || `Handles ${route.name}`,
-        parameters: [...(route.parameters || []), ...pathParams],
+        parameters: [ ...headers , ...(route.parameters || []), ...pathParams],
         requestBody: route.requestBody || undefined,
         responses: route.responses || {
           200: { description: 'OK' },
