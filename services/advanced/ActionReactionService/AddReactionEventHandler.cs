@@ -3,6 +3,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
 using Action = Database.Entities.Action;
 
 namespace ActionReactionService;
@@ -10,10 +11,12 @@ namespace ActionReactionService;
 public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent, (string, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
+    private readonly ISocketService _socketService;
 
-    public AddReactionEventHandler(IDatabaseHandler dbHandler)
+    public AddReactionEventHandler(IDatabaseHandler dbHandler, ISocketService socketService)
     {
         _dbHandler = dbHandler;
+        _socketService = socketService;
     }
     
     public async Task<(string, ResultType)> HandleAsync(AddReactionEvent @event)
@@ -59,6 +62,18 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
         area.ReactionId = addedReaction.Id;
         await _dbHandler.UpdateAsync(area);
 
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+        
         return ("Ok", ResultType.Success);
     }
 }
