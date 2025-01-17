@@ -6,7 +6,7 @@ dotenv.config();
 export default defineConfig({
   plugins: [vue()],
   server: {
-    port: 8081,
+    port: 80,
   },
   resolve: {
     alias: {

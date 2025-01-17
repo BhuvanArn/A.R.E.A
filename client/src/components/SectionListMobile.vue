@@ -51,13 +51,10 @@
 </template>
 
 <script>
-import WidgetList from '@/components/WidgetList.vue';
-
 export default {
 
     name: "SectionList",
     components: {
-        WidgetList,
     },
     mounted() {
         this.checkScreen();
