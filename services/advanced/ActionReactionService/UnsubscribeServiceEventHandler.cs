@@ -46,10 +46,17 @@ public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<Unsubscri
         
         await _dbHandler.DeleteAsync(existingService);
         
-        _socketService.OpenSocket();
-        _socketService.SendHandshake();
-        _socketService.NotifyChange();
-        _socketService.CloseSocket();
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
         
         return (await _dbHandler.GetAllAsync<Service>(), ResultType.Success);
     }

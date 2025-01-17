@@ -49,10 +49,17 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         
         await _dbHandler.AddAsync(service);
         
-        _socketService.OpenSocket();
-        _socketService.SendHandshake();
-        _socketService.NotifyChange();
-        _socketService.CloseSocket();
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
         
         return ($"You subscribed to {@event.Name}", ResultType.Success);
     }

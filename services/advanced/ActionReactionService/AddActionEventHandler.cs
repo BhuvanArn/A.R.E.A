@@ -47,19 +47,26 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
         {
             ServiceId = service.Id,
             DisplayName = @event.DisplayName,
-            CreatedDate = DateTime.Now,
+            CreatedDate = DateTime.UtcNow,
             ActionId = addedAction.Id,
             State = AreaState.Active,
             UserId = userId
         };
 
         await _dbHandler.AddAsync(area);
-        
-        _socketService.OpenSocket();
-        _socketService.SendHandshake();
-        _socketService.NotifyChange();
-        _socketService.CloseSocket();
-        
+
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+
         return ("Ok", ResultType.Success);
     }
 }

@@ -68,10 +68,17 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 await _dbHandler.DeleteAsync(area);
             }
             
-            _socketService.OpenSocket();
-            _socketService.SendHandshake();
-            _socketService.NotifyChange();
-            _socketService.CloseSocket();
+            try
+            {
+                _socketService.OpenSocket();
+                _socketService.SendHandshake();
+                _socketService.NotifyChange();
+                _socketService.CloseSocket();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             return ($"Deleted {areasToDelete.Count} areas for ServiceId {@event.ServiceId}.", ResultType.Success);
         }
@@ -106,10 +113,17 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 await _dbHandler.DeleteAsync(area);
             }
             
-            _socketService.OpenSocket();
-            _socketService.SendHandshake();
-            _socketService.NotifyChange();
-            _socketService.CloseSocket();
+            try
+            {
+                _socketService.OpenSocket();
+                _socketService.SendHandshake();
+                _socketService.NotifyChange();
+                _socketService.CloseSocket();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             return ($"Deleted {areasToDelete.Count} areas for ActionId {@event.ActionId}.", ResultType.Success);
         }
@@ -134,10 +148,17 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 await _dbHandler.DeleteAsync(area);
             }
 
-            _socketService.OpenSocket();
-            _socketService.SendHandshake();
-            _socketService.NotifyChange();
-            _socketService.CloseSocket();
+            try
+            {
+                _socketService.OpenSocket();
+                _socketService.SendHandshake();
+                _socketService.NotifyChange();
+                _socketService.CloseSocket();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
             
             return ($"Deleted {areasToDelete.Count} areas for ReactionId {@event.ReactionId}.", ResultType.Success);
         }
