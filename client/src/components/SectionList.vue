@@ -1,10 +1,16 @@
 <template>
     <div class="service-list" v-show="!mobile">
         <h1 class="service-txt-title">Services</h1>
-        <!-- <p>&nbsp</p> -->
         <ul>
-            <li v-for="(section, index) in services" class="section-item">
-                <div class="service-section-name" :style="{ backgroundColor: getColor(index) }">{{ section }}</div>
+            <li v-for="(section, _) in services" class="section-item">
+                <div class="service-section-name" :style="{ backgroundColor: getBrandColor(section.name) }" @click="selectedService = section; openServiceDetails()">
+                    <div class="icon-square">
+                        <Iconify :icon="getServiceIcon(section.name)" class="service-icon-small" />
+                    </div>
+                    <div class="service-name">
+                        {{ section.name }}
+                    </div>
+                </div>
             </li>
         </ul>
         <div class="add-services" @click="showForm = true">
@@ -19,51 +25,18 @@
       :services="filteredServices"
       @close="cancelForm"
     />
-    <!-- <div v-if="showForm" class="modal-overlay">
-        <div class="modal">
-            <h3>Add New Service</h3>
-            <p>&nbsp;</p>
-            <div v-if="filteredServices.length === 0">
-                No other services available
-                <p>&nbsp;</p>
-                <button type="button" @click="cancelForm">Cancel</button>
-            </div>
-            <div v-else>
-                <form @submit.prevent="createService">
-                    <div>
-                        <label for="service">Services: </label>
-                        <select id="service" v-model="selectedService">
-                            <option v-for="(service, id) in filteredServices" :key="id" :value="id">
-                                {{ service.name }}
-                            </option>
-                        </select>
-                        <p>&nbsp;</p>
-                        <label for="credentials">Credentials: </label>
-                        <div v-if="selectedService !== null">
-                            <div v-for="(credential) in filteredServices[selectedService]?.credentials || []"
-                                :key="index">
-                                <label for="credential">{{ credential }}: </label>
-                                <input id="credential" type="text" v-model="credentials[credential]"
-                                    placeholder="Enter value" />
-                            </div>
-                        </div>
-                        </div>
-                    <button type="submit">Create Service</button>
-                    <button type="button" @click="cancelForm">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div> -->
 </template>
 
 <script>
 import AddServiceModal from './AddServiceModal.vue';
+import { Icon } from "@iconify/vue";
 
 export default {
 
     name: "SectionList",
     components: {
         AddServiceModal,
+        Iconify: Icon
     },
     mounted() {
         this.checkScreen();
@@ -75,24 +48,11 @@ export default {
             mobile: false,
             selectedService: null,
             credentials: {},
-            available_services: [
-                {
-                    "name": "Discord",
-                    "credentials": [
-                        "token",
-                    ],
-                },
-                {
-                    "name": "Google",
-                    "credentials": [
-                        "email",
-                        "password",
-                    ]
-                }
-            ],
+            available_services: [],
             services: [
                 // "Discord",
             ],
+            selectedService: null,
         }
     },
     computed: {
@@ -101,7 +61,7 @@ export default {
                 return this.available_services;
             }
             return this.available_services.filter(
-                (service) => !this.services.includes(service.name)
+                (service) => !this.services.some((s) => s.name === service.name)
             );
         },
     },
@@ -114,24 +74,28 @@ export default {
                 this.mobile = false;
             }
         },
-            getColor(index) {
-            const colors = ["#77c   bda", "#ff9e99", "#dbcc79", "#8cbd8c"];  //["blue", "red", "yellow", "green"]
-            return colors[index % colors.length];
-        },
-        createService() {
-            if (this.selectedService != null &&
-                Object.keys(this.credentials).length == Object.keys(this.filteredServices[this.selectedService].credentials).length) {
-                this.services.push(this.filteredServices[this.selectedService]["name"]);
-                this.resetForm();
-            } else {
-                alert("Please select a service and specify the corresponding credentials.");
+        getBrandColor(name) {
+            switch (name) {
+                case "discord":
+                    return  "#7289da";
+                case "google":
+                    return "#4285f4";
+                case "twitter":
+                    return "#1da1f2";
+                case "github":
+                    return "#24292e";
+                case "spotify":
+                    return "#1db954";
+                default:
+                    return "gray";
             }
-
-            // TODO : Send credentials to API
-            alert(JSON.stringify(this.credentials, null, 2));
-
-            this.credentials = {};
         },
+
+        getServiceIcon(name) {
+            const lowerCased = name.toLowerCase();
+            return `mdi:${lowerCased}`;
+        },
+
         cancelForm() {
             this.resetForm();
         },
@@ -153,122 +117,35 @@ export default {
         async fetchServices() {
             try {
                 const token = localStorage.getItem("token");
-                const res = await this.$axios.get(`/area/${token}/services`);
+                const res = await this.$axios.get(`/area`, {
+                    headers: {
+                        'X-User-Token': token,
+                    },
+                });
                 console.log(res);
-                if (res.data.services) {
-                    this.services = res.data.services;
+                if (res.data) {
+                    this.services = res.data;
                 } else {
                     this.services = [];
                 }
             } catch (error) {
                 console.error(error);
+                this.services = [];
             }
+        },
+
+        openServiceDetails() {
+            // Redirect to service details page
+            this.$router.push({ name: 'service-details', params: { serviceName: this.selectedService.name } });
         },
     },
     async mounted() {
-        // const about_data = {
-        //     client: {
-        //         host: "10.101.53.35"
-        //     },
-        //     server: {
-        //         current_time: 1531680780,
-        //         services: [
-        //         {
-        //             name: "facebook",
-        //             credentials: ["email", "password"],
-        //             actions: [
-        //                 {
-        //                     name: "new_message_in_group",
-        //                     description: "A new message is posted in the group",
-        //                     inputs: ["Group Link", "Username"]
-        //                 },
-        //                 {
-        //                     name: "new_message_inbox",
-        //                     description: "A new private message is received by the user",
-        //                     inputs: ["Profile"]
-        //                 }
-        //             ],
-        //             reactions: [
-        //                 {
-        //                     name: "like_message",
-        //                     description: "The user likes a message",
-        //                     inputs: ["Profile"]
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             "name": "Discord",
-        //             "credentials": [
-        //                 "token",
-        //             ],
-        //             actions: [
-        //                 {
-        //                     name: "new_message_in_group",
-        //                     description: "A new message is posted in the group",
-        //                     inputs: ["Group Link", "Username"]
-        //                 },
-        //                 {
-        //                     name: "ping_everyone",
-        //                     description: "You were pinged by a @everyone",
-        //                     inputs: ["Profile"]
-        //                 }
-        //             ],
-        //             reactions: [
-        //                 {
-        //                     name: "send_message",
-        //                     description: "The user sends a message",
-        //                     inputs: ["Message"]
-        //                 }
-        //             ]
-        //         },
-        //         ]
-        //     }
-        // };
 
         // get services from API ABOUT
         await this.fetchAbout();
 
         // get services already subscribed by the user
         await this.fetchServices();
-
-        const user_actions_reactions =
-        {
-            "facebook": {
-                actions: [
-                    {
-                        name: "new_message_in_group",
-                        description: "A new message is posted in the group",
-                        inputs: ["Group Link", "Username"]
-                    },
-                ],
-                reactions: [
-                    {
-                        name: "like_message",
-                        action: "new_message_in_group",
-                        description: "The user likes a message",
-                        inputs: ["Profile"]
-                    }
-                ]
-            },
-            "discord": {
-                actions: [
-                    {
-                        name: "ping_everyone",
-                        description: "You were pinged by a @everyone",
-                        inputs: ["Profile"]
-                    }
-                ],
-                reactions: [
-                    {
-                        name: "send_message",
-                        action: "ping_everyone",
-                        description: "The user sends a message",
-                        inputs: ["Message"]
-                    }
-                ]
-            }
-        }
-        localStorage.setItem("user_actions_reactions", JSON.stringify(user_actions_reactions));
     }
 };
 </script>
@@ -286,18 +163,49 @@ export default {
 }
 
 .service-section-name {
+    display: flex;
+    align-items: center;
     line-height: 45px;
-    padding-left: 30px;
     font-size: 25px;
     font-weight: bold;
     color: white;
     border-radius: 15px;
-    box-shadow: 0px 3px rgb(126, 126, 126);
     cursor: pointer;
+    text-align: center;
+    padding: 10px;
 }
 
 .service-section-name:hover {
+    filter: brightness(1.1);
+}
+
+.icon-square {
+    width: 30px;
+    height: 30px;
+    background-color: #f4f4f4;
+    border: 2px solid #e8e7e4;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.service-icon-small {
     color: black;
+    font-size: 20px;
+}
+
+.service-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-grow: 1;
+}
+
+.section-item {
+    margin: 0 0.5rem;
 }
 
 .add-services {
@@ -333,61 +241,8 @@ export default {
     background-color: #2e7f8f;
 }
 
-
-/* Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    /* Ensures it's above everything else */
-}
-
-.modal {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    width: 400px;
-    max-width: 90%;
-}
-
-.modal h3 {
-    margin-top: 0;
-}
-
-.modal form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.modal button {
-    margin-top: 10px;
-}
-
-h1 {
-    text-align: center;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    padding: 10px;
-}
-
 .service-txt-title {
-    font-family: 'inter', sans-serif;
-    margin: 1rem;
+    text-align: center;
+    padding-top: 0.5rem;
 }
 </style>
