@@ -35,8 +35,15 @@ class RegisteredAction(object):
         if (not isdir(f'/var/service_storage/caches/{self.action_id}')):
             mkdir(f'/var/service_storage/caches/{self.action_id}')
         if (self.cache):
+            value = self.cache
+            if (isinstance(value, bytes)):
+                value = value.decode(errors="ignore")
+                print(f"[PYTHON (service-action)] - saving bytes data as str, they will be read back as str, this may cause problems in the future when using your cache.", flush=True)
+            if (not isinstance(value, str)):
+                value = str(value)
+                print(f"[PYTHON (service-action)] - saving other type data as str, they will be read back as str, this may cause problems in the future when using your cache.", flush=True)
             with open(f'/var/service_storage/caches/{self.action_id}/cache.tmp', 'w') as fp:
-                fp.write(self.cache)
+                fp.write(value)
 
     def read_cache(self):
         if (not isfile(f"/var/service_storage/caches/{self.action_id}/cache.tmp")):
@@ -331,7 +338,11 @@ def main() -> int:
     asrv: ActionService = ActionService()
 
     #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
-    asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
+    # args = {
+    #     "token": "token_fetched_from_api"
+    # }
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "spotify", "playback_playing", args))
 
     try:
         asrv.mainloop()
