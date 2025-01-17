@@ -1,8 +1,6 @@
 ﻿namespace EventBus.Event;
 
-public class GetServiceEvent
+public class GetUserInformationEvent
 {
     public string JwtToken { get; set; }
-    
-    public bool GetArea { get; set; }
 }

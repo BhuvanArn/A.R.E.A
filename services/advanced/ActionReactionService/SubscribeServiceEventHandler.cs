@@ -4,38 +4,41 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace ActionReactionService;
 
-public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeServiceEvent, (List<Service>, ResultType)>
+public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeServiceEvent, (string, ResultType)>
 {
     private readonly IDatabaseHandler _dbHandler;
     private readonly IAboutParserService _aboutParserService;
+    private readonly ISocketService _socketService;
 
-    public SubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService)
+    public SubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService, ISocketService socketService)
     {
         _dbHandler = dbHandler;
         _aboutParserService = aboutParserService;
+        _socketService = socketService;
     }
     
-    public async Task<(List<Service>, ResultType)> HandleAsync(SubscribeServiceEvent @event)
+    public async Task<(string, ResultType)> HandleAsync(SubscribeServiceEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
-
-        if (!Guid.TryParse(id, out Guid userId))
-        {
-            return (new(), ResultType.Fail);
-        }
         
         var services = _aboutParserService.GetServices();
 
+        if (!Guid.TryParse(id, out Guid userId))
+        {
+            return ("You are not connected", ResultType.Fail);
+        }
+
         if (services.All(s => s.Name != @event.Name))
         {
-            return (new(), ResultType.Fail);
+            var availableServices = string.Join(", ", services.Select(s => s.Name));
+            return ($"The service {@event.Name} doesnt exist, avalaible ones: {availableServices}", ResultType.Fail);
         }
-        
-        var existingService = await _dbHandler.GetAsync<Service>(s => s.Name == @event.Name && s.UserId == userId);
         
         var service = new Service
         {
@@ -45,6 +48,19 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         };
         
         await _dbHandler.AddAsync(service);
-        return (existingService.ToList(), ResultType.Success);
+        
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+        
+        return ($"You subscribed to {@event.Name}", ResultType.Success);
     }
 }

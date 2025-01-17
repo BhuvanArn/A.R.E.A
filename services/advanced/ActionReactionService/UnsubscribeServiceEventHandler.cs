@@ -4,6 +4,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
 
 namespace ActionReactionService;
 
@@ -11,11 +12,13 @@ public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<Unsubscri
 {
     private readonly IDatabaseHandler _dbHandler;
     private readonly IAboutParserService _aboutParserService;
+    private readonly ISocketService _socketService;
 
-    public UnsubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService)
+    public UnsubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService, ISocketService socketService)
     {
         _dbHandler = dbHandler;
         _aboutParserService = aboutParserService;
+        _socketService = socketService;
     }
     
     public async Task<(List<Service>, ResultType)> HandleAsync(UnsubscribeServiceEvent @event)
@@ -42,6 +45,19 @@ public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<Unsubscri
         }
         
         await _dbHandler.DeleteAsync(existingService);
+        
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+        
         return (await _dbHandler.GetAllAsync<Service>(), ResultType.Success);
     }
 }

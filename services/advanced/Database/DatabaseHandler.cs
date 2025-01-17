@@ -19,12 +19,24 @@ public class DatabaseHandler : IDatabaseHandler
         await context.SaveChangesAsync();
         return entity;
     }
-
+    
     public async Task<IEnumerable<T>> GetAsync<T>(Expression<Func<T, bool>> expression) where T : class
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Set<T>().Where(expression).ToListAsync();
+        return await GetAsync(expression, Array.Empty<Expression<Func<T, object>>>());
     }
+
+    public async Task<IEnumerable<T>> GetAsync<T>(
+        Expression<Func<T, bool>> expression,
+        params Expression<Func<T, object>>[] includes) where T : class
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        IQueryable<T> query = context.Set<T>().Where(expression);
+
+        query = includes.Aggregate(query, (current, include) => current.Include(include));
+
+        return await query.ToListAsync();
+    }
+
 
     public async Task<List<T>> GetAllAsync<T>() where T : class
     {
