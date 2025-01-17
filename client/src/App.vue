@@ -1,7 +1,9 @@
 <template>
-  <nav>
-  </nav>
-  <router-view />
+  <html lang="en">
+    <nav>
+    </nav>
+    <router-view />
+  </html>
 </template>
 
 <script>

@@ -7,6 +7,7 @@ using Database;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
+using Extension.Socket;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -66,6 +67,7 @@ public static class Program
         );
         builder.Services.AddScoped<IDatabaseHandler, DatabaseHandler>();
         builder.Services.AddSingleton<IAboutParserService, AboutParserService>();
+        builder.Services.AddSingleton<ISocketService, SocketService>();
         
         builder.Services.AddCors(options =>
         {
