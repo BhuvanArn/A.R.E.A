@@ -24,7 +24,7 @@
                     <span>{{ errorMessage }}</span>
                 </div>
                 <div class="filler02"></div>
-                <router-link class="link"><h4 class="txt-link" @click="navigateToLogin">Already have an account ?</h4></router-link>
+                <p class="txt-link" @click="navigateToLogin">Already have an account ?</p>
             </div>
         </div>
     </body>
@@ -249,7 +249,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #28728B;
     border-radius: 5px;
     border: none;
     width: 8rem;
@@ -380,6 +380,8 @@ body {
     cursor: pointer;
     margin: 0;
     padding: 0;
+    color: #28728B;
+    border-bottom: 1px solid #28728B;
 }
 
 .error-message {
