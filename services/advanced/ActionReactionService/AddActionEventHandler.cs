@@ -44,7 +44,7 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
         {
             ServiceId = service.Id,
             DisplayName = @event.DisplayName,
-            CreatedDate = DateTime.Now,
+            CreatedDate = DateTime.UtcNow,
             ActionId = addedAction.Id,
             State = AreaState.Active,
             UserId = userId
