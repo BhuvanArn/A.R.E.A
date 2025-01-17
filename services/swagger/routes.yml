@@ -184,8 +184,8 @@ routes:
   - name: "get-services"
     host: "csharp_service"
     port: 8080
-    condition: "^/area/services$"
-    realPath: "/area/services"
+    condition: "^/area/services/(true|false)$"
+    realPath: "/area/services/{GetArea}"
     summary: "Get Services"
     description: "Retrieves a list of services that you subscribed to."
     method: "GET"

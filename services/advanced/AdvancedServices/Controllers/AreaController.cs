@@ -36,8 +36,8 @@ public class AreaController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpGet("services")]
-    public async Task<IActionResult> GetServices()
+    [HttpGet("services/{getArea}")]
+    public async Task<IActionResult> GetServices(bool getArea)
     {
         var userToken = GetUserTokenFromHeaders();
 
@@ -50,7 +50,8 @@ public class AreaController : ControllerBase
 
         var response = await _eventBus.PublishAsync<GetServiceEvent, (object, ResultType)>(new GetServiceEvent
         {
-            JwtToken = userToken
+            JwtToken = userToken,
+            GetArea = getArea
         });
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
