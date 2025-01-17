@@ -24,6 +24,7 @@ fn handle_connection(mut stream: TcpStream) {
     if req.method == "OPTIONS" {
         response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
         response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization, X-User-Token".to_string());
+        response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
 
         response.code = 204;
         response.message = String::from("No Content");
