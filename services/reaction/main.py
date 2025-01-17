@@ -215,8 +215,18 @@ def main() -> int:
 
     rs: ReactionService = ReactionService()
 
-    #handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", {"channel_id": "1314613132894670981", "message": "test reaction from reaction-service.", "token": "token"}))
-    rs.handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "test", "log", {}))
+    rs.handler.register_reaction(RegisteredReaction("328", "0002", "45543", "test", "log", {}))
+    # args = {
+    #     "channel_id": "1314613132894670981",
+    #     "message": "test reaction from reaction-service.",
+    #     "token": "discord_token"
+    # }
+    # rs.handler.register_reaction(RegisteredReaction("2343354", "0002", "45543", "discord", "send_message", args))
+    # args = {
+    #     "album_ids": '["2kz6FGzMkZUyGZPywlkcOu"]',
+    #     "token": "token_fetched_from_api"
+    # }
+    # rs.handler.register_reaction(RegisteredReaction("328", "0003", "45543", "spotify", "save_albums", args))
 
     try:
         rs.mainloop()
