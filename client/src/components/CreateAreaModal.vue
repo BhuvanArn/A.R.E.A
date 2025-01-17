@@ -28,7 +28,7 @@
                 </div>
                 <div v-if="step === 2 || step === 4" class="carousel-container">
                     <div v-if="subscribedServices.length === 0" class="no-services">
-                        No new services available
+                        No service available
                     </div>
                     <div v-else-if="subscribedServices.length <= 3" class="carousel-container">
                         <div
@@ -140,11 +140,12 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" v-if="step > 1">
+            <div class="modal-footer-1" v-if="step > 1">
                 <button @click="prevStep">Back</button>
             </div>
-            <div class="modal-footer" v-if="selectedAction && selectedReaction && step == 1">
-                <button @click="createArea">Confirm</button>
+            <div class="modal-footer-2" v-if="selectedAction && selectedReaction && step == 1">
+                <input v-model="areaName" type="text" placeholder="Name of your area" />
+                <button @click="createArea" :disabled="!areaName">Confirm</button>
             </div>
         </div>
     </div>
@@ -179,6 +180,8 @@ export default {
 
             hasSelectedAction: false,
             hasSelectedReaction: false,
+
+            areaName: "",
         };
     },
     computed: {
@@ -293,6 +296,24 @@ export default {
                 this.step = 1;
             }
         },
+
+        async getIdOfService(serviceName) {
+            try {
+                const res = await this.$axios.get(`/area/services/false`, {
+                    headers: {
+                        'X-User-Token': localStorage.getItem("token"),
+                    },
+                });
+
+                const service = res.data.find(service => service.name === serviceName);
+
+                return service.id;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        },
+
         async createArea() {
             try {
                 const token = localStorage.getItem("token");
@@ -300,8 +321,31 @@ export default {
                 console.log(this.selectedActionService, this.selectedAction, this.actionInputs);
                 console.log(this.selectedReactionService, this.selectedReaction, this.reactionInputs);
 
-                // Create AREA using the variables above
-                this.closeModal();
+                const actionServiceId = await this.getIdOfService(this.selectedActionService.name);
+
+                const resAction = await this.$axios.post(`/area/addactions`, {
+                    "ServiceId": actionServiceId,
+                    "Name": this.selectedAction.name,
+                    "DisplayName": this.areaName,
+                    "TriggerConfig": JSON.stringify(this.actionInputs),
+                }, {
+                    headers: {
+                        'X-User-Token': token,
+                    },
+                });
+
+                const resReaction = await this.$axios.post(`/area/addreactions`, {
+                    "ServiceId": actionServiceId,
+                    "ActionId": resAction.data,
+                    "Name": this.selectedReaction.name,
+                    "ExecutionConfig": JSON.stringify(this.reactionInputs),
+                }, {
+                    headers: {
+                        'X-User-Token': token,
+                    },
+                });
+
+                this.$router.go();
             } catch (error) {
                 console.error(error);
             }
@@ -428,12 +472,36 @@ export default {
     padding: 20px;
 }
 
-.modal-footer {
+.modal-footer-1 {
     display: flex;
     justify-content: center;
     padding: 20px;
     border-top: 1px solid #ccc;
 }
+
+.modal-footer-2 {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border-top: 1px solid #ccc;
+
+    input {
+        width: 25%;
+        padding: 0.5rem 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    button {
+        height: auto;
+    }
+}
+
 
 .puzzle-container {
     display: flex;
