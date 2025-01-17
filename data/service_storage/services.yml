@@ -135,14 +135,13 @@ services:
     actions:
       - name: search_file
         description: action when a file given in parameters is found in files
-        time: 15
+        time: 5
         inputs:
           - name: file_name     # File path : /my_icon_file.png
             regex: "^*$"
 
         fetch:
           strategy: dropbox.strategy_file_search
-          middleware: dropbox.middleware_file_search
           endpoint:
             method: post
             url: https://api.dropboxapi.com/2/files/search_v2
