@@ -35,6 +35,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 {
                     Id = a.Id,
                     Name = a.Name,
+                    ServiceId = a.ServiceId,
                     TriggerConfig = a.TriggerConfig
                 }).ToList(),
                 Reactions = reactions.Select(r => new Reaction
@@ -42,6 +43,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                     Id = r.Id,
                     Name = r.Name,
                     ActionId = r.ActionId,
+                    ServiceId = r.ServiceId,
                     ExecutionConfig = r.ExecutionConfig
                 }).ToList()
             };
