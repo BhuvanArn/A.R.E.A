@@ -4,6 +4,7 @@ using Database.Entities;
 using EventBus;
 using EventBus.Event;
 using Extension;
+using Extension.Socket;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -13,11 +14,13 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
 {
     private readonly IDatabaseHandler _dbHandler;
     private readonly IAboutParserService _aboutParserService;
+    private readonly ISocketService _socketService;
 
-    public SubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService)
+    public SubscribeServiceEventHandler(IDatabaseHandler dbHandler, IAboutParserService aboutParserService, ISocketService socketService)
     {
         _dbHandler = dbHandler;
         _aboutParserService = aboutParserService;
+        _socketService = socketService;
     }
     
     public async Task<(string, ResultType)> HandleAsync(SubscribeServiceEvent @event)
@@ -45,6 +48,19 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         };
         
         await _dbHandler.AddAsync(service);
+        
+        try
+        {
+            _socketService.OpenSocket();
+            _socketService.SendHandshake();
+            _socketService.NotifyChange();
+            _socketService.CloseSocket();
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+        
         return ($"You subscribed to {@event.Name}", ResultType.Success);
     }
 }
