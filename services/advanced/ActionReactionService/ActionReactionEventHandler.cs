@@ -40,7 +40,6 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                         ServiceId = r.ServiceId,
                         ActionId = r.ActionId,
                         Action = a,
-                        Service = service,
                         Name = r.Name,
                         ExecutionConfig = TryParseJson(r.ExecutionConfig)
                     }).ToList()
@@ -80,7 +79,9 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     public class ServiceWithAuth
     {
         public Guid Id { get; set; }
+        
         public string Name { get; set; }
+        
         public Guid UserId { get; set; }
         
         public JObject Auth { get; set; } 
