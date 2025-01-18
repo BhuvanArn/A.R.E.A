@@ -550,6 +550,34 @@ routes:
       401:
         description: "Unauthorized or invalid credentials."
 
+  - name: "area-update-reaction"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_reaction$"
+    realPath: "/area/update_reaction"
+    summary: "Update an reaction"
+    description: "Update execution config of an reaction"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ExecutionConfig:
+                type: "string"
+                example: "{blablabla}"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
 
   ###------------------ Swagger ------------------###
 

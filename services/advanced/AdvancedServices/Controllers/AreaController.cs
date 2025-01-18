@@ -300,4 +300,26 @@ public class AreaController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPut("update_reaction")]
+    public async Task<IActionResult> UpdateReaction([FromBody] UpdateReactionRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateReaction event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateReactionEvent, (string, ResultType)>(new UpdateReactionEvent
+        {
+            ReactionId = request.ReactionId,
+            ExecutionConfig = request.ExecutionConfig,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }
