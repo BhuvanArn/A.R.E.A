@@ -340,9 +340,11 @@ def main() -> int:
     #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
     # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
     # args = {
-    #     "token": "token_fetched_from_api"
+    #     "token": "token_from_api",
+    #     "file_name": "arealogo1-nobg.png",
     # }
-    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "spotify", "playback_playing", args))
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "spotify", "playback_playing_once", args))
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "dropbox", "search_file", args))
 
     try:
         asrv.mainloop()
