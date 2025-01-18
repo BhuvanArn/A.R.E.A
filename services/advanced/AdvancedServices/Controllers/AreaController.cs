@@ -256,7 +256,7 @@ public class AreaController : ControllerBase
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 
-    [HttpPost("update_area")]
+    [HttpPut("update_area")]
     public async Task<IActionResult> UpdateArea([FromBody] UpdateAreaRequest request)
     {
         var userToken = GetUserTokenFromHeaders();
