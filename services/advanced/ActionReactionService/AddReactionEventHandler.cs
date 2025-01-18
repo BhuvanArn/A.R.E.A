@@ -65,8 +65,7 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
         try
         {
             _socketService.OpenSocket();
-            _socketService.SendHandshake();
-            _socketService.NotifyChange();
+            _socketService.SendHandshakeAndNotifyChange();
             _socketService.CloseSocket();
         }
         catch (Exception)
