@@ -511,8 +511,8 @@ routes:
                 type: "string"
                 example: "discord"
               State:
-                type: "int"
-                example: "1 for active 2 for inactive"
+                type: "number"
+                example: 1
               AreaId:
                 type: "guid"
                 example: "432432-84932-4893894-87348"
