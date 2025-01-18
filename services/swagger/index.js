@@ -18,6 +18,7 @@ function buildSwaggerDoc() {
     tags: [
       { name: 'Authentication Service', description: 'Endpoints for user authentication' },
       { name: 'Area Service', description: 'Endpoints for area-related operations' },
+      { name: 'Oauth Service', description: 'Endpoints for oauth-related operations' },
     ],
   };
 
@@ -34,7 +35,7 @@ function buildSwaggerDoc() {
       const method = (route.method || 'get').toLowerCase();
       if (!swaggerDoc.paths[path]) swaggerDoc.paths[path] = {};
 
-      const tag = route.name.startsWith('auth') ? 'Authentication Service' : 'Area Service';
+      const tag = route.name.startsWith('auth') ? 'Authentication Service' : (route.name.startsWith('oauth') ? 'Oauth Service' : 'Area Service');
 
       // extract params from path
       const pathParams = [];

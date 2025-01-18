@@ -40,6 +40,18 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('../views/ProfilePage.vue')
+  },
+  {
+    path: '/oauth/spotify/callback',
+    name: 'spotify-callback',
+    component: () => import('../views/SpotifyCallback.vue'),
+    props: (route) => ({ code: route.query.code })
+  },
+  {
+    path: '/oauth/dropbox/callback',
+    name: 'dropbox-callback',
+    component: () => import('../views/DropboxCallback.vue'),
+    props: (route) => ({ code: route.query.code })
   }
 ]
 
