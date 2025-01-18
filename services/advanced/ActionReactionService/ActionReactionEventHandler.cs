@@ -19,12 +19,35 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     public async Task<(object, ResultType)> HandleAsync(ActionReactionEvent @event)
     {
         var services = await _dbHandler.GetAllAsync<Service>();
-        
+    
         var result = new List<ServiceWithAuth>();
         foreach (var service in services)
         {
             var actions = await _dbHandler.GetAsync<Action>(a => a.ServiceId == service.Id);
-            var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id);
+
+            var actionsWithTriggerConfigTasks = actions.Select(async a => 
+            {
+                var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ActionId == a.Id);
+                var actionWithTriggerConfig = new ActionWithTriggerConfig
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    ServiceId = a.ServiceId,
+                    TriggerConfig = TryParseJson(a.TriggerConfig),
+                    Reaction = reactions.Select(r => new ReactionWithExecutionConfig
+                    {
+                        Id = r.Id,
+                        ServiceId = r.ServiceId,
+                        ActionId = r.ActionId,
+                        Action = a,
+                        Name = r.Name,
+                        ExecutionConfig = TryParseJson(r.ExecutionConfig)
+                    }).ToList()
+                };
+                return actionWithTriggerConfig;
+            }).ToList();
+
+            var actionsWithTriggerConfig = await Task.WhenAll(actionsWithTriggerConfigTasks);
 
             var serviceDto = new ServiceWithAuth
             {
@@ -32,21 +55,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 Name = service.Name,
                 UserId = service.UserId,
                 Auth = TryParseJson(service.Auth),
-                Actions = actions.Select(a => new ActionWithTriggerConfig
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    ServiceId = a.ServiceId,
-                    TriggerConfig = TryParseJson(a.TriggerConfig)
-                }).ToList(),
-                Reactions = reactions.Select(r => new ReactionWithExecutionConfig
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    ActionId = r.ActionId,
-                    ServiceId = r.ServiceId,
-                    ExecutionConfig = TryParseJson(r.ExecutionConfig)
-                }).ToList()
+                Actions = actionsWithTriggerConfig.ToList(),
             };
 
             result.Add(serviceDto);
@@ -70,13 +79,14 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     public class ServiceWithAuth
     {
         public Guid Id { get; set; }
+        
         public string Name { get; set; }
+        
         public Guid UserId { get; set; }
         
         public JObject Auth { get; set; } 
         
         public List<ActionWithTriggerConfig> Actions { get; set; } = new();
-        public List<ReactionWithExecutionConfig> Reactions { get; set; } = new();
     }
     
     public class ActionWithTriggerConfig
@@ -90,6 +100,8 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
         public string Name { get; set; }
     
         public JObject TriggerConfig { get; set; }
+
+        public List<ReactionWithExecutionConfig> Reaction { get; set; } = new();
     }
 
     public class ReactionWithExecutionConfig
