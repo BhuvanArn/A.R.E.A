@@ -522,6 +522,34 @@ routes:
       401:
         description: "Unauthorized or invalid credentials."
 
+  - name: "area-update-action"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_action$"
+    realPath: "/area/update_action"
+    summary: "Update an action"
+    description: "Update trigger config of an action"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              TriggerConfig:
+                type: "string"
+                example: "{blablabla}"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
 
   ###------------------ Swagger ------------------###
 
