@@ -125,7 +125,7 @@ export default {
                 this.errorMessage = 'Please fill all the fields';
                 return;
             }
-            if (!this.email.includes('@') || !this.email.includes('.')) {
+            if (!this.email.match(/^\S+@\S+\.\S+$/)) {
                 this.errorMessage = 'Please enter a valid email';
                 return;
             }
@@ -140,7 +140,7 @@ export default {
                     return;
                 }
                 const token = response.data;
-                console.log(token);
+                localStorage.removeItem('token');
                 localStorage.setItem('token', token);
                 localStorage.setItem('Status', 'Logged In');
                 localStorage.setItem('AccountType', 'Area');
