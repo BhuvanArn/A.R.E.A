@@ -11,13 +11,14 @@ function buildSwaggerDoc() {
     openapi: '3.0.0',
     info: {
       title: 'AREA - LastChance Backend API Documentation',
-      version: '1.0.0',
+      version: '1.1.0',
       description: 'API documentation for the LastChance backend of the AREA project',
     },
     paths: {},
     tags: [
       { name: 'Authentication Service', description: 'Endpoints for user authentication' },
       { name: 'Area Service', description: 'Endpoints for area-related operations' },
+      { name: 'Oauth Service', description: 'Endpoints for oauth-related operations' },
     ],
   };
 
@@ -34,7 +35,7 @@ function buildSwaggerDoc() {
       const method = (route.method || 'get').toLowerCase();
       if (!swaggerDoc.paths[path]) swaggerDoc.paths[path] = {};
 
-      const tag = route.name.startsWith('auth') ? 'Authentication Service' : 'Area Service';
+      const tag = route.name.startsWith('auth') ? 'Authentication Service' : (route.name.startsWith('oauth') ? 'Oauth Service' : 'Area Service');
 
       // extract params from path
       const pathParams = [];
@@ -52,11 +53,22 @@ function buildSwaggerDoc() {
         });
       }
 
+      // extract headers
+      const headers = route.headers ? Object.keys(route.headers).map(headerName => ({
+        name: headerName,
+        in: 'header',
+        required: route.headers[headerName].required,
+        description: route.headers[headerName].description,
+        schema: {
+          type: 'string',
+        },
+      })) : [];
+
       swaggerDoc.paths[path][method] = {
         tags: [tag],
         summary: route.summary || `Route for ${route.name}`,
         description: route.description || `Handles ${route.name}`,
-        parameters: [...(route.parameters || []), ...pathParams],
+        parameters: [ ...headers , ...(route.parameters || []), ...pathParams],
         requestBody: route.requestBody || undefined,
         responses: route.responses || {
           200: { description: 'OK' },

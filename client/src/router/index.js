@@ -40,6 +40,12 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('../views/ProfilePage.vue')
+  },
+  {
+    path: '/oauth/spotify/callback',
+    name: 'spotify-callback',
+    component: () => import('../views/SpotifyCallback.vue'),
+    props: (route) => ({ code: route.query.code })
   }
 ]
 

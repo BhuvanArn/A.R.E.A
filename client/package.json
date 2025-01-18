@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^6.2.0",
+    "@iconify/vue": "^4.3.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^25.0.1",

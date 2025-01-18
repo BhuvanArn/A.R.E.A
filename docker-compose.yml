@@ -4,9 +4,9 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "${EXPOSE_PORT_CLIENT}:80"
+      - "8081:80"
     environment:
-      - EXPOSE_PORT_SERVER=${EXPOSE_PORT_SERVER}
+      - EXPOSE_PORT_SERVER=8080
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80"]
@@ -19,7 +19,7 @@ services:
       context: ./services/router
       dockerfile: Dockerfile
     ports:
-      - "${EXPOSE_PORT_SERVER}:80"
+      - "8080:80"
     depends_on:
       db:
         condition: service_healthy
