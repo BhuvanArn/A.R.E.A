@@ -354,7 +354,7 @@ export default {
 .service-card {
     text-align: center;
     width: 150px;
-    height: calc(30vh - 2rem);
+    height: 185px;
     min-height: 11rem;
     margin: 0 20px;
     cursor: pointer;

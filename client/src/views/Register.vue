@@ -67,7 +67,7 @@ export default {
                 return;
             }
             // check if email is valid
-            if (!this.email.includes('@') || !this.email.includes('.')) {
+            if (!this.email.match(/^\S+@\S+\.\S+$/)) {
                 this.errorMessage = 'Please enter a valid email address';
                 return;
             }

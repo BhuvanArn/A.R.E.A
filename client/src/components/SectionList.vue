@@ -93,6 +93,10 @@ export default {
 
         getServiceIcon(name) {
             const lowerCased = name.toLowerCase();
+
+            if (lowerCased === "test") {
+                return "mdi:robot";
+            }
             return `mdi:${lowerCased}`;
         },
 
