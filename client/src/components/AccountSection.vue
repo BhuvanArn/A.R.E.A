@@ -56,12 +56,14 @@
                     </div>
                 </div>
                 <div class="filler01"></div>
+                <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
             <div v-else class="main-container-bottom">
                 <div class="profile-info-container">
                     <img src="@/assets/info.png" class="info-img">
                     <h2 class="profile-info-txt">This is not an Area account. You cannot modify your account information here. </h2>
                 </div>
+                <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
         </div>
 </template>
@@ -93,6 +95,11 @@ export default {
 
         activateChangePwdMenu() {
             this.changePwdMenu = true;
+        },
+
+        logoutUser() {
+            localStorage.clear();
+            window.location.href = this.$router.resolve({ name: 'login' }).href;
         },
 
         cancelChangePwd() {
@@ -476,6 +483,31 @@ export default {
     padding: 0;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #b60404;
+    border-radius: 5px;
+    border: none;
+    width: 8rem;
+    height: 2rem;
+    color: #efefef;
+    font-family: 'inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2.5rem;
+}
+
+.logout-btn:hover {
+    background-color: #d90f0f;
+}
+
+.logout-btn:active {
+    background-color: #a30303;
 }
 
 </style>
