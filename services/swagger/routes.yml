@@ -457,7 +457,36 @@ routes:
       200:
         description: "About details."
 
-
+  - name: "area-update-service"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_service$"
+    realPath: "/area/update_service"
+    summary: "Update a service"
+    description: "Update auth of a service"
+    method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              NewAuth:
+                type: "string"
+                example: "{ token:blablabla }"
+              ServiceId:
+                type: "guid"
+                example: "432432-84932-4893894-87348"
+    responses:
+      200:
+        description: "Discord token retrieved successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
 
 
 

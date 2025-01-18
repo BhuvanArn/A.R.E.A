@@ -233,4 +233,27 @@ public class AreaController : ControllerBase
 
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPut("update_service")]
+    public async Task<IActionResult> UpdateService([FromBody] UpdateServiceRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateService event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateServiceEvent, (string, ResultType)>(new UpdateServiceEvent
+        {
+            NewAuth = request.NewAuth,
+            JwtToken = userToken,
+            ServiceId = request.ServiceId
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+    
 }
