@@ -40,6 +40,8 @@ public class UpdateAreaEventHandler : IIntegrationEventHandler<UpdateAreaEvent, 
         {
             area.State = @event.State.Value;
         }
+
+        await _dbHandler.UpdateAsync(area);
         
         return ("Ok", ResultType.Success);
     }
