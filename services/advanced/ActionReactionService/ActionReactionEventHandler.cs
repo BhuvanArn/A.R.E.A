@@ -59,11 +59,11 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     {
         try
         {
-            return string.IsNullOrEmpty(jsonString) ? null : JObject.Parse(jsonString);
+            return string.IsNullOrEmpty(jsonString) ? new JObject() : JObject.Parse(jsonString);
         }
         catch
         {
-            return null;
+            return new JObject();
         }
     }
     
