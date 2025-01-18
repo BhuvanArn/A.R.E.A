@@ -233,4 +233,93 @@ public class AreaController : ControllerBase
 
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPut("update_service")]
+    public async Task<IActionResult> UpdateService([FromBody] UpdateServiceRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateService event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateServiceEvent, (string, ResultType)>(new UpdateServiceEvent
+        {
+            NewAuth = request.NewAuth,
+            JwtToken = userToken,
+            ServiceId = request.ServiceId
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPut("update_area")]
+    public async Task<IActionResult> UpdateArea([FromBody] UpdateAreaRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateArea event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateAreaEvent, (string, ResultType)>(new UpdateAreaEvent
+        {
+            AreaId = request.AreaId,
+            DisplayName = request.DisplayName,
+            State = (AreaState?)request.State,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPut("update_action")]
+    public async Task<IActionResult> UpdateAction([FromBody] UpdateActionRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateAction event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateActionEvent, (string, ResultType)>(new UpdateActionEvent
+        {
+            ActionId = request.ActionId,
+            TriggerConfig = request.TriggerConfig,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPut("update_reaction")]
+    public async Task<IActionResult> UpdateReaction([FromBody] UpdateReactionRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateReaction event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateReactionEvent, (string, ResultType)>(new UpdateReactionEvent
+        {
+            ReactionId = request.ReactionId,
+            ExecutionConfig = request.ExecutionConfig,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }
