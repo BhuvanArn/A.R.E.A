@@ -55,7 +55,7 @@
                         <button @click="cancelChangePwd" class="cancel-pwd-btn">Cancel</button>
                     </div>
                 </div>
-                <div class="filler01"></div>
+                <div class="filler02"></div>
                 <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
             <div v-else class="main-container-bottom">
@@ -114,8 +114,7 @@ export default {
             }
             this.errorMessage = '';
             try {
-                const response = await this.$axios.post('/auth/change-password', {
-                    JwtToken: localStorage.getItem('token'),
+                const response = await this.$axios.post('/auth/reset-password', {
                     Password: this.oldPwd,
                     NewPassword: this.newPwd
                 });
@@ -398,7 +397,8 @@ export default {
 .error-message {
     color: red;
     font-family: 'inter', sans-serif;
-    font-size: medium;
+    font-size: 14px;
+    margin-top: 0.5rem;
 }
 
 .error-message-section {
@@ -492,14 +492,14 @@ export default {
     background-color: #b60404;
     border-radius: 5px;
     border: none;
-    width: 8rem;
+    width: 7rem;
     height: 2rem;
     color: #efefef;
     font-family: 'inter', sans-serif;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .logout-btn:hover {
