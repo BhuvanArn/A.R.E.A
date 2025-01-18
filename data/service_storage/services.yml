@@ -100,9 +100,9 @@ services:
           - name: repository_name   # repository_name : A.R.E.A
             regex: "^*$"
 
-          - name: title     # title : Fix CI build on debian
+          - name: issue_title         # issue_title : Fix CI build on debian
             regex: "^*$"
-          - name: body      # body : There was a build error, ... we should fix it.
+          - name: issue_description      # issue_description : There was a build error, ... we should fix it.
             regex: "^*$"
 
         commit:
@@ -112,7 +112,7 @@ services:
               headers: |
                 {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
               data: |
-                {"title": "$+title", "body": "$+body"}
+                {"title": "$+issue_title", "body": "$+issue_description"}
 
       - name: create_pull_request
         description: creates a pull request on a github repository
@@ -123,14 +123,14 @@ services:
           - name: repository_name   # repository_name : A.R.E.A
             regex: "^*$"
 
-          - name: title     # title : Amazing new feature
+          - name: pull_request_title     # pull_request_title : Amazing new feature
             regex: "^*$"
-          - name: body      # body : Please pull these awesome changes in!
+          - name: pull_request_description      # pull_request_description : Please pull these awesome changes in!
             regex: "^*$"
 
-          - name: head      # head : new-user-feature
+          - name: head_branch_name      # head_branch_name : new-user-feature
             regex: "^*$"
-          - name: base      # head : main
+          - name: base_branch_name      # base_branch_name : main
             regex: "^*$"
 
         commit:
@@ -140,7 +140,7 @@ services:
               headers: |
                 {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
               data: |
-                {"title": "$+title", "body": "$+body", "head":"$+head", "base":"$+base"}
+                {"title": "$+pull_request_title", "body": "$+pull_request_description", "head":"$+head_branch_name", "base":"$+base_branch_name"}
 
   - name: spotify
     credentials:
