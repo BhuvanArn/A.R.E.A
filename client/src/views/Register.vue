@@ -241,7 +241,7 @@ body {
 .link {
     font-family: 'inter', sans-serif;
     font-size: medium;
-    color: #46b1c9;
+    color: #28728B;
     cursor: pointer;
 }
 

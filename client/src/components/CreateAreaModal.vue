@@ -620,7 +620,7 @@ input {
 }
 
 button {
-    background-color: #46b1c9;
+    background-color: #28728B;
     color: #efefef;
     border-radius: 5px;
     border: none;
@@ -826,7 +826,7 @@ button:active {
 }
 
 .common-btn {
-    background-color: #46b1c9;
+    background-color: #28728B;
     color: #efefef;
     border-radius: 5px;
     border: none;

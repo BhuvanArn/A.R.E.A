@@ -333,7 +333,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #28728B;
     border-radius: 5px;
     border: none;
     width: 6rem;
