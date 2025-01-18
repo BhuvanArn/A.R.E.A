@@ -99,20 +99,17 @@ export default {
             console.log("Deleting area:", area.actionId);
 
             try {
-                const body = JSON.stringify({ "ActionId": area.actionId });
+                const body = { "ActionId": area.actionId };
 
                 const token = localStorage.getItem("token");
 
-                const res = await this.$axios.delete(`/area/delete_areas`,
-                    body,
-                    {
-                        headers: {
-                            'X-User-Token': token,
-                            'Content-Type': 'application/json',
-                            'accept': '*/*'
-                        }
+                const res = await this.$axios.delete(`/area/delete_areas`, {
+                    data: body,
+                    headers: {
+                        'X-User-Token': token,
+                        'Content-Type': 'application/json'
                     }
-                );
+                });
 
                 this.$router.go();
             } catch (error) {
@@ -203,7 +200,7 @@ export default {
 
 .icon-square {
     width: 30px;
-    height: 30px;
+    height: 29px;
     background-color: #f4f4f4;
     border: 2px solid #e8e7e4;
     border-radius: 10px;
@@ -236,9 +233,7 @@ export default {
 .status-column {
     width: 6%;
 
-    text-align: center;
-
-    padding-left: 0px!important;
+    padding-left: 25px!important;
 
     svg {
         width: 2.1rem;
@@ -247,8 +242,7 @@ export default {
 
 .icon-column {
     width: 6%;
-    text-align: center;
-    padding-left: 0px!important;
+    padding-left: 30px!important;
 }
 
 .date-column {
