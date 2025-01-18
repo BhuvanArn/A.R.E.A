@@ -31,7 +31,7 @@ public class AreaController : ControllerBase
     {
         _logger.LogInformation("Action reaction event triggered.");
         
-        var response = await _eventBus.PublishAsync<ActionReactionEvent, (List<Service>, ResultType)>(new ActionReactionEvent());
+        var response = await _eventBus.PublishAsync<ActionReactionEvent, (object, ResultType)>(new ActionReactionEvent());
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
