@@ -146,7 +146,7 @@ export default {
                 localStorage.setItem('AccountType', 'Area');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
-                this.navigateToHome(event);
+                window.location.href = this.$router.resolve({ name: 'services' }).href;
             } catch (error) {
                 console.error(error);
                 this.errorMessage = 'An error occurred';
