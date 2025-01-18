@@ -164,7 +164,6 @@ export default {
 .navbar-container {
   height: 5rem;
   overflow: hidden;
-
   border-bottom: 1px solid #000000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
@@ -173,6 +172,7 @@ export default {
 .header {
     display: flex;
     box-sizing: border-box;
+    align-items: center;
     overflow: hidden;
     height: 5rem;
     background-color: #bcc1ba;
@@ -227,12 +227,10 @@ export default {
   .logo {
     display: flex;
     width: 5rem;
-    height: 6.2rem;
+    height: 4.5rem;
     align-items: center;
     left: 24px;
     top: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 1.75rem;
     transition: .5s ease all;
   }
 
@@ -241,7 +239,6 @@ export default {
     height: 3rem;
     margin-left: 1rem;
     margin-right: 0.5rem;
-    margin-top: 0.85rem;
     transition: .5s ease all;
     cursor: pointer;
   }
@@ -405,7 +402,6 @@ export default {
     color: rgba(0, 0, 0, 0.7);
     margin-left: 1rem;
     margin-right: 1rem;
-    margin-top: 0.2rem;
   }
 
   .activeMenu {
