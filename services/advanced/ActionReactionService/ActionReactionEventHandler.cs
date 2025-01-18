@@ -32,20 +32,20 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 Name = service.Name,
                 UserId = service.UserId,
                 Auth = TryParseJson(service.Auth),
-                Actions = actions.Select(a => new Action
+                Actions = actions.Select(a => new ActionWithTriggerConfig
                 {
                     Id = a.Id,
                     Name = a.Name,
                     ServiceId = a.ServiceId,
-                    TriggerConfig = a.TriggerConfig
+                    TriggerConfig = TryParseJson(a.TriggerConfig)
                 }).ToList(),
-                Reactions = reactions.Select(r => new Reaction
+                Reactions = reactions.Select(r => new ReactionWithExecutionConfig
                 {
                     Id = r.Id,
                     Name = r.Name,
                     ActionId = r.ActionId,
                     ServiceId = r.ServiceId,
-                    ExecutionConfig = r.ExecutionConfig
+                    ExecutionConfig = TryParseJson(r.ExecutionConfig)
                 }).ToList()
             };
 
@@ -75,7 +75,37 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
         
         public JObject Auth { get; set; } 
         
-        public List<Action> Actions { get; set; } = new();
-        public List<Reaction> Reactions { get; set; } = new();
+        public List<ActionWithTriggerConfig> Actions { get; set; } = new();
+        public List<ReactionWithExecutionConfig> Reactions { get; set; } = new();
+    }
+    
+    public class ActionWithTriggerConfig
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+    
+        public Guid ServiceId { get; set; }
+    
+        public Service Service { get; set; }
+    
+        public string Name { get; set; }
+    
+        public JObject TriggerConfig { get; set; }
+    }
+
+    public class ReactionWithExecutionConfig
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+    
+        public Guid ServiceId { get; set; }
+    
+        public Guid ActionId { get; set; }
+    
+        public Action Action { get; set; }
+    
+        public Service Service { get; set; }
+    
+        public string Name { get; set; }
+    
+        public JObject ExecutionConfig { get; set; }
     }
 }
