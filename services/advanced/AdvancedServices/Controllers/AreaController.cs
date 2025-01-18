@@ -255,5 +255,27 @@ public class AreaController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
-    
+
+    [HttpPost("update_area")]
+    public async Task<IActionResult> UpdateArea([FromBody] UpdateAreaRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("UpdateArea event triggered");
+
+        var response = await _eventBus.PublishAsync<UpdateAreaEvent, (string, ResultType)>(new UpdateAreaEvent
+        {
+            AreaId = request.AreaId,
+            DisplayName = request.DisplayName,
+            State = (AreaState?)request.State,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }

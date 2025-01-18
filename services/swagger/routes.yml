@@ -484,11 +484,43 @@ routes:
                 example: "432432-84932-4893894-87348"
     responses:
       200:
-        description: "Discord token retrieved successfully."
+        description: "Updated successfully."
       401:
         description: "Unauthorized or invalid credentials."
 
-
+  - name: "area-update-area"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_area$"
+    realPath: "/area/update_area"
+    summary: "Update an area"
+    description: "Update display name or state of an area"
+    method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              DisplayName:
+                type: "string"
+                example: "discord"
+              State:
+                type: "int"
+                example: "1 for active 2 for inactive"
+              AreaId:
+                type: "guid"
+                example: "432432-84932-4893894-87348"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
 
 
   ###------------------ Swagger ------------------###
