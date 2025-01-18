@@ -339,16 +339,12 @@ def main() -> int:
 
     #watcher.register_action(RegisteredAction("2343354", "45543", "timer", "only_time", {"marker": "2025-01-05T16:09:00.0Z"}))
     # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "timer", "every", {"time": "5"}))
-    args = {
-        "token": "sl.u.AFfBgfBn2x2dBKzXRn8qsi1k0hXYlzqq2Pu8ArqkRI4HjBpogn_L5_Zfk9bgZuhAAhCpJ5QHG4b1zt_QqlT9IUO-ndyImhXqVk40TBMnWwgi9egj98O1SdZiXI2Ql7lpeQ8aLOtstM0s3jq7lV_kFKx_krxGbZGxE3yUL8jqQkyOoteb3ioVyj2P3pdDVBSenIUG-hPca3SPPnQX2VIjb-4vkBOebhDou1cqTQHf5GyQSlAR7lktfg0xyF3aPNL7A0hn9umzZU2ZgFr94NRmsG6TMThptEP9WTbeL80Z-NJi3uIoOzB0qKlOGhCFoOND-q2MehV-yE7Se7uz_kN9J6p28oGfYFq-HFwZ-3GziEst8R5ZSF2wukOyfkBAL_YmnI8XiRiXOOXsBO__YM4glK7xEGV53XrnmKPEXJBSTmRN4eyprQRZpgMY9pmWG91Qvcv_zvUST3TNCmtQwgxIQdDGqL2D8yD0p2Bs9ZOxfoAfJn6W_pT8LbBxaDEOP1lz1cozRQRfiqX1YAMVvKE4gNfdm3X-Xwrg1WKfxH9Cab5XxPMdkPatZ1s9Vp8ZP9wLrXucKSlrMt7VjWaWclwD1KRrqW-3tBQVoNUJYMAWjN733NLGQamNzmVhslEXpPN4_hWx1vIADQSYUqUcy38mA-kEguc3g2CCNK-guBg5YAx1Hmy4vptrFOVcrhhs6-n0Iu2-bvMS2dZi6Lok2FGAuGFO-nnF8BTkiSJYEwPCmG2p1A7dpnUvn8h4e1SNKFjwHu6uLpk0QlybGiIJbndHOvyiIkZ2L1jAdb2UcrjJqslM9mgg7dhG6iPVK03Bq1u9X30AfCLHyX_-ERl1oRWWCMqluJrFUuN6yPJ2ByKQFIvLzzXdPIammYeSFgx0En6scxpgC6o7J1n0_2Ef1fzD-R520B-Q3F5j0SLP5DpcssvPfd65kndPwTD3vXv5G6mEBGHreYqqcuM6Am1bHQv0HVGy6ihmOVGzLOJTvg4rQrsb6MtSqhnghYJY9RSsR5A5oHkLiZEYurwDCiqkRy93-PnJfHNisr78hhTdLw21sua8tYulE0dwFB-rRjrO-teLBZu3a6Nw5DqSlJKQ0c3vfx5Wv_1OXEBjl4ONg0V4Kb5KiMQG2cFoCUT2fyGKLHJKcsKP0_JRe-0_uffowkoUHaDPsQ5ZidDZdzj9CHTov2MKDTD9RpmVx7h5HcY03ans2As-VZbVVPMIAHjMW0zYc2_jha7tanSlvdrFSK2WSJYmVnCEcsUbaDJQ7qZYzfRm7li22gLYgTDGoXis5MjvYKoqoruPKT1EPQVPx7lXD-jjdiRsEwmE90YaNr_bOAjhWtRZpNJtlbsx7lU4-5liLZ8fg-Hch0MSl6lhfIdVOK5PJsbFmC9K6zAIotHfJThJdhYyzaARsfAEVFtkigxgl4ZLd9MyG8rhLQINfnfOztxCu36509xmCzgMRofQTbQZPHM",
-        "file_name": "arealogo1-nobg.png",
-    }
     # args = {
-    #     "token": "BQCR_HOkDAoM1tlKi0S9zq588HokbZLI5eCgaxe3BzaLipKCk-JqK1zwEcSlrdpYY-8IvGhURfaSP-7DSLOKwE2TBNuKWWjj8VZSjZFpWShyblt6RyVEcKYncrZuOPpsk2Pj0skeTfnQIRF6Z4TqNwugnU-ORVk_216eU-BIESEUmuH-JSDD5QVU7LaYwRVEyl57YlX4_mZyBbRRQgnSnQEgYTwe",
+    #     "token": "token_from_api",
     #     "file_name": "arealogo1-nobg.png",
     # }
     # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "spotify", "playback_playing_once", args))
-    asrv.watcher.register_action(RegisteredAction("2343354", "45543", "dropbox", "search_file", args))
+    # asrv.watcher.register_action(RegisteredAction("2343354", "45543", "dropbox", "search_file", args))
 
     try:
         asrv.mainloop()
