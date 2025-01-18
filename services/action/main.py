@@ -5,7 +5,7 @@ from serviceconf import *
 from time import time
 from service_mod import *
 from requests import get
-from json import dumps
+from json import dumps, loads
 from time import sleep
 from genericpath import isdir, isfile
 from os import mkdir
@@ -188,7 +188,6 @@ class Watcher(object):
         self.failed_update = True
 
         self.save()
-
         self.registered_actions.clear()
 
         req = get(url)
@@ -199,13 +198,15 @@ class Watcher(object):
         json = req.json()
 
         for item in json:
-            for action in item["Actions"]:
+            for action in item["actions"]:
                 _vars = {}
+                #print(item, action["triggerConfig"], flush=True)
+                #for var_name, var_value in {**loads(action["triggerConfig"]), **loads(item["auth"])}.items():
 
-                for var_name, var_value in {**dumps(item["TriggerConfig"]), **dumps(item["Auth"])}.items():
+                for var_name, var_value in {**loads(action["triggerConfig"]), **item["auth"]}.items():
                     _vars[var_name] = var_value
 
-                self.register_action(RegisteredAction(item["Id"], action["Id"], item["Name"], action["Name"], _vars))
+                self.register_action(RegisteredAction(item["id"], action["id"], item["name"], action["name"], _vars))
 
         req.close()
 
@@ -284,16 +285,18 @@ class ActionService(object):
             self.watcher.update(name_id)
 
     def _handle_request_from_db(self):
-        self.db_connect.accept_if_not_connected()
+        if (self.db_connect.accept_if_not_connected()):
+            print(f"[PYTHON (service-action)] - db failed handshake, throwing.", flush=True)
+            return
         print(f"[PYTHON (service-action)] - db requested connection", flush=True)
 
         message = self.db_connect.get_message()
 
-        if (self.db_connect.get_message() == INVM):
+        if (message.type == INVM):
             self.db_connect.close_client()
             print(f"[PYTHON (service-action)] - closing db connect", flush=True)
 
-        if (self.db_connect.get_message() == UPDT):
+        if (message.type == UPDT):
             print(f"[PYTHON (service-action)] - db requested data update", flush=True)
             try:
                 self.watcher.from_request("http://csharp_service:8080/area")
