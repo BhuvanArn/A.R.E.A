@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
                                     <div v-if="dropdownAction === action.name" class="dropdown-menu" @click.stop>
-                                        <strong>Inputs</strong>
+                                        <strong v-if="action.inputs.length > 0">Inputs</strong>
                                         <div v-for="input in action.inputs" :key="input.name">
                                             <input :id="input.name" v-model="actionInputs[input.name]" type="text" :placeholder="input.name" />
                                         </div>
