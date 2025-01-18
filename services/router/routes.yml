@@ -136,7 +136,7 @@ routes:
       500:
         description: "Internal server error (bad JWT token, etc)."
 
-  - name: "auth-google-login"
+  - name: "oauth-google-login"
     host: "csharp_service"
     port: 8080
     condition: "^/auth/google-login$"
@@ -160,7 +160,7 @@ routes:
       500:
         description: "Invalid Google OAuth token."
 
-  - name: "auth-discord-login"
+  - name: "oauth-discord-login"
     host: "csharp_service"
     port: 8080
     condition: "^/auth/discord-login$"
@@ -184,6 +184,176 @@ routes:
     responses:
       200:
         description: "Discord token retrieved successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
+  - name: "oauth-dropbox-authorize"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/dropbox/authorize$"
+    realPath: "/oauth/dropbox/authorize"
+    summary: "Dropbox OAuth authorize process"
+    description: "Dropbox OAuth authorize process"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Dropbox OAuth url returned succesfully"
+      401:
+        description: "Parameters scopes or redirect_url not specified"
+  
+  - name: "oauth-dropbox-access-token"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/dropbox/access_token$"
+    realPath: "/oauth/dropbox/access_token"
+    summary: "Dropbox OAuth user token fetch"
+    description: "This is the route to fetch a token to act on behalf of a user"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+                example: "AQBFvuU8UV6gicVjPkuY-vAaJ6f9jvOWUfvuHOnoJZD_Y_DQg0mzu26acXKinavXfo1EwP3_qvd_Lhc89dMQKac0yv3r62htU7Gga0ScOivDnoexg51I5p4wJpeKIInJR_V97FvUzAVMsliC0nMz7IcyI9G4da3WQm5qgoic0-6_GgMNPpkznZVpf2G28YnugUYbKc8"
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Dropbox OAuth token returned succesfully"
+      401:
+        description: "Parameters code or redirect_url not specified"
+
+  - name: "oauth-spotify-authorize"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/spotify/authorize$"
+    realPath: "/oauth/spotify/authorize"
+    summary: "Spotify OAuth authorize process"
+    description: "Spotify OAuth authorize process"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              scopes:
+                type: "string"
+                example: "user-read-email user-read-private"
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Spotify OAuth url returned succesfully"
+      401:
+        description: "Parameters scopes or redirect_url not specified"
+
+  - name: "oauth-spotify-access-token"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/spotify/access_token$"
+    realPath: "/oauth/spotify/access_token"
+    summary: "Spotify OAuth user token fetch"
+    description: "This is the route to fetch a token to act on behalf of a user"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+                example: "AQBFvuU8UV6gicVjPkuY-vAaJ6f9jvOWUfvuHOnoJZD_Y_DQg0mzu26acXKinavXfo1EwP3_qvd_Lhc89dMQKac0yv3r62htU7Gga0ScOivDnoexg51I5p4wJpeKIInJR_V97FvUzAVMsliC0nMz7IcyI9G4da3WQm5qgoic0-6_GgMNPpkznZVpf2G28YnugUYbKc8"
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Spotify OAuth token returned succesfully"
+      401:
+        description: "Parameters code or redirect_url not specified"
+
+  - name: "area-update-service"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_service$"
+    realPath: "/area/update_service"
+    summary: "Update a service"
+    description: "Update auth of a service"
+    method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              NewAuth:
+                type: "string"
+                example: "{ token:blablabla }"
+              ServiceId:
+                type: "guid"
+                example: "432432-84932-4893894-87348"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
+  - name: "area-update-area"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_area$"
+    realPath: "/area/update_area"
+    summary: "Update an area"
+    description: "Update display name or state of an area"
+    method: "POST"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              DisplayName:
+                type: "string"
+                example: "discord"
+              State:
+                type: "int"
+                example: "1 for active 2 for inactive"
+              AreaId:
+                type: "guid"
+                example: "432432-84932-4893894-87348"
+    responses:
+      200:
+        description: "Updated successfully."
       401:
         description: "Unauthorized or invalid credentials."
 
@@ -458,7 +628,61 @@ routes:
         description: "About details."
 
 
+  - name: "area-update-action"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_action$"
+    realPath: "/area/update_action"
+    summary: "Update an action"
+    description: "Update trigger config of an action"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              TriggerConfig:
+                type: "string"
+                example: "{blablabla}"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
 
+  - name: "area-update-reaction"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/area/update_reaction$"
+    realPath: "/area/update_reaction"
+    summary: "Update an reaction"
+    description: "Update execution config of an reaction"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              ExecutionConfig:
+                type: "string"
+                example: "{blablabla}"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
 
 
 

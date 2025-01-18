@@ -47,6 +47,26 @@ services:
       retries: 5
     restart: on-failure
 
+  oauth_service:
+    build:
+      context: ./services/oauth
+      dockerfile: Dockerfile
+    environment:
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - DROPBOX_CLIENT_ID=${DROPBOX_CLIENT_ID}
+      - DROPBOX_CLIENT_SECRET=${DROPBOX_CLIENT_SECRET}
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - server-tier
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   service-about:
     build:
       context: ./services/about

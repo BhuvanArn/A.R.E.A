@@ -86,6 +86,8 @@ export default {
                     return "#24292e";
                 case "spotify":
                     return "#1db954";
+                case "dropbox":
+                    return "#0061ff";
                 default:
                     return "gray";
             }
@@ -199,6 +201,7 @@ export default {
 .service-icon-small {
     color: black;
     font-size: 20px;
+    margin-right: 1px;
 }
 
 .service-name {
@@ -210,6 +213,7 @@ export default {
 
 .section-item {
     margin: 0 0.5rem;
+    padding: 16px 50px;
 }
 
 .add-services {
