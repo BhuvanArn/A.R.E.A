@@ -1,6 +1,6 @@
 <template>
-    <header>
-      <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
+    <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
+      <nav class="header">
         <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
         <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
         <img src="@/assets/logo.png" class="logo">
@@ -14,21 +14,21 @@
                 <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
             </span>
         </div>
+      </nav>
+    </div>
+    <div v-show="mobileNav" class="mobile-menu-container">
+      <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
+          <h2 class="username-txt">{{ username }}</h2>
+          <span @click="goToProfilePage" class="user-avatar-img-container">
+              <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
+          </span>
       </div>
-      <div v-show="mobileNav" class="mobile-menu-container">
-        <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
-            <h2 class="username-txt">{{ username }}</h2>
-            <span @click="goToProfilePage" class="user-avatar-img-container">
-                <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
-            </span>
-        </div>
-        <hr class="horizontal-hr">
-        <button @click="navigateToServices" class="nvb-btn-style">Services</button>
-        <button @click="navigateToWidgets" class="nvb-btn-style">Widgets</button>
-      </div>
-      <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
-      </div>
-    </header>
+      <hr class="horizontal-hr">
+      <button @click="navigateToServices" class="nvb-btn-style">Services</button>
+      <button @click="navigateToWidgets" class="nvb-btn-style">Widgets</button>
+    </div>
+    <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
+    </div>
 </template>
 
 <script>
@@ -161,34 +161,21 @@ export default {
     transform: rotate(180deg);
 }
 
-  header {
-    z-index: 99;
-    width: 100%;
-    color: white;
+.navbar-container {
+  height: 5rem;
+  overflow: hidden;
+
+  border-bottom: 1px solid #000000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+.header {
+    display: flex;
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 5rem;
     background-color: #bcc1ba;
-
-    nav {
-      display: flex;
-      position: relative;
-      flex-direction: row;
-      padding: 12px 0;
-      width: 90%;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-
-      @media(min-width: 1080px) {
-        max-width: 1080px;
-      }
-
-      ul,
-      .link {
-        font-weight: 500;
-        color: white;
-        list-style-type: none;
-        text-decoration: none;
-      }
-    }
   }
 
   li {
@@ -244,8 +231,8 @@ export default {
     align-items: center;
     left: 24px;
     top: 0;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1.75rem;
     transition: .5s ease all;
   }
 
@@ -254,38 +241,9 @@ export default {
     height: 3rem;
     margin-left: 1rem;
     margin-right: 0.5rem;
+    margin-top: 0.85rem;
     transition: .5s ease all;
     cursor: pointer;
-  }
-
-  .navigation {
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    top: -1rem;
-    left: -3rem;
-    border-radius: 20px;
-  }
-
-  .link {
-    font-size: 14px;
-    transition: .5 ease all;
-    padding-bottom: 4px;
-    border-bottom: 1px solid transparent;
-    transition: 2s ease all;
-  }
-
-  .navbar-container {
-    display: flex;
-    height: 5rem;
-    align-items: center;
-    flex-direction: row;
-    border-bottom: 1px solid #000000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    background-color: #bcc1ba;
-    color: white;
   }
 
   .navbar-container-mobile-active {
@@ -447,6 +405,7 @@ export default {
     color: rgba(0, 0, 0, 0.7);
     margin-left: 1rem;
     margin-right: 1rem;
+    margin-top: 0.2rem;
   }
 
   .activeMenu {

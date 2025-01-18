@@ -58,8 +58,7 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
         try
         {
             _socketService.OpenSocket();
-            _socketService.SendHandshake();
-            _socketService.NotifyChange();
+            _socketService.SendHandshakeAndNotifyChange();
             _socketService.CloseSocket();
         }
         catch (Exception)
@@ -67,6 +66,6 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
             // ignored
         }
 
-        return ("Ok", ResultType.Success);
+        return ($"{addedAction.Id}", ResultType.Success);
     }
 }

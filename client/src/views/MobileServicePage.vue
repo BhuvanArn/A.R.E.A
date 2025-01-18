@@ -8,13 +8,11 @@
 <script>
 import NavBar from '../components/WorkspaceNavBar.vue';
 import SectionList from '@/components/SectionListMobile.vue';
-import WidgetList from '@/components/WidgetList.vue';
 
 export default {
     name: "MobileServicePage",
     components: {
         SectionList,
-        WidgetList,
         NavBar,
     },
     data() {

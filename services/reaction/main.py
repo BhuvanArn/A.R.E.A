@@ -5,7 +5,7 @@ from time import sleep
 from serviceconf import *
 from service_mod import *
 from requests import get
-from json import dumps
+from json import dumps, loads
 from signal import signal, SIGTERM
 
 class RegisteredReaction(object):
@@ -110,13 +110,14 @@ class Handler(object):
         json = req.json()
 
         for item in json:
-            for action in item["Reactions"]:
+            for action in item["reactions"]:
                 _vars = {}
 
-                for var_name, var_value in {**dumps(item["ExecutionConfig"]), **dumps(item["Auth"])}.items():
+                #for var_name, var_value in {**loads(action["executionConfig"]), **loads(item["auth"])}.items():
+                for var_name, var_value in {**loads(action["executionConfig"]), **item["auth"]}.items():
                     _vars[var_name] = var_value
 
-                self.register_action(RegisteredReaction(item["Id"], action["Id"], item["ActionId"], item["Name"], action["Name"], _vars))
+                self.register_reaction(RegisteredReaction(item["id"], action["id"], action["actionId"], item["name"], action["name"], _vars))
 
         req.close()
 
@@ -215,7 +216,7 @@ def main() -> int:
 
     rs: ReactionService = ReactionService()
 
-    rs.handler.register_reaction(RegisteredReaction("328", "0002", "45543", "test", "log", {}))
+    #rs.handler.register_reaction(RegisteredReaction("328", "0002", "45543", "test", "log", {}))
     # args = {
     #     "channel_id": "1314613132894670981",
     #     "message": "test reaction from reaction-service.",

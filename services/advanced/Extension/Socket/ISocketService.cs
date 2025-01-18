@@ -3,7 +3,6 @@
 public interface ISocketService
 {
     void OpenSocket();
-    void SendHandshake();
-    void NotifyChange();
+    void SendHandshakeAndNotifyChange();
     void CloseSocket();
 }
