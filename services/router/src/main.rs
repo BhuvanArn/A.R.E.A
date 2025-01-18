@@ -23,7 +23,8 @@ fn handle_connection(mut stream: TcpStream) {
 
     if req.method == "OPTIONS" {
         response.headers.insert("Access-Control-Allow-Origin".to_string(), "*".to_string());
-        response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization".to_string());
+        response.headers.insert("Access-Control-Allow-Headers".to_string(), "Content-Type, Authorization, X-User-Token".to_string());
+        response.headers.insert("Access-Control-Allow-Methods".to_string(), "GET, POST, PUT, DELETE, OPTIONS".to_string());
 
         response.code = 204;
         response.message = String::from("No Content");
@@ -46,6 +47,8 @@ fn handle_connection(mut stream: TcpStream) {
 
                         let mut res = parser::collect_response(&socket);
 
+                        res.headers.insert("access-control-allow-origin".to_string(), "*".to_string());
+
                         stream.write_all(&res.build_request()).unwrap();
                         return ();
                     }
@@ -56,6 +59,7 @@ fn handle_connection(mut stream: TcpStream) {
                         response.message = String::from("SERVICE UNAVAILABLE");
 
                         stream.write_all(&response.build_request()).unwrap();
+                        return ();
                     }
                 }
             } else {

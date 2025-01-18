@@ -59,13 +59,31 @@ routes:
       401:
         description: "Invalid data (passwords do not match, email already exists, etc)."
 
-  - name: "auth-google-login"
+  - name: "auth-user-information"
     host: "csharp_service"
     port: 8080
-    condition: "^/auth/google-login$"
-    realPath: "/auth/google-login"
-    summary: "Google Login"
-    description: "Authenticates a user using Google OAuth and provides an access token."
+    condition: "^/auth/userinformation$"
+    realPath: "/auth/userinformation"
+    summary: "Get User Information"
+    description: "Retrieves information about the user based on the provided JWT token."
+    method: "GET"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    responses:
+      200:
+        description: "User information retrieved successfully."
+      401:
+        description: "Unauthorized or invalid JWT token."
+
+  - name: "auth-forget-password"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/forget-password$"
+    realPath: "/auth/forget-password"
+    summary: "Forgot Password"
+    description: "Send an email to user in case they lost their password."
     method: "POST"
     requestBody:
       required: true
@@ -74,14 +92,16 @@ routes:
           schema:
             type: "object"
             properties:
-              Token:
+              Email:
                 type: "string"
-                example: "google_oauth_token"
+                example: "area@gmail.com"
     responses:
       200:
-        description: "Login successful and access token provided."
+        description: "Email sent successfully."
+      401:
+        description: "Invalid data (wrong email, couldn't connect to SMTP, etc)."
       500:
-        description: "Invalid Google OAuth token."
+        description: "Internal server error (email couldn't be sent, etc)."
 
   - name: "auth-reset-password"
     host: "csharp_service"
@@ -89,7 +109,7 @@ routes:
     condition: "^/auth/reset-password$"
     realPath: "/auth/reset-password"
     summary: "Reset Password"
-    description: "Resets a user's password.\nThe user must be logged in to reset their password."
+    description: "Resets a user's password. The user must be logged in to reset their password."
     method: "POST"
     headers:
       X-User-Token:
@@ -116,13 +136,13 @@ routes:
       500:
         description: "Internal server error (bad JWT token, etc)."
 
-  - name: "auth-forget-password"
+  - name: "oauth-google-login"
     host: "csharp_service"
     port: 8080
-    condition: "^/auth/forget-password$"
-    realPath: "/auth/forget-password"
-    summary: "Forgot Password"
-    description: "Send an email to the user in case they lost their password."
+    condition: "^/auth/google-login$"
+    realPath: "/auth/google-login"
+    summary: "Google Login"
+    description: "Authenticates a user using Google OAuth and provides an access token."
     method: "POST"
     requestBody:
       required: true
@@ -131,18 +151,16 @@ routes:
           schema:
             type: "object"
             properties:
-              Email:
+              Token:
                 type: "string"
-                example: "area@gmail.com"
+                example: "google_oauth_token"
     responses:
       200:
-        description: "Email sent successfully."
-      401:
-        description: "Invalid data (wrong email, couldn't connect to SMTP, etc)."
+        description: "Login successful and access token provided."
       500:
-        description: "Internal server error (email couldn't be sent, etc)."
+        description: "Invalid Google OAuth token."
 
-  - name: "discord-login"
+  - name: "oauth-discord-login"
     host: "csharp_service"
     port: 8080
     condition: "^/auth/discord-login$"
@@ -195,7 +213,7 @@ routes:
         description: "Spotify OAuth url returned succesfully"
       401:
         description: "Parameters scopes or redirect_url not specified"
-  
+
   - name: "oauth-spotify-access-token"
     host: "oauth_service"
     port: 80
@@ -222,6 +240,10 @@ routes:
         description: "Spotify OAuth token returned succesfully"
       401:
         description: "Parameters code or redirect_url not specified"
+
+
+  #------------------ Area-Related Operations ------------------#
+
 
   - name: "area-list"
     host: "csharp_service"
@@ -280,29 +302,10 @@ routes:
                     type: "string"
                     example: "3421432423"
     responses:
-      201:
+      200:
         description: "Subscription successful."
       400:
         description: "Invalid subscription data."
-
-
-  - name: "user-information"
-    host: "csharp_service"
-    port: 8080
-    condition: "^/auth/userinformation$"
-    realPath: "/auth/userinformation"
-    summary: "Get User Information"
-    description: "Retrieves information about the user based on the provided JWT token."
-    method: "POST"
-    headers:
-      X-User-Token:
-        description: "Bearer token for user authentication"
-        required: true
-    responses:
-      200:
-        description: "User information retrieved successfully."
-      401:
-        description: "Unauthorized or invalid JWT token."
 
   - name: "unsubscribe-service"
     host: "csharp_service"
@@ -310,7 +313,7 @@ routes:
     condition: "^/area/unsubscribe_service$"
     realPath: "/area/unsubscribe_service"
     summary: "Unsubscribe Service"
-    description: "Unsubscribes from a service in an area."
+    description: "Unsubscribes from a service in an area. On success, It will return a list of the remaining services."
     method: "POST"
     headers:
       X-User-Token:
@@ -326,12 +329,11 @@ routes:
               name:
                 type: "string"
                 example: "facebook"
-              credentials:
-                type: "object"
-                properties:
-                  Name:
-                    type: "string"
-                    example: "resd"
+    responses:
+      200:
+        description: "Unsubscription successful (no data)."
+      401:
+        description: "Invalid unsubscription data/not subscribed to the service."
 
   - name: "add-actions"
     host: "csharp_service"
@@ -389,9 +391,6 @@ routes:
           schema:
             type: "object"
             properties:
-              user_token:
-                type: "string"
-                example: "user_token_example"
               ServiceId:
                 type: "number"
                 example: 1
@@ -452,7 +451,7 @@ routes:
     condition: "^/area/services/([^/]+)/actions_reactions$"
     realPath: "/area/services/{serviceName}/actions_reactions"
     summary: "Get Actions and Reactions"
-    description: "Retrieves a list of actions and reactions available in a service."
+    description: "Retrieves a list of actions and reactions available in a service (you must be subscribed to the service)."
     method: "GET"
     headers:
       X-User-Token:
@@ -461,6 +460,8 @@ routes:
     responses:
       200:
         description: "List of actions and reactions."
+      401:
+        description: "Not subscribed to the service/bad service name/bad JWT token."
 
   - name: "action"
     host: "csharp_service"
@@ -468,7 +469,7 @@ routes:
     condition: "^/area/services/([^/]+)/action$"
     realPath: "/area/services/{serviceName}/action"
     summary: "Get all actions of the service"
-    description: "Retrieves a list of actions available in a service."
+    description: "Retrieves a list of actions available in a service (you must be subscribed to the service)."
     method: "GET"
     headers:
       X-User-Token:
@@ -477,8 +478,8 @@ routes:
     responses:
       200:
         description: "List of actions."
-      400:
-        description: "Invalid action data."
+      401:
+        description: "Not subscribed to the service/bad service name/bad JWT token."
 
   - name: "reaction"
     host: "csharp_service"
@@ -486,7 +487,7 @@ routes:
     condition: "^/area/services/([^/]+)/reaction$"
     realPath: "/area/services/{serviceName}/reaction"
     summary: "Get all reactions of the service"
-    description: "Retrieves a list of reactions available in a service."
+    description: "Retrieves a list of reactions available in a service (you must be subscribed to the service)."
     method: "GET"
     headers:
       X-User-Token:
@@ -494,9 +495,9 @@ routes:
         required: true
     responses:
       200:
-        description: "Reaction successful."
-      400:
-        description: "Invalid reaction data."
+        description: "List of reactions."
+      401:
+        description: "Not subscribed to the service/bad service name/bad JWT token."
 
   - name: "about"
     host: "service-about"
@@ -509,6 +510,11 @@ routes:
     responses:
       200:
         description: "About details."
+
+
+
+
+
 
   ###------------------ Swagger ------------------###
 

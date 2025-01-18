@@ -15,7 +15,7 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
     {
         _dbHandler = dbHandler;
     }
-    
+
     public async Task<(object, ResultType)> HandleAsync(GetServiceEvent @event)
     {
         string id = @event.JwtToken.GetJwtSubClaim();
@@ -24,50 +24,37 @@ public class GetServicesEventHandler : IIntegrationEventHandler<GetServiceEvent,
         {
             return (new(), ResultType.Fail);
         }
-        
+
         var services = (await _dbHandler.GetAsync<Service>(s => s.UserId == userId)).ToList();
 
-        if (@event.GetArea)
+        if (!@event.GetArea)
         {
             return (services, ResultType.Success);
         }
 
-        var areaInfos = new List<AreaInfo>();
-        
+        var areasWithDetails = new List<Area>();
+
         foreach (var service in services)
         {
-            var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id && !string.IsNullOrEmpty(s.DisplayName))).FirstOrDefault();
-            
-            if (area == null)
+            var areas = await _dbHandler.GetAsync<Area>(s =>
+                s.ServiceId == service.Id && !string.IsNullOrEmpty(s.DisplayName));
+
+            foreach (var area in areas)
             {
-                continue;
+                if (area.ActionId is not null)
+                {
+                    area.Action = (await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId)).FirstOrDefault();
+                }
+
+                if (area.Action is not null)
+                {
+                    area.Action.Reactions = (await _dbHandler.GetAsync<Reaction>(r => r.ActionId == area.Action.Id)).ToList();
+                }
+
+                areasWithDetails.Add(area);
             }
-
-            var action = area.ActionId != null 
-                ? await _dbHandler.GetAsync<Action>(a => a.Id == area.ActionId) 
-                : null;
-
-            var reaction = area.ReactionId != null 
-                ? await _dbHandler.GetAsync<Reaction>(r => r.Id == area.ReactionId) 
-                : null;
-
-            areaInfos.Add(new AreaInfo
-            {
-                Area = area,
-                Action = action?.FirstOrDefault(),
-                Reaction = reaction?.FirstOrDefault(),
-                ServiceName = service.Name
-            });
         }
-        
-        return (areaInfos, ResultType.Success);
-    }
 
-    private class AreaInfo
-    {
-        public Area Area { get; set; }
-        public Action? Action { get; set; }
-        public Reaction? Reaction { get; set; }
-        public string ServiceName { get; set; }
+        return (areasWithDetails, ResultType.Success);
     }
 }

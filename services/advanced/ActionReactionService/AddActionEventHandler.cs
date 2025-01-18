@@ -67,6 +67,6 @@ public class AddActionEventHandler : IIntegrationEventHandler<AddActionEvent, (s
             // ignored
         }
 
-        return ("Ok", ResultType.Success);
+        return ($"{addedAction.Id}", ResultType.Success);
     }
 }

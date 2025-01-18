@@ -96,6 +96,7 @@ export default {
 				callback: this.handleCredentialResponse,
 			});
 			google.accounts.id.prompt()
+            localStorage.setItem('AccountType', 'Google');
 		},
 
         async handleCredentialResponse(response) {
@@ -105,15 +106,14 @@ export default {
             }
             const credential = response.credential;
             try {
-                const response = await this.$axios.post('/auth/google-login', {
+                const res = await this.$axios.post('/auth/google-login', {
                     Token: credential,
                 });
 
-                localStorage.setItem('token', credential);
+                localStorage.setItem('token', res.data);
                 localStorage.setItem('Status', 'Logged In');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
-                localStorage.setItem('AccountType', 'Google');
                 window.location.href = this.$router.resolve({ name: 'services' }).href;
             } catch (error) {
                 console.error(error);
@@ -125,7 +125,7 @@ export default {
                 this.errorMessage = 'Please fill all the fields';
                 return;
             }
-            if (!this.email.includes('@') || !this.email.includes('.')) {
+            if (!this.email.match(/^\S+@\S+\.\S+$/)) {
                 this.errorMessage = 'Please enter a valid email';
                 return;
             }
@@ -135,12 +135,12 @@ export default {
                     Email: this.email,
                     Password: this.password
                 });
-                if (!response.data || !response.data.responses || response.data.responses.length === 0) {
+                if (response.status != 200 || !response.data) {
                     this.errorMessage = 'Invalid email or password';
                     return;
                 }
-                const token = response.data.responses[0];
-                console.log(token);
+                const token = response.data;
+                localStorage.removeItem('token');
                 localStorage.setItem('token', token);
                 localStorage.setItem('Status', 'Logged In');
                 localStorage.setItem('AccountType', 'Area');
