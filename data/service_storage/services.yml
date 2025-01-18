@@ -48,6 +48,100 @@ services:
               data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
   
+  - name: github
+    credentials:
+      - name: token
+        regex: "^*$"
+    
+    actions:
+      - name: commit_in_repo
+        description: action when there is a new commit in a github repository main branch
+        time: 5
+        inputs:
+          - name: repository_owner   # repository_owner : BhuvanArn
+            regex: "^*$"
+          - name: repository_name   # repository_name : A.R.E.A
+            regex: "^*$"
+
+        fetch:
+          strategy: hash
+          endpoint:
+            method: get
+            url: https://api.github.com/repos/$+repository_owner/$+repository_name/commits
+            headers: |
+              {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+      
+      - name: commit_in_repo_branch
+        description: action when there is a new commit in a github repository branch
+        time: 5
+        inputs:
+          - name: repository_owner   # repository_owner : BhuvanArn
+            regex: "^*$"
+          - name: repository_name   # repository_name : A.R.E.A
+            regex: "^*$"
+          - name: repository_branch   # repository_name : AREA-103-Dropbox-OAuth-workflow
+            regex: "^*$"
+
+        fetch:
+          strategy: hash
+          endpoint:
+            method: get
+            url: https://api.github.com/repos/$+repository_owner/$+repository_name/commits/$+repository_branch
+            headers: |
+              {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    
+    reactions:
+      - name: create_issue
+        description: creates an issue on a github repository
+        update_action: true
+        inputs:
+          - name: repository_owner   # repository_owner : BhuvanArn
+            regex: "^*$"
+          - name: repository_name   # repository_name : A.R.E.A
+            regex: "^*$"
+
+          - name: title     # title : Fix CI build on debian
+            regex: "^*$"
+          - name: body      # body : There was a build error, ... we should fix it.
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://api.github.com/repos/$+repository_owner/$+repository_name/issues
+              headers: |
+                {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+              data: |
+                {"title": "$+title", "body": "$+body"}
+
+      - name: create_pull_request
+        description: creates a pull request on a github repository
+        update_action: true
+        inputs:
+          - name: repository_owner   # repository_owner : BhuvanArn
+            regex: "^*$"
+          - name: repository_name   # repository_name : A.R.E.A
+            regex: "^*$"
+
+          - name: title     # title : Amazing new feature
+            regex: "^*$"
+          - name: body      # body : Please pull these awesome changes in!
+            regex: "^*$"
+
+          - name: head      # head : new-user-feature
+            regex: "^*$"
+          - name: base      # head : main
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://api.github.com/repos/$+repository_owner/$+repository_name/pulls
+              headers: |
+                {"Authorization": "Bearer $+token", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+              data: |
+                {"title": "$+title", "body": "$+body", "head":"$+head", "base":"$+base"}
+
   - name: spotify
     credentials:
       - name: token
