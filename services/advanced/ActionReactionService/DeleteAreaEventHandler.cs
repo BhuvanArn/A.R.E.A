@@ -71,8 +71,7 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             try
             {
                 _socketService.OpenSocket();
-                _socketService.SendHandshake();
-                _socketService.NotifyChange();
+                _socketService.SendHandshakeAndNotifyChange();
                 _socketService.CloseSocket();
             }
             catch (Exception)
@@ -116,8 +115,7 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             try
             {
                 _socketService.OpenSocket();
-                _socketService.SendHandshake();
-                _socketService.NotifyChange();
+                _socketService.SendHandshakeAndNotifyChange();
                 _socketService.CloseSocket();
             }
             catch (Exception)
@@ -151,8 +149,7 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             try
             {
                 _socketService.OpenSocket();
-                _socketService.SendHandshake();
-                _socketService.NotifyChange();
+                _socketService.SendHandshakeAndNotifyChange();
                 _socketService.CloseSocket();
             }
             catch (Exception)
