@@ -20,7 +20,8 @@ namespace Extension.Socket
 
         public void SendHandshakeAndNotifyChange()
         {
-            byte[] handshakeData = { 0xa4, 0x0e, 0xa0, 0x01, 0x00 };
+            // 0xa4 0xea 0x01 0x00
+            byte[] handshakeData = { 0xa4, 0xea, 0x01, 0x00 };
             byte[] paddedHandshakeData = AddPadding(handshakeData);
 
             SendData(paddedHandshakeData);
@@ -36,7 +37,8 @@ namespace Extension.Socket
             
             Console.WriteLine("Handshake response received: " + BitConverter.ToString(receivedData));
 
-            byte[] changeData = { 0xa4, 0x0e, 0xa0, 0x04, 0x00 };
+            // 0xa4 0xea 0x04 0x00 
+            byte[] changeData = { 0xa4, 0xea, 0x04, 0x00 };
             byte[] paddedChangeData = AddPadding(changeData);
             SendData(paddedChangeData);
             Console.WriteLine("Notify change sent.");
