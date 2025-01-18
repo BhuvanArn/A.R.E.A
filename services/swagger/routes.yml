@@ -241,8 +241,59 @@ routes:
       401:
         description: "Parameters code or redirect_url not specified"
 
+  - name: "oauth-dropbox-authorize"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/dropbox/authorize$"
+    realPath: "/oauth/dropbox/authorize"
+    summary: "Dropbox OAuth authorize process"
+    description: "Dropbox OAuth authorize process"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Dropbox OAuth url returned succesfully"
+      401:
+        description: "Parameters scopes or redirect_url not specified"
 
-  #------------------ Area-Related Operations ------------------#
+  - name: "oauth-dropbox-access-token"
+    host: "oauth_service"
+    port: 80
+    condition: "^/oauth/dropbox/access_token$"
+    realPath: "/oauth/dropbox/access_token"
+    summary: "Dropbox OAuth user token fetch"
+    description: "This is the route to fetch a token to act on behalf of a user"
+    method: "POST"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+                example: "AQBFvuU8UV6gicVjPkuY-vAaJ6f9jvOWUfvuHOnoJZD_Y_DQg0mzu26acXKinavXfo1EwP3_qvd_Lhc89dMQKac0yv3r62htU7Gga0ScOivDnoexg51I5p4wJpeKIInJR_V97FvUzAVMsliC0nMz7IcyI9G4da3WQm5qgoic0-6_GgMNPpkznZVpf2G28YnugUYbKc8"
+              redirect_url:
+                type: "string"
+                example: "http://localhost:8081/callback"
+    responses:
+      200:
+        description: "Dropbox OAuth token returned succesfully"
+      401:
+        description: "Parameters code or redirect_url not specified"
+
+
+    #------------------ Area-Related Operations ------------------#
 
 
   - name: "area-list"

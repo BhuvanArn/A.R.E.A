@@ -362,6 +362,8 @@ export default {
                     return "#24292e";
                 case "spotify":
                     return "#1db954";
+                case "dropbox":
+                    return "#0061ff";
                 default:
                     return "gray";
             }

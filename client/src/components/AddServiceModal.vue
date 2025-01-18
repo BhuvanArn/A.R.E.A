@@ -188,6 +188,10 @@ export default {
                     await this.authSpotify();
                     return;
                 }
+                if (this.selectedService.name == "dropbox") {
+                    await this.authDropbox();
+                    return;
+                }
 
                 const res = await this.$axios.post(`/area/subscribe_service`, {
                     name: this.selectedService.name,
@@ -222,6 +226,8 @@ export default {
                     return "#24292e";
                 case "spotify":
                     return "#1db954";
+                case "dropbox":
+                    return "#0061ff";
                 default:
                     return "gray";
             }
@@ -263,6 +269,24 @@ export default {
                 window.open(res.data.authorize_url, "_blank");
 
                 // this call will open a new tab to the spotify login page,
+                // then the user will be redirected to the callback url
+            } catch (error) {
+                console.error(error);
+            };
+        },
+
+        async authDropbox() {
+            try {
+                // get the token from dropbox
+                const res = await this.$axios.post(`/oauth/dropbox/authorize`,
+                {
+                    "redirect_url": "http://localhost:8081/oauth/dropbox/callback"
+                });
+
+                // res.data contains "authorize_url" which is the url to redirect the user to
+                window.open(res.data.authorize_url, "_blank");
+
+                // this call will open a new tab to the dropbox login page,
                 // then the user will be redirected to the callback url
             } catch (error) {
                 console.error(error);
