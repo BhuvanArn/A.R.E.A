@@ -59,6 +59,7 @@ fn handle_connection(mut stream: TcpStream) {
                         response.message = String::from("SERVICE UNAVAILABLE");
 
                         stream.write_all(&response.build_request()).unwrap();
+                        return ();
                     }
                 }
             } else {

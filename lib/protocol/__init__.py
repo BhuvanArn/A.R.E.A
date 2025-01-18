@@ -87,9 +87,10 @@ class AreaConnect(object):
 
         if (response.type != CONH):
             self.close_client()
-            return
+            return (1)
 
         self.send_message(Message(CONR))
+        return (0)
 
     def throw_away(self):
         client_socket, address = self.socket.accept()
@@ -100,9 +101,10 @@ class AreaConnect(object):
 
     def accept_if_not_connected(self):
         if (not self.connected):
-            self.accept()
+            return (self.accept())
         else:
             self.throw_away()
+            return (1)
 
     def close_client(self):
         if (self.connected):
