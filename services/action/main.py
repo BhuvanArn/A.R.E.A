@@ -253,7 +253,7 @@ class ActionService(object):
 
         self.running = False
 
-        signal(SIGTERM, lambda: self.close())
+        signal(SIGTERM, lambda *args, **kwargs: self.close())
 
         self._update_datas()
 

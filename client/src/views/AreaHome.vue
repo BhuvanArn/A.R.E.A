@@ -3,7 +3,7 @@
     <body>
         <div class="page-container">
             <div class="top-container" :class="{ 'top-container-mobile': mobile }">
-                <img class="img-01-style" src="@/assets/icone-puzzle.png" alt="icone-puzzle">
+                <img class="img-01-style" :class="{'img-01-style-mobile':mobile}" src="@/assets/icone-puzzle.png" alt="icone-puzzle">
                 <h1 class="title-home-page" :class="{ 'title-home-page-mobile': mobile }">Action REAction</h1>
             </div>
             <div class="middle-container" :class="{ 'middle-container-mobile': mobile }">
@@ -139,6 +139,11 @@ body {
 .img-01-style {
     width: 30rem;
     height: 30rem;
+}
+
+.img-01-style-mobile {
+    width: 25rem;
+    height: 25rem;
 }
 
 .top-container {
@@ -428,7 +433,7 @@ body {
 }
 
 .img-03-style-mobile {
-    width: 25rem;
+    width: 24rem;
     height: 14rem;
 }
 

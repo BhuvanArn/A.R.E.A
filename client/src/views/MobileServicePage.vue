@@ -1,7 +1,9 @@
 <template>
-    <NavBar class="navbar"></NavBar>
-    <div class="services-page">
-        <SectionList/>
+    <div class="main-page">
+        <NavBar class="navbar"></NavBar>
+        <div class="services-page">
+            <SectionList></SectionList>
+        </div>
     </div>
 </template>
 
@@ -10,39 +12,59 @@ import NavBar from '../components/WorkspaceNavBar.vue';
 import SectionList from '@/components/SectionListMobile.vue';
 
 export default {
-    name: "MobileServicePage",
-    components: {
-        SectionList,
-        NavBar,
-    },
-    data() {
-        return {
-        };
-    },
+name: "ServicePage",
+components: {
+    SectionList,
+    NavBar,
+},
+data() {
+    return {
+        mobile: false,
+    };
+},
 
-    mounted() {
+mounted() {
+    window.addEventListener('resize', this.checkScreen);
+    this.checkScreen();
+},
+methods: {
+    checkScreen() {
+        this.windowWidth = window.innerWidth;
+        if (this.windowWidth <= 960) {
+            this.mobile = true;
+        } else {
+            this.mobile = false;
+        }
     },
-    methods: {
-    },
+},
 
 };
 </script>
 
 <style scoped>
 
-.navbar {
+.main-page {
+    font-family: 'inter', sans-serif;
     position: relative;
-    z-index: 10;
+    z-index: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 .services-page {
+    height: calc(100vh - 5rem);
+    outline: none;
     position: relative;
+    z-index: -1;
     display: flex;
-    flex-direction: row;
-    font-family: 'inter', sans-serif;
-    z-index: 1;
-    height: 100vh;
-    width: auto;
+    background-color: #efefef;
+}
+
+@media (max-width: 920px) {
+.services-page {
+    justify-content: center;
+    align-items: center;
+}
 }
 
 </style>

@@ -30,6 +30,11 @@ public class ChangeUsernameEventHandler : IIntegrationEventHandler<ChangeUsernam
         {
             return ("You are not logged in", ResultType.Fail);
         }
+        
+        if (string.IsNullOrEmpty(user.Password))
+        {
+            return ("You are not logged in", ResultType.Fail);
+        }
 
         user.Username = @event.Username;
         await _dbHandler.UpdateAsync(user);

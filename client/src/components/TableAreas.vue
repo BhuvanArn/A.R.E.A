@@ -1,5 +1,5 @@
 <template>
-    <div class="table-container">
+    <div class="table-container" :class="{ 'mobile-table': mobile }">
         <table class="areas-table">
             <thead>
                 <tr class="table-header">
@@ -75,6 +75,7 @@ export default {
         return {
             showCreateModal: false,
             areas: [],
+            mobile: false,
         };
     },
     methods: {
@@ -133,6 +134,15 @@ export default {
             }
         },
 
+        checkScreen() {
+            this.windowWidth = window.innerWidth;
+            if (this.windowWidth <= 960) {
+                this.mobile = true;
+            } else {
+                this.mobile = false;
+            }
+        },
+
         async getAreas() {
             try {
                 const token = localStorage.getItem("token");
@@ -160,6 +170,9 @@ export default {
     },
     async mounted() {
         await this.getAreas();
+        window.addEventListener('resize', this.checkScreen);
+        this.checkScreen();
+
     }
 };
 </script>
