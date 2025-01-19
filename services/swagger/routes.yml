@@ -842,6 +842,65 @@ routes:
       401:
         description: "Unauthorized or invalid credentials."
 
+  - name: "auth-change-password"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/change-password$"
+    realPath: "/auth/change-password"
+    summary: "Change user password"
+    description: "Change user password"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              Password:
+                type: "string"
+                example: "test"
+              ConfirmPassword:
+                type: "string"
+                example: "test"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
+  - name: "auth-change-username"
+    host: "csharp_service"
+    port: 8080
+    condition: "^/auth/change-username$"
+    realPath: "/auth/change-username"
+    summary: "Change username"
+    description: "Change username"
+    method: "PUT"
+    headers:
+      X-User-Token:
+        description: "Bearer token for user authentication"
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              Username:
+                type: "string"
+                example: "test"
+    responses:
+      200:
+        description: "Updated successfully."
+      401:
+        description: "Unauthorized or invalid credentials."
+
 
   ###------------------ Swagger ------------------###
 
