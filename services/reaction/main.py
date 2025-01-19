@@ -114,7 +114,7 @@ class Handler(object):
                 _vars = {}
 
                 #for var_name, var_value in {**loads(action["executionConfig"]), **loads(item["auth"])}.items():
-                for var_name, var_value in {**loads(action["executionConfig"]), **item["auth"]}.items():
+                for var_name, var_value in {**loads(action["executionConfig"]), **loads(item["auth"])}.items():
                     _vars[var_name] = var_value
 
                 self.register_reaction(RegisteredReaction(item["id"], action["id"], action["actionId"], item["name"], action["name"], _vars))
