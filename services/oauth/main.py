@@ -1,5 +1,8 @@
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify, redirect, make_response
+from base64 import b64encode
+from uuid import uuid4
 import requests
+import requests.auth
 import urllib.parse
 import base64
 import os
@@ -22,9 +25,52 @@ GITHUB_CLIENT_SECRET = os.environ['GITHUB_CLIENT_SECRET']
 GITHUB_AUTH_URL = "https://github.com/login/oauth/authorize"
 GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token"
 
+REDDIT_CLIENT_ID = os.environ['REDDIT_CLIENT_ID']
+REDDIT_CLIENT_SECRET = os.environ['REDDIT_CLIENT_SECRET']
+REDDIT_AUTH_URL = "https://ssl.reddit.com/api/v1/authorize"
+REDDIT_TOKEN_URL = "https://ssl.reddit.com/api/v1/access_token"
+
 @app.route("/health")
 def health_check():
     return "Everything alright !"
+
+@app.route("/oauth/reddit/authorize", methods=["POST"])
+def reddit_authorize():
+    data = request.json
+    if not data or not data.get("scopes") or not data.get("redirect_url"):
+        return jsonify({"error": "Missing required fields: 'scopes' and/or 'redirect_url'"}), 400
+
+    # scopes = data["scopes"].replace(" ", "+")
+    state = str(uuid4())
+    params = {
+        "client_id": REDDIT_CLIENT_ID,
+        "response_type": "code",
+        "state": state,
+        "redirect_uri": data["redirect_url"],
+        "duration": "permanent",
+        "scope": data["scopes"]
+    }
+    url = f"{REDDIT_AUTH_URL}?" + urllib.parse.urlencode(params)
+    return jsonify({"authorize_url": url})
+
+@app.route("/oauth/reddit/access_token", methods=["POST"])
+def reddit_get_access_token():
+    data = request.json
+    if not data or not data.get("code") or not data.get("redirect_url"):
+        return jsonify({"error": "Missing required field(s): 'code' and/or 'redirect_url'"}), 400
+
+    client_auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
+    post_data = {
+        "grant_type": "authorization_code",
+        "code": data["code"],
+        "redirect_uri": data["redirect_url"]
+    }
+    headers = {"User-Agent": 'linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)'}
+    response = requests.post(REDDIT_TOKEN_URL, auth=client_auth, headers=headers, data=post_data)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({"error": "Failed to retrieve access token", "details": response.json()}), response.status_code
 
 @app.route("/oauth/github/authorize", methods=["POST"])
 def github_authorize():

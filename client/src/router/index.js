@@ -60,6 +60,12 @@ const routes = [
     props: (route) => ({ code: route.query.code })
   },
   {
+    path: '/oauth/reddit/callback',
+    name: 'reddit-callback',
+    component: () => import('../views/RedditCallback.vue'),
+    props: (route) => ({ code: route.query.code })
+  },
+  {
     path: '/client.apk',
     name: 'AreaApk',
     component: () => import('../views/apk.vue')

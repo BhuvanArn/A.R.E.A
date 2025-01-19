@@ -2,7 +2,8 @@
     <div class="modal-overlay" @click.self="closeModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" :class="{ 'modal-title-mobile': mobile }">Subscribe to {{ selectedService ? selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
+                <h2 class="modal-title" :class="{ 'modal-title-mobile': mobile }">Subscribe to {{ selectedService ?
+                    selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
                 <img src="@/assets/logo.png" class="logo" :class="{ 'logo-mobile': mobile }" alt="logo" />
             </div>
             <!-- Step 1: Carousel of Services -->
@@ -11,12 +12,8 @@
                     No new services available
                 </div>
                 <div v-else-if="services.length <= 3" class="carousel-container">
-                    <div
-                        class="service-card"
-                        v-for="(service, idx) in services"
-                        :key="idx"
-                        @click="viewService(service)"
-                        :style="{ '--bg-color': getBrandColor(service.name) }">
+                    <div class="service-card" v-for="(service, idx) in services" :key="idx"
+                        @click="viewService(service)" :style="{ '--bg-color': getBrandColor(service.name) }">
                         <Iconify :icon="getServiceIcon(service.name)" />
                         <h4>{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
                         <hr class="divider" />
@@ -27,26 +24,29 @@
                 <div v-else class="carousel-container">
                     <!-- left arrow SVG -->
                     <button class="nav-arrow" @click="prevService">
-                        <svg fill="#000000" height="16px" width="16px" viewBox="-33 -33 396 396" transform="rotate(180)">
-                            <path d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606C255,161.018,253.42,157.202,250.606,154.389z" />
+                        <svg fill="#000000" height="16px" width="16px" viewBox="-33 -33 396 396"
+                            transform="rotate(180)">
+                            <path
+                                d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606C255,161.018,253.42,157.202,250.606,154.389z" />
                         </svg>
                     </button>
-                    <div
-                        class="service-card"
-                        v-for="(service, idx) in visibleServices"
-                        :key="idx"
+                    <div class="service-card" v-for="(service, idx) in visibleServices" :key="idx"
                         @click="viewService(service)"
-                        :style="{ '--bg-color': getBrandColor(service.name) }">
-                        <Iconify :icon="getServiceIcon(service.name)" />
-                        <h4>{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
+                        :style="{ '--bg-color': getBrandColor(service.name), '--text-color': getComplementaryColor(getBrandColor(service.name)) }">
+                        <Iconify :icon="getServiceIcon(service.name)" :style="{ color: 'var(--text-color)' }" />
+                        <h4 :style="{ color: 'var(--text-color)' }">{{ service.name.slice(0, 1).toUpperCase() +
+                            service.name.slice(1) }}</h4>
                         <hr class="divider" />
-                        <p>{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
-                        <p>{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
+                        <p :style="{ color: 'var(--text-color)' }">{{ service.actions.length }} Action{{
+                            service.actions.length > 1 ? 's' : '' }}</p>
+                        <p :style="{ color: 'var(--text-color)' }">{{ service.reactions.length }} Reaction{{
+                            service.reactions.length > 1 ? 's' : '' }}</p>
                     </div>
                     <!-- right arrow SVG -->
                     <button class="nav-arrow" @click="nextService">
                         <svg fill="#000000" height="16px" width="16px" viewBox="-33 -33 396 396">
-                        <path d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606C255,161.018,253.42,157.202,250.606,154.389z" />
+                            <path
+                                d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606C255,161.018,253.42,157.202,250.606,154.389z" />
                         </svg>
                     </button>
                 </div>
@@ -54,9 +54,12 @@
 
             <!-- Step 2: Service Overview -->
             <div v-else-if="step === 2" class="service-overview">
-                <div class="service-info" :style="{ '--bg-color': getBrandColor(selectedService.name), '--text-color': getComplementaryColor(getBrandColor(selectedService.name)) }">
-                    <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon" :style="{ color: 'var(--text-color)' }" />
-                    <h3 :style="{ color: 'var(--text-color)' }">{{ selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) }}</h3>
+                <div class="service-info"
+                    :style="{ '--bg-color': getBrandColor(selectedService.name), '--text-color': getComplementaryColor(getBrandColor(selectedService.name)) }">
+                    <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon"
+                        :style="{ color: 'var(--text-color)' }" />
+                    <h3 :style="{ color: 'var(--text-color)' }">{{ selectedService.name.slice(0, 1).toUpperCase() +
+                        selectedService.name.slice(1) }}</h3>
                     <button class="common-btn" @click="openServiceDetails">MORE DETAILS</button>
                     <div v-if="showForm" class="service-credentials">
                         <input type="email" v-model="credentials.email" placeholder="Email" />
@@ -77,7 +80,8 @@
                             <div class="card-content">
                                 <div class="icon-section">
                                     <div class="icon-square">
-                                        <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon-small" />
+                                        <Iconify :icon="getServiceIcon(selectedService.name)"
+                                            class="service-icon-small" />
                                     </div>
                                 </div>
                                 <div class="info-section">
@@ -86,14 +90,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-for="reaction in selectedService.reactions" :key="reaction.name" class="action-reaction-card">
+                        <div v-for="reaction in selectedService.reactions" :key="reaction.name"
+                            class="action-reaction-card">
                             <div class="type-section">
                                 <small>Reaction</small>
                             </div>
                             <div class="card-content">
                                 <div class="icon-section">
                                     <div class="icon-square">
-                                        <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon-small" />
+                                        <Iconify :icon="getServiceIcon(selectedService.name)"
+                                            class="service-icon-small" />
                                     </div>
                                 </div>
                                 <div class="info-section">
@@ -197,6 +203,10 @@ export default {
                     await this.authGithub();
                     return;
                 }
+                if (this.selectedService.name == "reddit") {
+                    await this.authReddit();
+                    return;
+                }
 
                 const res = await this.$axios.post(`/area/subscribe_service`, {
                     name: this.selectedService.name,
@@ -222,7 +232,7 @@ export default {
         getBrandColor(name) {
             switch (name) {
                 case "discord":
-                    return  "#7289da";
+                    return "#7289da";
                 case "google":
                     return "#4285f4";
                 case "twitter":
@@ -267,10 +277,10 @@ export default {
             try {
                 // get the token from spotify
                 const res = await this.$axios.post(`/oauth/spotify/authorize`,
-                {
-                    "scopes": "user-read-private user-read-playback-state",
-                    "redirect_url": "http://localhost:8081/oauth/spotify/callback"
-                });
+                    {
+                        "scopes": "user-read-private user-read-playback-state",
+                        "redirect_url": "http://localhost:8081/oauth/spotify/callback"
+                    });
 
                 // res.data contains "authorize_url" which is the url to redirect the user to
                 window.open(res.data.authorize_url, "_blank");
@@ -286,9 +296,9 @@ export default {
             try {
                 // get the token from dropbox
                 const res = await this.$axios.post(`/oauth/dropbox/authorize`,
-                {
-                    "redirect_url": "http://localhost:8081/oauth/dropbox/callback"
-                });
+                    {
+                        "redirect_url": "http://localhost:8081/oauth/dropbox/callback"
+                    });
 
                 // res.data contains "authorize_url" which is the url to redirect the user to
                 window.open(res.data.authorize_url, "_blank");
@@ -304,10 +314,10 @@ export default {
             try {
                 // get the token from github
                 const res = await this.$axios.post(`/oauth/github/authorize`,
-                {
-                    "scopes": "repo",
-                    "redirect_url": "http://localhost:8081/oauth/github/callback"
-                });
+                    {
+                        "scopes": "repo",
+                        "redirect_url": "http://localhost:8081/oauth/github/callback"
+                    });
 
                 // res.data contains "authorize_url" which is the url to redirect the user to
                 window.open(res.data.authorize_url, "_blank");
@@ -319,15 +329,34 @@ export default {
             };
         },
 
+        async authReddit() {
+            try {
+                // get the token from reddit
+                const res = await this.$axios.post(`/oauth/reddit/authorize`,
+                    {
+                        "scopes": "read submit subscribe",
+                        "redirect_url": "http://localhost:8081/oauth/reddit/callback"
+                    });
+
+                // res.data contains "authorize_url" which is the url to redirect the user to
+                window.open(res.data.authorize_url, "_blank");
+
+                // this call will open a new tab to the reddit login page,
+                // then the user will be redirected to the callback url
+            } catch (error) {
+                console.error(error);
+            };
+        },
+
         async authDiscord() {
             try {
 
                 // get the token from discord
                 const res = await this.$axios.post(`/auth/discord-login`,
-                {
-                    "Email": this.credentials.email,
-                    "Password": this.credentials.password
-                });
+                    {
+                        "Email": this.credentials.email,
+                        "Password": this.credentials.password
+                    });
 
                 const token = res.data;
                 const user_token = getCookie('token');
@@ -358,7 +387,6 @@ export default {
 </script>
 
 <style scoped>
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -401,11 +429,11 @@ export default {
 }
 
 .modal-title {
-  margin: 0;
-  font-family: 'inter', sans-serif;
-  font-weight: 400;
-  font-size: 2.5rem;
-  color: #313030;
+    margin: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 400;
+    font-size: 2.5rem;
+    color: #313030;
 }
 
 .modal-title-mobile {
@@ -482,8 +510,10 @@ export default {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    width: 3rem; /* for circular button hover */
-    height: 3rem; /* for circular button hover */
+    width: 3rem;
+    /* for circular button hover */
+    height: 3rem;
+    /* for circular button hover */
 }
 
 .nav-arrow::before {
@@ -660,5 +690,4 @@ export default {
 .common-btn:hover {
     filter: brightness(90%);
 }
-
 </style>
