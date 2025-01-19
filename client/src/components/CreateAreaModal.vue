@@ -320,6 +320,7 @@ export default {
                 console.log(this.selectedReactionService, this.selectedReaction, this.reactionInputs);
 
                 const actionServiceId = await this.getIdOfService(this.selectedActionService.name);
+                const reactionServiceId = await this.getIdOfService(this.selectedReactionService.name);
 
                 const resAction = await this.$axios.post(`/area/addactions`, {
                     "ServiceId": actionServiceId,
@@ -333,7 +334,7 @@ export default {
                 });
 
                 const resReaction = await this.$axios.post(`/area/addreactions`, {
-                    "ServiceId": actionServiceId,
+                    "ServiceId": reactionServiceId,
                     "ActionId": resAction.data,
                     "Name": this.selectedReaction.name,
                     "ExecutionConfig": JSON.stringify(this.reactionInputs),

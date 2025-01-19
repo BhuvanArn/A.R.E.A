@@ -1,4 +1,5 @@
-﻿using ActionReactionService.AboutParser;
+﻿using System.Reactive.Linq;
+using ActionReactionService.AboutParser;
 using Database;
 using Database.Entities;
 using EventBus;
@@ -46,16 +47,20 @@ public class UnsubscribeServiceEventHandler : IIntegrationEventHandler<Unsubscri
         
         await _dbHandler.DeleteAsync(existingService);
         
-        try
-        {
-            _socketService.OpenSocket();
-            _socketService.SendHandshakeAndNotifyChange();
-            _socketService.CloseSocket();
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        Observable.Timer(TimeSpan.FromMilliseconds(500))
+            .Subscribe(_ =>
+            {
+                try
+                {
+                    _socketService.OpenSocket();
+                    _socketService.SendHandshakeAndNotifyChange();
+                    _socketService.CloseSocket();
+                }
+                catch (Exception)
+                {
+                    // ignore error
+                }
+            });
         
         return (await _dbHandler.GetAllAsync<Service>(), ResultType.Success);
     }

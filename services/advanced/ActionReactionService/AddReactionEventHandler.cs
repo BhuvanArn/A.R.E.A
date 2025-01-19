@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using System.Reactive.Linq;
+using Database;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
@@ -34,13 +35,6 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
         {
             return ("Service cannot be found", ResultType.Fail);
         }
-        
-        var action = (await _dbHandler.GetAsync<Action>(s => s.Id == @event.ActionId)).FirstOrDefault();
-
-        if (action == null || action.ServiceId != service.Id)
-        {
-            return ("Action cannot be found", ResultType.Fail);
-        }
 
         var reaction = new Reaction
         {
@@ -62,16 +56,20 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
         area.ReactionId = addedReaction.Id;
         await _dbHandler.UpdateAsync(area);
 
-        try
-        {
-            _socketService.OpenSocket();
-            _socketService.SendHandshakeAndNotifyChange();
-            _socketService.CloseSocket();
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        Observable.Timer(TimeSpan.FromMilliseconds(500))
+            .Subscribe(_ =>
+            {
+                try
+                {
+                    _socketService.OpenSocket();
+                    _socketService.SendHandshakeAndNotifyChange();
+                    _socketService.CloseSocket();
+                }
+                catch (Exception)
+                {
+                    // ignore error
+                }
+            });
         
         return ("Ok", ResultType.Success);
     }

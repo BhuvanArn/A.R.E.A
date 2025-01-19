@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using System.Reactive.Linq;
+using Database;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
@@ -30,134 +31,152 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
         
         if (@event.ServiceId is not null)
         {
-            var areasToDelete = (await _dbHandler.GetAsync<Area>(a => a.ServiceId == @event.ServiceId && a.UserId == userId)).ToList();
-            if (areasToDelete.Count == 0)
+            var servicesToDelete = (await _dbHandler.GetAsync<Service>(a => a.Id == @event.ServiceId && a.UserId == userId)).ToList();
+
+            foreach (var service in servicesToDelete)
             {
-                return ("No areas found for the provided ServiceId.", ResultType.Fail);
-            }
-
-            var service = (await _dbHandler.GetAsync<Service>(s => s.Id == @event.ServiceId)).FirstOrDefault();
-
-            if (service is not null)
-            {
-                await _dbHandler.DeleteAsync(service);
-            }
-
-            var actions = (await _dbHandler.GetAsync<Action>(s => s.ServiceId == @event.ServiceId)).ToList();
-
-            if (actions.Count > 0)
-            {
-                foreach (var action in actions)
+                var area = (await _dbHandler.GetAsync<Area>(s => s.ServiceId == service.Id)).FirstOrDefault();
+                
+                if (area is not null)
                 {
-                    await _dbHandler.DeleteAsync(action);
+                    await _dbHandler.DeleteAsync(area);
+                }
+
+                var actions = (await _dbHandler.GetAsync<Action>(s => s.ServiceId == service.Id)).ToList();
+
+                if (actions.Count > 0)
+                {
+                    foreach (var action in actions)
+                    {
+                        var reactions = (await _dbHandler.GetAsync<Reaction>(s => s.ActionId == action.Id)).ToList();
+
+                        foreach (var reaction in reactions)
+                        {
+                            await _dbHandler.DeleteAsync(reaction);
+                        }
+                        
+                        await _dbHandler.DeleteAsync(action);
+                    }
+                }
+
+                var toDelete = servicesToDelete.FirstOrDefault();
+
+                if (toDelete is not null)
+                {
+                    await _dbHandler.DeleteAsync(toDelete);
                 }
             }
             
-            var reactions = (await _dbHandler.GetAsync<Reaction>(s => s.ServiceId == @event.ServiceId)).ToList();
-
-            if (reactions.Count > 0)
-            {
-                foreach (var reaction in reactions)
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
                 {
-                    await _dbHandler.DeleteAsync(reaction);
-                }
-            }
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
 
-            foreach (var area in areasToDelete)
-            {
-                await _dbHandler.DeleteAsync(area);
-            }
-            
-            try
-            {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            return ($"Deleted {areasToDelete.Count} areas for ServiceId {@event.ServiceId}.", ResultType.Success);
+            return ($"Deleted {servicesToDelete.Count} areas for ServiceId {@event.ServiceId}.", ResultType.Success);
         }
         
         if (@event.ActionId is not null)
         {
-            var areasToDelete = (await _dbHandler.GetAsync<Area>(a => a.ActionId == @event.ActionId && a.UserId == userId)).ToList();
-            if (areasToDelete.Count == 0)
+            var actionToDelete = (await _dbHandler.GetAsync<Action>(a => a.Id == @event.ActionId)).FirstOrDefault();
+
+            if (actionToDelete is null)
             {
-                return ("No areas found for the provided ActionId.", ResultType.Fail);
+                return ("", ResultType.Fail);
             }
             
-            var actions = (await _dbHandler.GetAsync<Action>(s => s.ServiceId == @event.ServiceId)).ToList();
+            var area = (await _dbHandler.GetAsync<Area>(s => s.ActionId == actionToDelete.Id)).FirstOrDefault();
 
-            if (actions.Count > 0)
-            {
-                foreach (var action in actions)
-                {
-                    var reaction = (await _dbHandler.GetAsync<Reaction>(s => s.ServiceId == @event.ServiceId && s.ActionId == action.Id)).FirstOrDefault();
-
-                    if (reaction is not null)
-                    {
-                        await _dbHandler.DeleteAsync(reaction);
-                    }
-                    
-                    await _dbHandler.DeleteAsync(action);
-                }
-            }
-
-            foreach (var area in areasToDelete)
+            if (area is not null)
             {
                 await _dbHandler.DeleteAsync(area);
             }
             
-            try
+            var service = (await _dbHandler.GetAsync<Service>(s => s.Id == actionToDelete.ServiceId && s.UserId == userId)).FirstOrDefault();
+
+            if (service is null)
             {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
+                return ("", ResultType.Fail);
             }
 
-            return ($"Deleted {areasToDelete.Count} areas for ActionId {@event.ActionId}.", ResultType.Success);
-        }
-        
-        if (@event.ReactionId is not null)
-        {
-            var areasToDelete = (await _dbHandler.GetAsync<Area>(a => a.ReactionId == @event.ReactionId && a.UserId == userId)).ToList();
-            if (areasToDelete.Count == 0)
-            {
-                return ("No areas found for the provided ReactionId.", ResultType.Fail);
-            }
-            
-            var reaction = (await _dbHandler.GetAsync<Reaction>(s => s.Id == @event.ReactionId)).FirstOrDefault();
+            var reactions = (await _dbHandler.GetAsync<Reaction>(s => s.ActionId == actionToDelete.Id)).ToList();
 
-            if (reaction is not null)
+            foreach (var reaction in reactions)
             {
                 await _dbHandler.DeleteAsync(reaction);
             }
 
-            foreach (var area in areasToDelete)
-            {
-                await _dbHandler.DeleteAsync(area);
-            }
+            await _dbHandler.DeleteAsync(actionToDelete);
+            
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
+                {
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
 
-            try
+            return ($"Delete ActionId {@event.ActionId}.", ResultType.Success);
+        }
+        
+        if (@event.ReactionId is not null)
+        {
+            var reactionToDelete = (await _dbHandler.GetAsync<Reaction>(a => a.Id == @event.ReactionId)).FirstOrDefault();
+
+            if (reactionToDelete is null)
             {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
+                return ("", ResultType.Fail);
             }
             
-            return ($"Deleted {areasToDelete.Count} areas for ReactionId {@event.ReactionId}.", ResultType.Success);
+            var service = (await _dbHandler.GetAsync<Service>(s => s.Id == reactionToDelete.ServiceId && s.UserId == userId)).FirstOrDefault();
+
+            if (service is null)
+            {
+                return ("", ResultType.Fail);
+            }
+            
+            var area = (await _dbHandler.GetAsync<Area>(s => s.ReactionId == reactionToDelete.Id)).FirstOrDefault();
+
+            if (area is not null)
+            {
+                area.ReactionId = null;
+                await _dbHandler.UpdateAsync(area);
+            }
+            
+            await _dbHandler.DeleteAsync(reactionToDelete);
+
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
+                {
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
+            
+            return ($"Deleted ReactionId {@event.ReactionId}.", ResultType.Success);
         }
         
         return ("No valid identifier provided for deletion.", ResultType.Fail);

@@ -18,36 +18,15 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     
     public async Task<(object, ResultType)> HandleAsync(ActionReactionEvent @event)
     {
-        var services = await _dbHandler.GetAllAsync<Service>();
-    
         var result = new List<ServiceWithAuth>();
+
+        var services = await _dbHandler.GetAllAsync<Service>();
+
         foreach (var service in services)
         {
             var actions = await _dbHandler.GetAsync<Action>(a => a.ServiceId == service.Id);
 
-            var actionsWithTriggerConfigTasks = actions.Select(async a => 
-            {
-                var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ActionId == a.Id);
-                var actionWithTriggerConfig = new ActionWithTriggerConfig
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    ServiceId = a.ServiceId,
-                    TriggerConfig = TryParseJson(a.TriggerConfig),
-                    Reaction = reactions.Select(r => new ReactionWithExecutionConfig
-                    {
-                        Id = r.Id,
-                        ServiceId = r.ServiceId,
-                        ActionId = r.ActionId,
-                        Action = a,
-                        Name = r.Name,
-                        ExecutionConfig = TryParseJson(r.ExecutionConfig)
-                    }).ToList()
-                };
-                return actionWithTriggerConfig;
-            }).ToList();
-
-            var actionsWithTriggerConfig = await Task.WhenAll(actionsWithTriggerConfigTasks);
+            var reactions = await _dbHandler.GetAsync<Reaction>(r => r.ServiceId == service.Id);
 
             var serviceDto = new ServiceWithAuth
             {
@@ -55,7 +34,21 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 Name = service.Name,
                 UserId = service.UserId,
                 Auth = TryParseJson(service.Auth),
-                Actions = actionsWithTriggerConfig.ToList(),
+                Actions = actions.Select(a => new ActionWithTriggerConfig
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    ServiceId = a.ServiceId,
+                    TriggerConfig = a.TriggerConfig
+                }).ToList(),
+                Reactions = reactions.Select(r => new ReactionWithExecutionConfig
+                {
+                    Id = r.Id,
+                    ServiceId = r.ServiceId,
+                    ActionId = r.ActionId,
+                    Name = r.Name,
+                    ExecutionConfig = r.ExecutionConfig
+                }).ToList()
             };
 
             result.Add(serviceDto);
@@ -75,7 +68,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
             return new JObject();
         }
     }
-    
+
     public class ServiceWithAuth
     {
         public Guid Id { get; set; }
@@ -87,6 +80,8 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
         public JObject Auth { get; set; } 
         
         public List<ActionWithTriggerConfig> Actions { get; set; } = new();
+        
+        public List<ReactionWithExecutionConfig> Reactions { get; set; } = new();
     }
     
     public class ActionWithTriggerConfig
@@ -95,13 +90,9 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     
         public Guid ServiceId { get; set; }
     
-        public Service Service { get; set; }
-    
         public string Name { get; set; }
     
-        public JObject TriggerConfig { get; set; }
-
-        public List<ReactionWithExecutionConfig> Reaction { get; set; } = new();
+        public string TriggerConfig { get; set; }
     }
 
     public class ReactionWithExecutionConfig
@@ -112,12 +103,8 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     
         public Guid ActionId { get; set; }
     
-        public Action Action { get; set; }
-    
-        public Service Service { get; set; }
-    
         public string Name { get; set; }
     
-        public JObject ExecutionConfig { get; set; }
+        public string ExecutionConfig { get; set; }
     }
 }
