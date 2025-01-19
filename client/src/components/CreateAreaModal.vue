@@ -36,12 +36,12 @@
                             v-for="(service, idx) in subscribedServices"
                             :key="idx"
                             @click="viewService(service)"
-                            :style="{ '--bg-color': getBrandColor(service.name), '--text-color': getComplementaryColor(getBrandColor(service.name)) }">
-                            <Iconify :icon="getServiceIcon(service.name)" :style="{ color: 'var(--text-color)' }" />
-                            <h4 :style="{ color: 'var(--text-color)' }">{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
+                            :style="{ '--bg-color': getBrandColor(service.name) }">
+                            <Iconify :icon="getServiceIcon(service.name)" />
+                            <h4>{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
                             <hr class="divider" />
-                            <p :style="{ color: 'var(--text-color)' }">{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
-                            <p :style="{ color: 'var(--text-color)' }">{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
+                            <p>{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
+                            <p>{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
                         </div>
                     </div>
                     <div v-else class="carousel-container">
@@ -56,12 +56,12 @@
                             v-for="(service, idx) in visibleServices"
                             :key="idx"
                             @click="viewService(service)"
-                            :style="{ '--bg-color': getBrandColor(service.name), '--text-color': getComplementaryColor(getBrandColor(service.name)) }">
-                            <Iconify :icon="getServiceIcon(service.name)" :style="{ color: 'var(--text-color)' }" />
-                            <h4 :style="{ color: 'var(--text-color)' }">{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
+                            :style="{ '--bg-color': getBrandColor(service.name) }">
+                            <Iconify :icon="getServiceIcon(service.name)" />
+                            <h4>{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
                             <hr class="divider" />
-                            <p :style="{ color: 'var(--text-color)' }">{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
-                            <p :style="{ color: 'var(--text-color)' }">{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
+                            <p>{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
+                            <p>{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
                         </div>
                         <!-- right arrow SVG -->
                         <button class="nav-arrow" @click="nextService">
@@ -72,9 +72,9 @@
                     </div>
                 </div>
                 <div v-if="step === 3 || step === 5" class="service-overview">
-                    <div class="service-info" :style="{ '--bg-color': getBrandColor(selectedService.name), '--text-color': getComplementaryColor(getBrandColor(selectedService.name)) }">
-                        <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon" :style="{ color: 'var(--text-color)' }" />
-                        <h3 :style="{ color: 'var(--text-color)' }">{{ selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) }}</h3>
+                    <div class="service-info" :style="{ '--bg-color': getBrandColor(selectedService.name) }">
+                        <Iconify :icon="getServiceIcon(selectedService.name)" class="service-icon" />
+                        <h3>{{ selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) }}</h3>
                     </div>
                     <div class="service-details">
                         <div v-if="step === 3">
@@ -162,6 +162,7 @@ export default {
     data() {
         return {
             step: 1,
+            indexStart: 0,
             subscribedServices: [],
             availableServices: [],
 
@@ -210,6 +211,12 @@ export default {
     methods: {
         closeModal() {
             this.$emit('close');
+        },
+        nextService() {
+            this.indexStart = (this.indexStart + 1) % this.subscribedServices.length;
+        },
+        prevService() {
+            this.indexStart = (this.indexStart - 1 + this.subscribedServices.length) % this.subscribedServices.length;
         },
         async fetchSubscribedServices() {
             try {
@@ -479,6 +486,26 @@ export default {
     justify-content: center;
     padding: 20px;
     border-top: 1px solid #ccc;
+
+    button {
+        background-color: #28728B;
+        color: #efefef;
+        border-radius: 5px;
+        border: none;
+        width: 8rem;
+        height: auto;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #3a9cb1;
+    }
+
+    button:active {
+        background-color: #2e7f8f;
+    }
 }
 
 .modal-footer-2 {
@@ -492,6 +519,26 @@ export default {
         padding: 0.5rem 0;
         border-radius: 5px;
         border: 1px solid #ccc;
+    }
+
+    button {
+        background-color: #28728B;
+        color: #efefef;
+        border-radius: 5px;
+        border: none;
+        width: 8rem;
+        height: 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #3a9cb1;
+    }
+
+    button:active {
+        background-color: #2e7f8f;
     }
 
     button:disabled {
@@ -621,26 +668,6 @@ input {
     border: 1px solid #ccc;
 }
 
-button {
-    background-color: #28728B;
-    color: #efefef;
-    border-radius: 5px;
-    border: none;
-    width: 8rem;
-    height: 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #3a9cb1;
-}
-
-button:active {
-    background-color: #2e7f8f;
-}
-
 /* Carousel */
 
 .carousel-container {
@@ -663,7 +690,7 @@ button:active {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    color: var(--text-color);
+    color: #fff;
     font-weight: bold;
     font-size: 1.2rem;
     background-color: var(--bg-color);
@@ -690,7 +717,7 @@ button:active {
 
 .divider {
     width: 70%;
-    border: 1px solid var(--text-color);
+    border: 1px solid #fff;
     margin: 10px 0 5px 0;
 }
 
@@ -699,6 +726,34 @@ button:active {
     border: none;
     font-size: 2rem;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 3rem; /* for circular button hover */
+    height: 3rem; /* for circular button hover */
+}
+
+.nav-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    width: 0;
+    height: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.nav-arrow:hover::before {
+    width: 100%;
+    height: 100%;
+}
+
+.nav-arrow svg {
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .service-overview {
@@ -716,7 +771,7 @@ button:active {
     width: 20vw;
     min-width: 200px;
     background-color: var(--bg-color);
-    color: var(--text-color);
+    color: #fff;
     margin: 0 1rem;
     border-radius: 10px;
 }

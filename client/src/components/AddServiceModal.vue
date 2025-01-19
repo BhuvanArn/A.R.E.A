@@ -470,6 +470,34 @@ export default {
     border: none;
     font-size: 2rem;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 3rem; /* for circular button hover */
+    height: 3rem; /* for circular button hover */
+}
+
+.nav-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    width: 0;
+    height: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.nav-arrow:hover::before {
+    width: 100%;
+    height: 100%;
+}
+
+.nav-arrow svg {
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .service-overview {
