@@ -39,7 +39,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                     Id = a.Id,
                     Name = a.Name,
                     ServiceId = a.ServiceId,
-                    TriggerConfig = TryParseJson(a.TriggerConfig)
+                    TriggerConfig = a.TriggerConfig
                 }).ToList(),
                 Reactions = reactions.Select(r => new ReactionWithExecutionConfig
                 {
@@ -47,7 +47,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                     ServiceId = r.ServiceId,
                     ActionId = r.ActionId,
                     Name = r.Name,
-                    ExecutionConfig = TryParseJson(r.ExecutionConfig)
+                    ExecutionConfig = r.ExecutionConfig
                 }).ToList()
             };
 
@@ -92,7 +92,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     
         public string Name { get; set; }
     
-        public JObject TriggerConfig { get; set; }
+        public string TriggerConfig { get; set; }
     }
 
     public class ReactionWithExecutionConfig
@@ -105,6 +105,6 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
     
         public string Name { get; set; }
     
-        public JObject ExecutionConfig { get; set; }
+        public string ExecutionConfig { get; set; }
     }
 }
