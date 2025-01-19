@@ -17,11 +17,6 @@
       <hr v-show="!mobile" class="vertical-hr">
     </div>
     <div v-show="mobileNav" class="mobile-menu-container">
-      <button>Sample</button> <!-- To replace with the correct links/buttons -->
-      <button>Sample</button> <!-- To replace with the correct links/buttons -->
-      <button>Sample</button> <!-- To replace with the correct links/buttons -->
-      <button>Sample</button> <!-- To replace with the correct links/buttons -->
-      <hr class="horizontal-hr">
       <div v-show="!isLogged" class="nv-btn-container-mobile">
         <button @click="navigateToLogin" class="access-btn-style">Login</button>
         <button @click="navigateToRegister" class="access-btn-style">Register</button>
