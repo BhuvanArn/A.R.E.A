@@ -85,10 +85,6 @@ jobs:
           GITHUB_CLIENT_ID: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_ID }}
           GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
-      # Remove .env file for security reasons
-      - name: remove .env file
-        run: rm -f .env
-
       - name: Print Docker Compose logs
         if: failure()
         run: docker compose logs
@@ -108,6 +104,10 @@ jobs:
       - name: Stop Docker Compose services
         if: always()
         run: docker compose down -v --remove-orphans
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
 
   tests_run:
     runs-on: ubuntu-latest
@@ -131,10 +131,6 @@ jobs:
           mask: true
           export: false
           envFile: '.env'
-
-      # Remove .env file for security reasons
-      - name: remove .env file
-        run: rm -f .env
 
       - name: Start Docker Compose services
         id: startServices
@@ -219,6 +215,10 @@ jobs:
       - name: Stop Docker Compose services
         if: always()
         run: docker compose down -v --remove-orphans
+
+      # Remove .env file for security reasons
+      - name: remove .env file
+        run: rm -f .env
 
   push_to_mirror:
     runs-on: ubuntu-latest
