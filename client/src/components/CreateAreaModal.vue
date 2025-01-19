@@ -516,7 +516,8 @@ export default {
 
     input {
         width: 25%;
-        padding: 0.5rem 0;
+        padding: 0.75rem 0.3rem;
+        font-size: 1.1rem;
         border-radius: 5px;
         border: 1px solid #ccc;
     }
