@@ -64,6 +64,11 @@ const routes = [
     name: 'AreaApk',
     component: () => import('../views/apk.vue')
   },
+  {
+    path: '/service-details/:serviceName',
+    name: 'service-details',
+    component: () => import('../views/ServiceDetails.vue')
+  }
 ]
 
 const router = createRouter({
