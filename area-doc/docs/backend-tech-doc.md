@@ -80,6 +80,8 @@ The condition is a regular expression (regex) that will be used to match the pat
 
 The API is divided into services. Each service is responsible for a specific task.
 
+To add the route in the swagger, you need to go in `services/swagger/routes.yaml` file. This files contains all the routes of all the services, just like `services/router/routes.yaml`.
+
 ### Request
 
 - HTTP Method: `POST`
