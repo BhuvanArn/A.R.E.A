@@ -25,7 +25,7 @@ public class GoogleLoginEventHandler : IIntegrationEventHandler<GoogleLoginEvent
 
         string token = string.Empty;
         
-        User? foundUser = (await _dbHandler.GetAsync<User>(s => s.Username == payload.Email)).FirstOrDefault();
+        User? foundUser = (await _dbHandler.GetAsync<User>(s => s.Email == payload.Email)).FirstOrDefault();
         
         if (foundUser == null)
         {
@@ -34,8 +34,9 @@ public class GoogleLoginEventHandler : IIntegrationEventHandler<GoogleLoginEvent
                 Email = payload.Email,
                 Username = payload.Email.Split('@')[0]
             };
-            
-            token = user.GenerateJwtToken(_configuration);
+
+            var registeredUser = await _dbHandler.AddAsync(user);
+            token = registeredUser.GenerateJwtToken(_configuration);
         }
         else
         {
