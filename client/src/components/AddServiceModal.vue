@@ -2,7 +2,8 @@
     <div class="modal-overlay" @click.self="closeModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" :class="{ 'modal-title-mobile': mobile }">Subscribe to {{ selectedService ? selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
+                <h2 class="modal-title" :class="{ 'modal-title-mobile': mobile }">Subscribe to {{ selectedService ?
+                    selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
                 <img src="@/assets/logo.png" class="logo" :class="{ 'logo-mobile': mobile }" alt="logo" />
             </div>
             <!-- Step 1: Carousel of Services -->
@@ -332,7 +333,7 @@ export default {
                 // get the token from reddit
                 const res = await this.$axios.post(`/oauth/reddit/authorize`,
                     {
-                        "scopes": "read",
+                        "scopes": "read submit subscribe",
                         "redirect_url": "http://localhost:8081/oauth/reddit/callback"
                     });
 
