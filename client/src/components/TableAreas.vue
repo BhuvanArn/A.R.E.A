@@ -351,8 +351,4 @@ export default {
     }
 }
 
-.mobile-table {
-    
-}
-
 </style>

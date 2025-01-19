@@ -1,7 +1,7 @@
 <template>
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
       <nav class="header">
-        <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="Menu">
+        <img v-if="mobile" @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="Menu">
         <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
         <img src="@/assets/logo.png" class="logo" alt="Logo" @click="navigateToHome">
         <h2 class="title" @click="navigateToHome">Area</h2>
@@ -18,10 +18,10 @@
     </div>
     <div v-show="mobileNav" class="mobile-menu-container">
       <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
-          <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
           <span @click="goToProfilePage" class="user-avatar-img-container">
               <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
           </span>
+          <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
       </div>
       <hr class="horizontal-hr">
       <button @click="navigateToServices" class="nvb-btn-style">Services</button>
@@ -216,6 +216,7 @@ export default {
     align-items: center;
     overflow: hidden;
     height: 5rem;
+    width: 100%;
     background-color: #bcc1ba;
   }
 
@@ -299,12 +300,13 @@ export default {
 
   .mobile-menu-container {
     display: flex;
-    height: 15rem;
+    height: 12.2rem;
     align-items: center;
     flex-direction: column;
     border-bottom: 1px solid #000000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     animation:backwards 1s;
+    background-color: #bcc1ba;
   }
 
   .mb-menu-selector-style{
@@ -514,6 +516,7 @@ export default {
 }
 
 .user-info-container-mobile {
+  flex-direction: column;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
