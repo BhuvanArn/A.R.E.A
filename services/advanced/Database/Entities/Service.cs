@@ -8,7 +8,7 @@ public class Service
     
     public Guid UserId { get; set; }
     
-    public string? Auth { get; set; }
+    public string Auth { get; set; }
     
     public ICollection<Action> Actions { get; set; } = new List<Action>();
     
