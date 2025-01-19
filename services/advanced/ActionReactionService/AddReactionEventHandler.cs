@@ -34,13 +34,6 @@ public class AddReactionEventHandler : IIntegrationEventHandler<AddReactionEvent
         {
             return ("Service cannot be found", ResultType.Fail);
         }
-        
-        var action = (await _dbHandler.GetAsync<Action>(s => s.Id == @event.ActionId)).FirstOrDefault();
-
-        if (action == null || action.ServiceId != service.Id)
-        {
-            return ("Action cannot be found", ResultType.Fail);
-        }
 
         var reaction = new Reaction
         {
