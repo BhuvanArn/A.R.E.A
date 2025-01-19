@@ -1,9 +1,9 @@
 <template>
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
       <nav class="header">
-        <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
+        <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="Menu">
         <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-        <img src="@/assets/logo.png" class="logo">
+        <img src="@/assets/logo.png" class="logo" alt="Logo">
         <h2 class="title">Area</h2>
         <div class="filler01">
         </div>
