@@ -1,24 +1,24 @@
 <template>
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
       <nav class="header">
-        <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }">
+        <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="Menu">
         <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-        <img src="@/assets/logo.png" class="logo">
-        <h2 class="title">Area</h2>
+        <img src="@/assets/logo.png" class="logo" alt="Logo" @click="navigateToHome">
+        <h2 class="title" @click="navigateToHome">Area</h2>
         <div class="filler01">
         </div>
         <hr v-show="!mobile" class="vertical-hr">
         <div class="user-info-container" v-show="!mobile">
-            <h2 class="username-txt">{{ username }}</h2>
+            <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
             <span @click="goToProfilePage" class="user-avatar-img-container">
-                <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
+              <h2 class="user-avatar-ini2">{{ userAvatar }}</h2>
             </span>
         </div>
       </nav>
     </div>
     <div v-show="mobileNav" class="mobile-menu-container">
       <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
-          <h2 class="username-txt">{{ username }}</h2>
+          <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
           <span @click="goToProfilePage" class="user-avatar-img-container">
               <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
           </span>
@@ -44,15 +44,23 @@ export default {
         mobileNavButton: false,
         isLogged: false,
         isActiveMenu: false,
-        username: 'Pablo', // To replace with the correct username gotten from the backend
+        userName: '',
+        userAvatar: '',
       }
     },
 
     mounted() {
+      if (localStorage.getItem("token") === null) {
+        this.$router.push('/login');
+        return;
+      }
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
       this.enforceMinWidth();
+      if (localStorage.getItem('AccountType') === 'Area') {
+        this.getUserInformation();
+      }
     },
 
     methods: {
@@ -78,6 +86,31 @@ export default {
         }
       },
 
+      splitString(input) {
+        return input.split(';');
+      },
+
+      async getUserInformation() {
+        try {
+          const response = await this.$axios.get(`/auth/userinformation`, {
+              headers: {
+                  'X-User-Token': localStorage.getItem("token"),
+              },
+          });
+          if (response.status === 200) {
+            const result = this.splitString(response.data);
+            this.userName = result[1];
+            this.userAvatar = this.userName.charAt(0);
+          }
+        } catch (error) {
+          if (error.response.status === 400 || error.response.status === 401) {
+            localStorage.clear();
+            this.$router.push('/login');
+          }
+          console.error(error);
+        }
+      },
+
       navigateToServices(event) {
         event.preventDefault()
         this.$router.push('/mobile-services');
@@ -86,6 +119,11 @@ export default {
       navigateToWidgets(event) {
         event.preventDefault()
         this.$router.push('/services');
+      },
+
+      navigateToHome(event) {
+        event.preventDefault()
+        window.location.href = this.$router.resolve({ name: 'home' }).href;
       },
 
       toggleMenu() {
@@ -164,7 +202,6 @@ export default {
 .navbar-container {
   height: 5rem;
   overflow: hidden;
-
   border-bottom: 1px solid #000000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
@@ -173,6 +210,7 @@ export default {
 .header {
     display: flex;
     box-sizing: border-box;
+    align-items: center;
     overflow: hidden;
     height: 5rem;
     background-color: #bcc1ba;
@@ -227,13 +265,15 @@ export default {
   .logo {
     display: flex;
     width: 5rem;
-    height: 6.2rem;
+    height: 4.5rem;
     align-items: center;
     left: 24px;
     top: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 1.75rem;
     transition: .5s ease all;
+  }
+
+  .logo:hover {
+    cursor: pointer;
   }
 
   .menu {
@@ -241,7 +281,6 @@ export default {
     height: 3rem;
     margin-left: 1rem;
     margin-right: 0.5rem;
-    margin-top: 0.85rem;
     transition: .5s ease all;
     cursor: pointer;
   }
@@ -405,7 +444,10 @@ export default {
     color: rgba(0, 0, 0, 0.7);
     margin-left: 1rem;
     margin-right: 1rem;
-    margin-top: 0.2rem;
+  }
+
+  .title:hover {
+    cursor: pointer;
   }
 
   .activeMenu {
@@ -448,6 +490,10 @@ export default {
     font-weight: 500;
 }
 
+.username-txt:hover {
+    cursor: pointer;
+}
+
 .user-info-container {
     display: flex;
     flex-direction: row;
@@ -480,4 +526,15 @@ export default {
 .nvb-btn-style:active {
     background-color: #c6c9c4;
 }
+
+.user-avatar-ini2 {
+    font-size: 2rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 300;
+    cursor: pointer;
+}
+
 </style>
