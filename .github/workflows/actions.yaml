@@ -35,23 +35,6 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      # Generate docker-bake.hcl file
-      - name: Generate docker-bake.hcl
-        run: |
-          pip install pyyaml
-          python ./tools/generate-docker-bake.py
-
-      # bake action is used to build the docker containers from the docker-bake.hcl file
-      # The docker-bake.hcl file is used to define the build targets for the docker containers
-      # it is used to build the docker containers in parallel to save time
-      # then when we'll run the docker compose up command, the containers will be already built
-      - name: Build docker containers
-        uses: docker/bake-action@v3
-        with:
-          files: docker-bake.hcl
-          targets: default
-          load: true
-
       - name: Start Docker Compose services
         id: startServices
         run: docker compose up -d --wait
@@ -130,8 +113,18 @@ jobs:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ steps.exportEnv.outputs.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ steps.exportEnv.outputs.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ steps.exportEnv.outputs.KEY_PASSWORD }}
           EXPOSE_PORT_CLIENT: 8081
           EXPOSE_PORT_SERVER: 8080
+
+          SPOTIFY_CLIENT_ID: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_SECRET }}
+          DROPBOX_CLIENT_ID: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_ID }}
+          DROPBOX_CLIENT_SECRET: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
         # run tests for every service
       - name: Run tests for services
@@ -150,8 +143,18 @@ jobs:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ steps.exportEnv.outputs.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ steps.exportEnv.outputs.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ steps.exportEnv.outputs.KEY_PASSWORD }}
           EXPOSE_PORT_CLIENT: 8081
           EXPOSE_PORT_SERVER: 8080
+
+          SPOTIFY_CLIENT_ID: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_SECRET }}
+          DROPBOX_CLIENT_ID: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_ID }}
+          DROPBOX_CLIENT_SECRET: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
       - name: Stop Docker Compose services
         if: always()
