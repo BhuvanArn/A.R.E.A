@@ -36,35 +36,32 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 return ("No areas found for the provided ServiceId.", ResultType.Fail);
             }
 
-            var service = (await _dbHandler.GetAsync<Service>(s => s.Id == @event.ServiceId)).FirstOrDefault();
-
-            if (service is not null)
-            {
-                await _dbHandler.DeleteAsync(service);
-            }
-
-            var actions = (await _dbHandler.GetAsync<Action>(s => s.ServiceId == @event.ServiceId)).ToList();
-
-            if (actions.Count > 0)
-            {
-                foreach (var action in actions)
-                {
-                    await _dbHandler.DeleteAsync(action);
-                }
-            }
-            
-            var reactions = (await _dbHandler.GetAsync<Reaction>(s => s.ServiceId == @event.ServiceId)).ToList();
-
-            if (reactions.Count > 0)
-            {
-                foreach (var reaction in reactions)
-                {
-                    await _dbHandler.DeleteAsync(reaction);
-                }
-            }
-
             foreach (var area in areasToDelete)
             {
+                var service = (await _dbHandler.GetAsync<Service>(s => s.Id == area.ServiceId)).FirstOrDefault();
+
+                if (service is not null)
+                {
+                    await _dbHandler.DeleteAsync(service);
+                }
+
+                var actions = (await _dbHandler.GetAsync<Action>(s => s.Id == area.ActionId)).ToList();
+
+                if (actions.Count > 0)
+                {
+                    foreach (var action in actions)
+                    {
+                        var reactions = (await _dbHandler.GetAsync<Reaction>(s => s.ActionId == action.Id)).ToList();
+
+                        foreach (var reaction in reactions)
+                        {
+                            await _dbHandler.DeleteAsync(reaction);
+                        }
+                        
+                        await _dbHandler.DeleteAsync(action);
+                    }
+                }
+                
                 await _dbHandler.DeleteAsync(area);
             }
             
@@ -89,26 +86,26 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             {
                 return ("No areas found for the provided ActionId.", ResultType.Fail);
             }
-            
-            var actions = (await _dbHandler.GetAsync<Action>(s => s.ServiceId == @event.ServiceId)).ToList();
-
-            if (actions.Count > 0)
-            {
-                foreach (var action in actions)
-                {
-                    var reaction = (await _dbHandler.GetAsync<Reaction>(s => s.ServiceId == @event.ServiceId && s.ActionId == action.Id)).FirstOrDefault();
-
-                    if (reaction is not null)
-                    {
-                        await _dbHandler.DeleteAsync(reaction);
-                    }
-                    
-                    await _dbHandler.DeleteAsync(action);
-                }
-            }
 
             foreach (var area in areasToDelete)
             {
+                var actions = (await _dbHandler.GetAsync<Action>(s => s.Id == area.ActionId)).ToList();
+                
+                if (actions.Count > 0)
+                {
+                    foreach (var action in actions)
+                    {
+                        var reactions = await _dbHandler.GetAsync<Reaction>(s => s.ActionId == action.Id);
+
+                        foreach (var reaction in reactions)
+                        {
+                            await _dbHandler.DeleteAsync(reaction);
+                        }
+                    
+                        await _dbHandler.DeleteAsync(action);
+                    }
+                }
+
                 await _dbHandler.DeleteAsync(area);
             }
             
@@ -133,17 +130,18 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             {
                 return ("No areas found for the provided ReactionId.", ResultType.Fail);
             }
-            
-            var reaction = (await _dbHandler.GetAsync<Reaction>(s => s.Id == @event.ReactionId)).FirstOrDefault();
-
-            if (reaction is not null)
-            {
-                await _dbHandler.DeleteAsync(reaction);
-            }
 
             foreach (var area in areasToDelete)
             {
-                await _dbHandler.DeleteAsync(area);
+                var reaction = (await _dbHandler.GetAsync<Reaction>(s => s.Id == area.ReactionId)).FirstOrDefault();
+
+                if (reaction is not null)
+                {
+                    await _dbHandler.DeleteAsync(reaction);
+                }
+                
+                area.ReactionId = null;
+                await _dbHandler.UpdateAsync(area);
             }
 
             try
