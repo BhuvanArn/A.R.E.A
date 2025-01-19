@@ -526,6 +526,7 @@ export default {
 }
 
 .user-avatar-ini2 {
+    font-size: 2rem;
     color: #313030;
     margin: 0;
     padding: 0;
