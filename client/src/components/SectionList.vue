@@ -88,6 +88,8 @@ export default {
                     return "#1db954";
                 case "dropbox":
                     return "#0061ff";
+                case "reddit":
+                    return "#ff4500";
                 default:
                     return "gray";
             }
@@ -113,7 +115,6 @@ export default {
         async fetchAbout() {
             try {
                 const res = await this.$axios.get("/about.json");
-                console.log(res);
                 this.available_services = res.data.server.services;
             } catch (error) {
                 console.error(error);
@@ -123,12 +124,11 @@ export default {
         async fetchServices() {
             try {
                 const token = localStorage.getItem("token");
-                const res = await this.$axios.get(`/area`, {
+                const res = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token,
                     },
                 });
-                console.log(res);
                 if (res.data) {
                     this.services = res.data;
                 } else {
@@ -220,7 +220,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #28728B;
     border-radius: 5px;
     border: none;
     width: 10rem;

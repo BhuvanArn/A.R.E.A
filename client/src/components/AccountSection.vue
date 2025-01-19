@@ -3,7 +3,7 @@
             <div class="main-container-top">
                 <h2 class="account-title-txt">Profile</h2>
                 <div class="filler01"></div>
-                <img src="@/assets/logo.png" class="logo-account">
+                <img src="@/assets/logo.png" class="logo-account" alt="logo">
             </div>
             <div v-if="isAreaAccount" class="main-container-bottom">
                 <div class="filler01"></div>
@@ -19,8 +19,8 @@
                     <h2 class="profile-title-txt-style">Username</h2>
                     <div class="filler03"></div>
                     <div class="user-name-container">
-                        <img src="@/assets/user.png" class="img-style1">
-                        <input type="text" class="input-style1" placeholder="Username" v-model="userName">
+                        <img src="@/assets/user.png" class="img-style1" alt="username">
+                        <input @input="updateUsername" type="text" class="input-style1" placeholder="Username" v-model="userName">
                     </div>
                 </div>
                 <div class="filler03"></div>
@@ -28,15 +28,15 @@
                     <h2 class="profile-title-txt-style">Password</h2>
                     <div class="filler03"></div>
                     <div class="user-pwd-container">
-                        <img src="@/assets/key.png" class="img-style1">
+                        <img src="@/assets/key.png" class="img-style1" alt="password">
                         <button v-show="!changePwdMenu" @click="activateChangePwdMenu" class="change-pwd-btn">Change</button>
-                        <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
+                        <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
                     </div>
-                    <div v-show="changePwdMenu" class="filler02"></div>
+<!--                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
                         <input type="password" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
-                    </div>
+                    </div> -->
                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
@@ -55,13 +55,15 @@
                         <button @click="cancelChangePwd" class="cancel-pwd-btn">Cancel</button>
                     </div>
                 </div>
-                <div class="filler01"></div>
+                <div class="filler02"></div>
+                <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
             <div v-else class="main-container-bottom">
                 <div class="profile-info-container">
-                    <img src="@/assets/info.png" class="info-img">
+                    <img src="@/assets/info.png" class="info-img" alt="info">
                     <h2 class="profile-info-txt">This is not an Area account. You cannot modify your account information here. </h2>
                 </div>
+                <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
         </div>
 </template>
@@ -77,22 +79,69 @@ export default {
             isAreaAccount: false,
             isGoogleAccount: false,
             isDiscordAccount: false,
-            userEmail: 'test@test.com',
-            userName: 'Pablo',
+            userEmail: '',
+            userName: '',
+            editedUserName: '',
             userAvatar: '',
-            oldPwd: '',
             newPwd: '',
             confirmNewPwd: '',
             errorMessage: ''
         }
     },
     methods: {
-        getAvatarLetter() {
-            this.userAvatar = this.userName.charAt(0);
+
+        async updateUsername() {
+            try {
+                console.log(localStorage.getItem("token"));
+                if (this.userName === this.editedUserName) {
+                    return;
+                }
+                const response = await this.$axios.put('/auth/change-username', {
+                    Username: this.userName,
+                }, {
+                    headers: {
+                            'X-User-Token': localStorage.getItem("token"),
+                            'Content-Type': 'application/json',
+                        },
+                });
+                console.log(response);
+                this.editedUserName = this.userName;
+            } catch (error) {
+                console.error(error);
+            }
         },
 
         activateChangePwdMenu() {
             this.changePwdMenu = true;
+        },
+
+        splitString(input) {
+            return input.split(';');
+        },
+
+        async getUserInformation() {
+            try {
+            const response = await this.$axios.get(`/auth/userinformation`, {
+                headers: {
+                    'X-User-Token': localStorage.getItem("token"),
+                },
+            });
+            if (response.status === 200) {
+                console.log('response: ',response);
+                const result = this.splitString(response.data);
+                this.userEmail = result[0];
+                this.userName = result[1];
+                this.editedUserName = this.userName;
+                this.userAvatar = this.userName.charAt(0);
+            }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
+        logoutUser() {
+            localStorage.clear();
+            window.location.href = this.$router.resolve({ name: 'login' }).href;
         },
 
         cancelChangePwd() {
@@ -106,23 +155,29 @@ export default {
                 return;
             }
             this.errorMessage = '';
+            console.log('username before: ',this.userName);
             try {
-                const response = await this.$axios.post('/auth/change-password', {
-                    JwtToken: localStorage.getItem('token'),
-                    Password: this.oldPwd,
-                    NewPassword: this.newPwd
+                const response = await this.$axios.put('/auth/change-password', {
+                    Password: this.newPwd,
+                    ConfirmPassword: this.confirmNewPwd,
+                }, {
+                    headers: {
+                            'X-User-Token': localStorage.getItem("token"),
+                            'Content-Type': 'application/json',
+                        },
                 });
                 this.changePwdMenu = false;
                 console.log(response);
             } catch (error) {
                 this.errorMessage = 'An error occurred. Please try again later.';
             }
+            console.log('username after: ',this.userName);
         }
     },
     mounted() {
         if (localStorage.getItem('AccountType') === 'Area') {
             this.isAreaAccount = true;
-            this.getAvatarLetter();
+            this.getUserInformation();
         } else if (localStorage.getItem('AccountType') === 'Google') {
             this.isGoogleAccount = true;
         } else if (localStorage.getItem('AccountType') === 'Discord') {
@@ -155,7 +210,6 @@ export default {
     border-radius: 50%;
     background-color: #9fb7b9;
     border: 1px solid #969696;
-    margin-left: 1rem;
     overflow: hidden;
     cursor: pointer;
 }
@@ -333,7 +387,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #46b1c9;
+    background-color: #28728B;
     border-radius: 5px;
     border: none;
     width: 6rem;
@@ -391,7 +445,8 @@ export default {
 .error-message {
     color: red;
     font-family: 'inter', sans-serif;
-    font-size: medium;
+    font-size: 14px;
+    margin-top: 0.5rem;
 }
 
 .error-message-section {
@@ -476,6 +531,31 @@ export default {
     padding: 0;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #b60404;
+    border-radius: 5px;
+    border: none;
+    width: 7rem;
+    height: 2rem;
+    color: #efefef;
+    font-family: 'inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.logout-btn:hover {
+    background-color: #d90f0f;
+}
+
+.logout-btn:active {
+    background-color: #a30303;
 }
 
 </style>

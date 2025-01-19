@@ -33,7 +33,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
                 Id = service.Id,
                 Name = service.Name,
                 UserId = service.UserId,
-                Auth = TryParseJson(service.Auth),
+                Auth = service.Auth,
                 Actions = actions.Select(a => new ActionWithTriggerConfig
                 {
                     Id = a.Id,
@@ -56,18 +56,6 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
 
         return (result, ResultType.Success);
     }
-    
-    private JObject? TryParseJson(string jsonString)
-    {
-        try
-        {
-            return string.IsNullOrEmpty(jsonString) ? new JObject() : JObject.Parse(jsonString);
-        }
-        catch
-        {
-            return new JObject();
-        }
-    }
 
     public class ServiceWithAuth
     {
@@ -77,7 +65,7 @@ public class ActionReactionEventHandler : IIntegrationEventHandler<ActionReactio
         
         public Guid UserId { get; set; }
         
-        public JObject Auth { get; set; } 
+        public string Auth { get; set; } 
         
         public List<ActionWithTriggerConfig> Actions { get; set; } = new();
         
