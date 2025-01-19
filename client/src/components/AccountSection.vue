@@ -60,6 +60,8 @@
             </div>
             <div v-else class="main-container-bottom">
                 <div class="filler01"></div>
+                <div class="filler01"></div>
+                <div class="filler01"></div>
                 <span class="account-avatar-container">
                     <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
                     <h2 class="user-avatar-ini">{{ userAvatar }}</h2>
