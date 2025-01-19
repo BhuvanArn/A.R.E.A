@@ -300,7 +300,7 @@ export default {
 
   .mobile-menu-container {
     display: flex;
-    height: 12.2rem;
+    height: 14.5rem;
     align-items: center;
     flex-direction: column;
     border-bottom: 1px solid #000000;
