@@ -57,7 +57,7 @@ jobs:
 
       - name: Wait for specific services to be healthy
         run: |
-          services=("server" "csharp_service" "client_web" "oauth_service" "service-about" "db")
+          services=("lastchance---area-server-1" "lastchance---area-csharp_service-1" "lastchance---area-client_web-1" "lastchance---area-oauth_service-1" "lastchance---area-service-about-1" "lastchance---area-db-1")
           for service in "${services[@]}"; do
             echo "Waiting for $service to be healthy..."
             while ! docker inspect --format='{{json .State.Health.Status}}' "$service" | grep -q '"healthy"'; do
@@ -158,7 +158,7 @@ jobs:
 
       - name: Wait for specific services to be healthy
         run: |
-          services=("server" "csharp_service" "client_web" "oauth_service" "service-about" "db")
+          services=("lastchance---area-server-1" "lastchance---area-csharp_service-1" "lastchance---area-client_web-1" "lastchance---area-oauth_service-1" "lastchance---area-service-about-1" "lastchance---area-db-1")
           for service in "${services[@]}"; do
             echo "Waiting for $service to be healthy..."
             while ! docker inspect --format='{{json .State.Health.Status}}' "$service" | grep -q '"healthy"'; do
