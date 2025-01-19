@@ -12,6 +12,7 @@
 <script>
 import NavBar from '../components/WorkspaceNavBar.vue';
 import AccountSection from '@/components/AccountSection.vue';
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: "ProfilePage",
@@ -25,7 +26,7 @@ export default {
     },
 
     mounted() {
-        if (localStorage.getItem('token') === null) {
+        if (getCookie('token') === null) {
             this.$router.push('/login');
         }
     },

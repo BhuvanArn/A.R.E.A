@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: "navigation",
@@ -50,18 +51,18 @@ export default {
     },
 
     mounted() {
-/*       if (localStorage.getItem("token") === null) {
+       if (getCookie("token") === '') {
         this.$router.push('/login');
         return;
-      } */
+      }
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
       this.enforceMinWidth();
-      if (localStorage.getItem('AccountType') === 'Area') {
+      if (getCookie('AccountType') === 'Area') {
         this.getUserInformation();
-      } else if (localStorage.getItem('AccountType') === 'Google') {
-        this.userName = localStorage.getItem('GoogleUsername');
+      } else if (getCookie('AccountType') === 'Google') {
+        this.userName = getCookie('GoogleUsername');
         this.userAvatar = this.userName.charAt(0);
       }
     },
@@ -97,7 +98,7 @@ export default {
         try {
           const response = await this.$axios.get(`/auth/userinformation`, {
               headers: {
-                  'X-User-Token': localStorage.getItem("token"),
+                  'X-User-Token': getCookie('token'),
               },
           });
           if (response.status === 200) {
@@ -107,7 +108,9 @@ export default {
           }
         } catch (error) {
           if (error.response.status === 400 || error.response.status === 401) {
-            localStorage.clear();
+            removeCookie('token');
+            removeCookie('AccountType');
+            removeCookie('GoogleUsername');
             this.$router.push('/login');
           }
           console.error(error);

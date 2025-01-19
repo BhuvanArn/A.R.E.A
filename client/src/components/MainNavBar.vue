@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
   name: "navigation",
@@ -51,7 +52,7 @@ export default {
     window.addEventListener('resize', this.enforceMinWidth);
     this.checkScreen();
     this.enforceMinWidth();
-    const clientStatus = localStorage.getItem('Status');
+    const clientStatus = getCookie('Status');
     if (clientStatus === 'Logged In') {
       this.isLogged = true;
     }

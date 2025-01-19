@@ -56,6 +56,7 @@
 <script>
 import { Icon } from "@iconify/vue";
 import NavBar from "@/components/WorkspaceNavBar.vue";
+import { getCookie } from '@/utils/cookies';
 
 export default {
     name: "ServiceDetails",
@@ -95,7 +96,7 @@ export default {
         },
         async checkSubscriptionStatus() {
         try {
-            const token = localStorage.getItem("token");
+            const token = getCookie('token');
             const res = await this.$axios.get(`/area/services/false`, {
             headers: {
                 "X-User-Token": token,
@@ -117,7 +118,7 @@ export default {
         },
         async activateService() {
         try {
-            const token = localStorage.getItem("token");
+            const token = getCookie('token');
             await this.$axios.post(
             `/area/subscribe_service`,
             { name: this.serviceName },
@@ -134,7 +135,7 @@ export default {
         },
         async deactivateService() {
         try {
-            const token = localStorage.getItem("token");
+            const token = getCookie('token');
             await this.$axios.post(
             `/area/unsubscribe_service`,
             { name: this.serviceName },

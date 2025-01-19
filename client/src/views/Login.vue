@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: 'Login',
@@ -110,13 +111,15 @@ export default {
                 const res = await this.$axios.post('/auth/google-login', {
                     Token: credential,
                 });
-                localStorage.setItem('GoogleUsername', name);
-                localStorage.setItem('GoogleEmail', email);
-                localStorage.setItem('token', res.data);
-                localStorage.setItem('Status', 'Logged In');
-                localStorage.setItem('AccountType', 'Google');
+                setCookie('GoogleUsername', name, 7);
+                setCookie('GoogleEmail', email, 7);
+                setCookie('token', res.data, 7);
+                setCookie('Status', 'Logged In', 7);
+                setCookie('AccountType', 'Google', 7);
+
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
-                localStorage.setItem('expirationTime', expirationTime);
+
+                setCookie('expirationTime', expirationTime, 7);
                 window.location.href = this.$router.resolve({ name: 'panel' }).href;
             } catch (error) {
                 console.error(error);
@@ -143,12 +146,12 @@ export default {
                     return;
                 }
                 const token = response.data;
-                localStorage.removeItem('token');
-                localStorage.setItem('token', token);
-                localStorage.setItem('Status', 'Logged In');
-                localStorage.setItem('AccountType', 'Area');
+                removeCookie('token');
+                setCookie('token', token, 7);
+                setCookie('Status', 'Logged In', 7);
+                setCookie('AccountType', 'Area', 7);
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
-                localStorage.setItem('expirationTime', expirationTime);
+                setCookie('expirationTime', expirationTime, 7);
                 window.location.href = this.$router.resolve({ name: 'panel' }).href;
             } catch (error) {
                 console.error(error);

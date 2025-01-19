@@ -157,6 +157,7 @@
 
 <script>
 import { Icon } from "@iconify/vue";
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: "CreateAreaModal",
@@ -225,7 +226,7 @@ export default {
         },
         async fetchSubscribedServices() {
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
                 const registeredService = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token,
@@ -305,7 +306,7 @@ export default {
             try {
                 const res = await this.$axios.get(`/area/services/false`, {
                     headers: {
-                        'X-User-Token': localStorage.getItem("token"),
+                        'X-User-Token': getCookie('token'),
                     },
                 });
 
@@ -320,7 +321,7 @@ export default {
 
         async createArea() {
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
 
                 console.log(this.selectedActionService, this.selectedAction, this.actionInputs);
                 console.log(this.selectedReactionService, this.selectedReaction, this.reactionInputs);

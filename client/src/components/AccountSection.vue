@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: 'AccountSection',
@@ -102,7 +103,8 @@ export default {
 
         async updateUsername() {
             try {
-                console.log(localStorage.getItem("token"));
+                const token = getCookie('token');
+                console.log('token: ',token);
                 if (this.userName === this.editedUserName) {
                     return;
                 }
@@ -110,7 +112,7 @@ export default {
                     Username: this.userName,
                 }, {
                     headers: {
-                            'X-User-Token': localStorage.getItem("token"),
+                            'X-User-Token': getCookies('token'),
                             'Content-Type': 'application/json',
                         },
                 });
@@ -134,7 +136,7 @@ export default {
             try {
             const response = await this.$axios.get(`/auth/userinformation`, {
                 headers: {
-                    'X-User-Token': localStorage.getItem("token"),
+                    'X-User-Token': getCookie('token'),
                 },
             });
             if (response.status === 200) {
@@ -151,7 +153,8 @@ export default {
         },
 
         logoutUser() {
-            localStorage.clear();
+            removeCookie('token');
+            removeCookie('AccountType');
             window.location.href = this.$router.resolve({ name: 'login' }).href;
         },
 
@@ -173,7 +176,7 @@ export default {
                     ConfirmPassword: this.confirmNewPwd,
                 }, {
                     headers: {
-                            'X-User-Token': localStorage.getItem("token"),
+                            'X-User-Token': getCookie('token'),
                             'Content-Type': 'application/json',
                         },
                 });
@@ -186,15 +189,16 @@ export default {
         }
     },
     mounted() {
-        if (localStorage.getItem('AccountType') === 'Area') {
+
+        if (getCookie('AccountType') === 'Area') {
             this.isAreaAccount = true;
             this.getUserInformation();
-        } else if (localStorage.getItem('AccountType') === 'Google') {
+        } else if (getCookie('AccountType') === 'Google') {
             this.isGoogleAccount = true;
-            this.userEmail = localStorage.getItem('GoogleEmail');
-            this.userAvatar = localStorage.getItem('GoogleUsername').charAt(0);
+            this.userEmail = getCookie('GoogleEmail');
+            this.userAvatar = getCookie('GoogleUsername').charAt(0);
             console.log('google email: ',this.userEmail);
-        } else if (localStorage.getItem('AccountType') === 'Discord') {
+        } else if (getCookie('AccountType') === 'Discord') {
             this.isDiscordAccount = true;
         }
 

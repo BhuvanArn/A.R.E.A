@@ -2,6 +2,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
   name: 'SpotifyCallback',
@@ -17,7 +18,7 @@ export default {
     async getSpotifyToken() {
       try {
 
-        const token = localStorage.getItem('token');
+        const token = getCookie('token');
 
         const response = await this.$axios.post('/oauth/spotify/access_token', {
           code: this.code,
