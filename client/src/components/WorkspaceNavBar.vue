@@ -25,7 +25,7 @@
       </div>
       <hr class="horizontal-hr">
       <button @click="navigateToServices" class="nvb-btn-style">Services</button>
-      <button @click="navigateToWidgets" class="nvb-btn-style">Widgets</button>
+      <button @click="navigateToPanel" class="nvb-btn-style">Panel</button>
     </div>
     <div :class="{ activeMenu : isActiveMenu }" ref="isActiveMenu">
     </div>
@@ -50,10 +50,10 @@ export default {
     },
 
     mounted() {
-      if (localStorage.getItem("token") === null) {
+/*       if (localStorage.getItem("token") === null) {
         this.$router.push('/login');
         return;
-      }
+      } */
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
@@ -119,9 +119,9 @@ export default {
         this.$router.push('/mobile-services');
       },
 
-      navigateToWidgets(event) {
+      navigateToPanel(event) {
         event.preventDefault()
-        this.$router.push('/services');
+        this.$router.push('/panel');
       },
 
       navigateToHome(event) {
