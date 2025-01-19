@@ -130,7 +130,7 @@ class ReactionService(object):
 
         self.running = False
 
-        signal(SIGTERM, lambda: self.close())
+        signal(SIGTERM, lambda *args: self.close())
 
         self._update_datas()
         self._connect_action()
