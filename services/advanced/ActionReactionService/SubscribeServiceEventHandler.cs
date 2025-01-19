@@ -1,4 +1,5 @@
-﻿using ActionReactionService.AboutParser;
+﻿using System.Reactive.Linq;
+using ActionReactionService.AboutParser;
 using Database;
 using Database.Entities;
 using EventBus;
@@ -49,16 +50,20 @@ public class SubscribeServiceEventHandler : IIntegrationEventHandler<SubscribeSe
         
         await _dbHandler.AddAsync(service);
         
-        try
-        {
-            _socketService.OpenSocket();
-            _socketService.SendHandshakeAndNotifyChange();
-            _socketService.CloseSocket();
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        Observable.Timer(TimeSpan.FromMilliseconds(500))
+            .Subscribe(_ =>
+            {
+                try
+                {
+                    _socketService.OpenSocket();
+                    _socketService.SendHandshakeAndNotifyChange();
+                    _socketService.CloseSocket();
+                }
+                catch (Exception)
+                {
+                    // ignore error
+                }
+            });
         
         return ($"You subscribed to {@event.Name}", ResultType.Success);
     }
