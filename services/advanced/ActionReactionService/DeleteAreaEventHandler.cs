@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using System.Reactive.Linq;
+using Database;
 using Database.Entities;
 using EventBus;
 using EventBus.Event;
@@ -66,16 +67,20 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
                 }
             }
             
-            try
-            {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
+                {
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
 
             return ($"Deleted {servicesToDelete.Count} areas for ServiceId {@event.ServiceId}.", ResultType.Success);
         }
@@ -112,16 +117,20 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
 
             await _dbHandler.DeleteAsync(actionToDelete);
             
-            try
-            {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
+                {
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
 
             return ($"Delete ActionId {@event.ActionId}.", ResultType.Success);
         }
@@ -152,16 +161,20 @@ public class DeleteAreaEventHandler : IIntegrationEventHandler<DeleteAreaEvent, 
             
             await _dbHandler.DeleteAsync(reactionToDelete);
 
-            try
-            {
-                _socketService.OpenSocket();
-                _socketService.SendHandshakeAndNotifyChange();
-                _socketService.CloseSocket();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(_ =>
+                {
+                    try
+                    {
+                        _socketService.OpenSocket();
+                        _socketService.SendHandshakeAndNotifyChange();
+                        _socketService.CloseSocket();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore error
+                    }
+                });
             
             return ($"Deleted ReactionId {@event.ReactionId}.", ResultType.Success);
         }
