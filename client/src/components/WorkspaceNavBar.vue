@@ -3,13 +3,13 @@
       <nav class="header">
         <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="Menu">
         <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-        <img src="@/assets/logo.png" class="logo" alt="Logo">
-        <h2 class="title">Area</h2>
+        <img src="@/assets/logo.png" class="logo" alt="Logo" @click="navigateToHome">
+        <h2 class="title" @click="navigateToHome">Area</h2>
         <div class="filler01">
         </div>
         <hr v-show="!mobile" class="vertical-hr">
         <div class="user-info-container" v-show="!mobile">
-            <h2 class="username-txt">{{ userName }}</h2>
+            <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
             <span @click="goToProfilePage" class="user-avatar-img-container">
               <h3 class="user-avatar-ini">{{ userAvatar }}</h3>
             </span>
@@ -18,7 +18,7 @@
     </div>
     <div v-show="mobileNav" class="mobile-menu-container">
       <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
-          <h2 class="username-txt">{{ username }}</h2>
+          <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
           <span @click="goToProfilePage" class="user-avatar-img-container">
               <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
           </span>
@@ -117,6 +117,11 @@ export default {
       navigateToWidgets(event) {
         event.preventDefault()
         this.$router.push('/services');
+      },
+
+      navigateToHome(event) {
+        event.preventDefault()
+        window.location.href = this.$router.resolve({ name: 'home' }).href;
       },
 
       toggleMenu() {
@@ -263,6 +268,10 @@ export default {
     left: 24px;
     top: 0;
     transition: .5s ease all;
+  }
+
+  .logo:hover {
+    cursor: pointer;
   }
 
   .menu {
@@ -435,6 +444,10 @@ export default {
     margin-right: 1rem;
   }
 
+  .title:hover {
+    cursor: pointer;
+  }
+
   .activeMenu {
     position: absolute;
     display: flex;
@@ -473,6 +486,10 @@ export default {
     color: rgba(0, 0, 0, 0.7);
     margin-left: 1rem;
     font-weight: 500;
+}
+
+.username-txt:hover {
+    cursor: pointer;
 }
 
 .user-info-container {

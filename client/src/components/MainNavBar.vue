@@ -3,8 +3,8 @@
     <div class="navbar-container" :class="{ 'navbar-container-mobile-active': mobileNav }">
       <img @click.stop="displayMenu" src="@/assets/menu.png" class="menu" :class="{ rotated: isRotated }" alt="menu">
       <hr class="vertical-hr" :class="{ 'vertical-hr-mobile': mobile }">
-      <img src="@/assets/logo.png" class="logo" alt="logo of the app">
-      <h2 class="title">Area</h2>
+      <img src="@/assets/logo.png" class="logo" alt="logo of the app" @click="navigateToHome">
+      <h2 class="title" @click="navigateToHome">Area</h2>
       <div class="filler01">
       </div>
       <div v-show="!isLogged && !mobile" class="nv-btn-container">
@@ -146,6 +146,11 @@ export default {
       window.location.href = this.$router.resolve({ name: 'services' }).href;
     },
 
+    navigateToHome(event) {
+      event.preventDefault()
+      window.location.href = this.$router.resolve({ name: 'home' }).href;
+    },
+
     displayMenu() {
       if (this.mobile) {
         this.toggleMobileNav();
@@ -254,6 +259,10 @@ li {
   padding-top: 1rem;
   padding-bottom: 1rem;
   transition: .5s ease all;
+}
+
+.logo:hover {
+  cursor: pointer;
 }
 
 .menu {
@@ -454,6 +463,10 @@ li {
   color: rgba(0, 0, 0, 0.7);
   margin-left: 1rem;
   margin-right: 1rem;
+}
+
+.title:hover {
+  cursor: pointer;
 }
 
 .activeMenu {
