@@ -19,6 +19,11 @@ public class AuthController : ControllerBase
         _eventBus = eventBus;
         _logger = logger;
     }
+    
+    private string GetUserTokenFromHeaders()
+    {
+        return Request.Headers.TryGetValue("X-User-Token", out var token) ? token.ToString() : string.Empty;
+    }
 
     [HttpPost("google-login")]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
@@ -115,6 +120,47 @@ public class AuthController : ControllerBase
             Password = @request.Password
         });
 
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+        
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+        
+        _logger.LogInformation("Change password event triggered.");
+
+        var response = await _eventBus.PublishAsync<ChangePasswordEvent, (string, ResultType)>(new ChangePasswordEvent
+        {
+            ConfirmPassword = request.ConfirmPassword,
+            Password = request.Password,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
+
+    [HttpPut("change-username")]
+    public async Task<IActionResult> ChangeUsername([FromBody] ChangeUsernameRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+
+        var response = await _eventBus.PublishAsync<ChangeUsernameEvent, (string, ResultType)>(new ChangeUsernameEvent
+        {
+            Username = request.Username,
+            JwtToken = userToken
+        });
+        
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
 }
