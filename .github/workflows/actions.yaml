@@ -56,7 +56,18 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
       - name: Wait for specific services to be healthy
-        run: docker compose wait server csharp_service client_web oauth_service service-about db
+        run: |
+          services=("server" "csharp_service" "client_web" "oauth_service" "service-about" "db")
+          for service in "${services[@]}"; do
+            echo "Waiting for $service to be healthy..."
+            while ! docker inspect --format='{{json .State.Health.Status}}' "$service" | grep -q '"healthy"'; do
+              if docker inspect --format='{{json .State.Status}}' "$service" | grep -q '"exited"'; then
+                echo "$service has exited with code 0"
+                break
+              fi
+              sleep 5
+            done
+          done
         env:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
@@ -146,7 +157,18 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
       - name: Wait for specific services to be healthy
-        run: docker compose wait server csharp_service client_web oauth_service service-about db
+        run: |
+          services=("server" "csharp_service" "client_web" "oauth_service" "service-about" "db")
+          for service in "${services[@]}"; do
+            echo "Waiting for $service to be healthy..."
+            while ! docker inspect --format='{{json .State.Health.Status}}' "$service" | grep -q '"healthy"'; do
+              if docker inspect --format='{{json .State.Status}}' "$service" | grep -q '"exited"'; then
+                echo "$service has exited with code 0"
+                break
+              fi
+              sleep 5
+            done
+          done
         env:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
