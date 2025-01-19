@@ -115,7 +115,6 @@ export default {
         async fetchAbout() {
             try {
                 const res = await this.$axios.get("/about.json");
-                console.log(res);
                 this.available_services = res.data.server.services;
             } catch (error) {
                 console.error(error);
@@ -130,7 +129,6 @@ export default {
                         'X-User-Token': token,
                     },
                 });
-                console.log(res);
                 if (res.data) {
                     this.services = res.data;
                 } else {

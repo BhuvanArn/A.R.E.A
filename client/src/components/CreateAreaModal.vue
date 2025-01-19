@@ -164,7 +164,6 @@ export default {
             step: 1,
             indexStart: 0,
             subscribedServices: [],
-            availableServices: [],
 
             selectedActionService: null,
             selectedAction: null,
@@ -221,7 +220,7 @@ export default {
         async fetchSubscribedServices() {
             try {
                 const token = localStorage.getItem("token");
-                const registeredService = await this.$axios.get(`/area`, {
+                const registeredService = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token,
                     },
@@ -233,14 +232,6 @@ export default {
                 this.subscribedServices = allServices.data.server.services.filter(service => {
                     return registeredService.data.some(registered => registered.name === service.name);
                 });
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        async fetchAvailableServices() {
-            try {
-                const res = await this.$axios.get("/about.json");
-                this.availableServices = res.data.server.services;
             } catch (error) {
                 console.error(error);
             }
@@ -423,7 +414,6 @@ export default {
     },
     async mounted() {
         await this.fetchSubscribedServices();
-        await this.fetchAvailableServices();
     }
 };
 </script>
