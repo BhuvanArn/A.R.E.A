@@ -52,7 +52,13 @@ const routes = [
     name: 'dropbox-callback',
     component: () => import('../views/DropboxCallback.vue'),
     props: (route) => ({ code: route.query.code })
-  }
+  },
+  {
+    path: '/oauth/github/callback',
+    name: 'github-callback',
+    component: () => import('../views/GithubCallback.vue'),
+    props: (route) => ({ code: route.query.code })
+  },
 ]
 
 const router = createRouter({

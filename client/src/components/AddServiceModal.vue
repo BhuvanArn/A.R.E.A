@@ -192,6 +192,10 @@ export default {
                     await this.authDropbox();
                     return;
                 }
+                if (this.selectedService.name == "github") {
+                    await this.authGithub();
+                    return;
+                }
 
                 const res = await this.$axios.post(`/area/subscribe_service`, {
                     name: this.selectedService.name,
@@ -287,6 +291,25 @@ export default {
                 window.open(res.data.authorize_url, "_blank");
 
                 // this call will open a new tab to the dropbox login page,
+                // then the user will be redirected to the callback url
+            } catch (error) {
+                console.error(error);
+            };
+        },
+
+        async authGithub() {
+            try {
+                // get the token from github
+                const res = await this.$axios.post(`/oauth/github/authorize`,
+                {
+                    "scopes": "repo",
+                    "redirect_url": "http://localhost:8081/oauth/github/callback"
+                });
+
+                // res.data contains "authorize_url" which is the url to redirect the user to
+                window.open(res.data.authorize_url, "_blank");
+
+                // this call will open a new tab to the github login page,
                 // then the user will be redirected to the callback url
             } catch (error) {
                 console.error(error);
