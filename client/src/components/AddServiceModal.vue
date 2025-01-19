@@ -2,8 +2,8 @@
     <div class="modal-overlay" @click.self="closeModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title">Subscribe to {{ selectedService ? selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
-                <img src="@/assets/logo.png" class="logo">
+                <h2 class="modal-title" :class="{ 'modal-title-mobile': mobile }">Subscribe to {{ selectedService ? selectedService.name.slice(0, 1).toUpperCase() + selectedService.name.slice(1) : "a Service" }}</h2>
+                <img src="@/assets/logo.png" class="logo" :class="{ 'logo-mobile': mobile }" alt="logo" />
             </div>
             <!-- Step 1: Carousel of Services -->
             <div v-if="step === 1" class="carousel-container">
@@ -386,7 +386,7 @@ export default {
 .modal-header {
     border-bottom: 2px solid black;
     padding: 1rem;
-    height: 20%;
+    height: 100%;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     margin-bottom: 1rem;
@@ -396,7 +396,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 20%;
     background-color: #bcc1ba;
 }
 
@@ -408,11 +407,18 @@ export default {
   color: #313030;
 }
 
+.modal-title-mobile {
+    font-size: 1.3rem;
+}
+
 .logo {
     width: 5rem;
-    height: 7rem;
-    margin-bottom: -1rem;
-    margin-right: 2rem;
+    height: 5rem;
+}
+
+.logo-mobile {
+    width: 3rem;
+    height: 3rem;
 }
 
 .carousel-container {

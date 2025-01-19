@@ -1,13 +1,17 @@
 <template>
     <div class="modal-overlay" @click.self="closeModal">
         <div class="modal">
-            <div class="modal-header">
+            <div v-if="!mobile" class="modal-header">
                 <h2 class="modal-title">Create AREA</h2>
                 <img src="@/assets/logo.png" class="logo">
             </div>
+            <div v-if="mobile" class="modal-header">
+                <h2 class="modal-title-mobile">Create AREA</h2>
+                <img src="@/assets/logo.png" class="logo-mobile">
+            </div>
             <div class="modal-body">
                 <div v-if="step === 1" class="puzzle-container">
-                    <div class="puzzle-piece left-piece" :style="actionStyle" @click="selectPart('action')">
+                    <div class="puzzle-piece left-piece" :class="{'puzzle-piece-mobile':mobile}" :style="actionStyle" @click="selectPart('action')">
                         <div v-if="selectedAction" class="each-piece">
                             <Iconify :icon="getServiceIcon(selectedActionService.name)" class="service-icon-large" />
                             <p style="font-style: italic;">{{ selectedAction.name.slice(0, 1).toUpperCase() + selectedAction.name.slice(1) }}</p>
@@ -16,7 +20,7 @@
                         </div>
                         <p v-else>Select the Action</p>
                     </div>
-                    <div class="puzzle-piece right-piece" :style="reactionStyle" @click="selectPart('reaction')">
+                    <div class="puzzle-piece right-piece" :class="{'puzzle-piece-mobile':mobile}" :style="reactionStyle" @click="selectPart('reaction')">
                         <div v-if="selectedReaction" class="each-piece">
                             <Iconify :icon="getServiceIcon(selectedReactionService.name)" class="service-icon-large" />
                             <p style="font-style: italic;">{{ selectedReaction.name.slice(0, 1).toUpperCase() + selectedReaction.name.slice(1) }}</p>
@@ -180,6 +184,8 @@ export default {
 
             hasSelectedAction: false,
             hasSelectedReaction: false,
+
+            mobile: false,
 
             areaName: "",
         };
@@ -411,10 +417,21 @@ export default {
                 this.reactionInputs = {};
                 this.hasSelectedReaction = false;
             }
-        }
+        },
+
+        checkScreen() {
+            this.windowWidth = window.innerWidth;
+            if (this.windowWidth <= 960) {
+                this.mobile = true;
+            } else {
+                this.mobile = false;
+            }
+        },
     },
     async mounted() {
         await this.fetchSubscribedServices();
+        window.addEventListener('resize', this.checkScreen);
+        this.checkScreen();
     }
 };
 </script>
@@ -467,6 +484,14 @@ export default {
     font-family: 'inter', sans-serif;
     font-weight: 400;
     font-size: 2.5rem;
+    color: #313030;
+}
+
+.modal-title-mobile {
+    margin: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 400;
+    font-size: 2rem;
     color: #313030;
 }
 
@@ -599,6 +624,11 @@ export default {
 .puzzle-piece p {
     margin: 0;
     font-size: 1.2rem;
+}
+
+.puzzle-piece-mobile p {
+    margin: 0;
+    font-size: 1rem;
 }
 
 .service-section-name {
@@ -743,6 +773,11 @@ input {
 .nav-arrow:hover::before {
     width: 100%;
     height: 100%;
+}
+
+.logo-mobile {
+    width: 50px;
+    height: 50px;
 }
 
 .nav-arrow svg {
@@ -907,6 +942,10 @@ input {
 
 .puzzle-piece:hover .trash-icon {
     display: block;
+}
+
+.txt-mobile {
+    font-size: 0.5rem;
 }
 
 </style>

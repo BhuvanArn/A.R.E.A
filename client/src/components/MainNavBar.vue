@@ -21,7 +21,7 @@
         <button @click="navigateToLogin" class="access-btn-style">Login</button>
         <button @click="navigateToRegister" class="access-btn-style">Register</button>
       </div>
-      <div v-show="isLogged">
+      <div class="nv-btn-container-mobile" v-show="isLogged">
         <button @click="navigateToPanel" class="access-btn-style">Your panel</button>
       </div>
     </div>
@@ -138,7 +138,7 @@ export default {
 
     navigateToPanel(event) {
       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'services' }).href;
+      window.location.href = this.$router.resolve({ name: 'panel' }).href;
     },
 
     navigateToHome(event) {
@@ -310,7 +310,7 @@ li {
 
 .mobile-menu-container {
   display: flex;
-  height: 15rem;
+  height: 5rem;
   align-items: center;
   flex-direction: column;
   border-bottom: 1px solid #000000;
@@ -423,11 +423,12 @@ li {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 20rem;
+  width: auto;
   height: 25%;
   background-color: transparent;
   gap: 1rem;
   margin: 1rem;
+  margin-top: 1.7rem;
 }
 
 .access-btn-style {

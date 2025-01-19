@@ -31,6 +31,11 @@ public class ChangePasswordEventHandler : IIntegrationEventHandler<ChangePasswor
             return ("You are not logged in", ResultType.Fail);
         }
 
+        if (string.IsNullOrEmpty(user.Password))
+        {
+            return ("You are not logged in", ResultType.Fail);
+        }
+
         if (!string.Equals(@event.ConfirmPassword, @event.Password))
         {
             return ("Passwords do not match", ResultType.Fail);
