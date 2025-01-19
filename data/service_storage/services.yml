@@ -69,6 +69,72 @@ services:
             headers: |
               {"Authorization": "Bearer $+token", "User-Agent": "linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)"}
     
+    reactions:
+      - name: create_post
+        description: creates a post in a subreddit
+        update_action: true
+        inputs:
+          - name: subreddit_name   # subreddit_name : steam
+            regex: "^*$"
+          - name: post_title   # post_title : New games on steam
+            regex: "^*$"
+          - name: post_text   # post_text : Overwatch 3, kingdom three cronws, etc...
+            regex: "^*$"
+
+        commit:
+          middleware: log
+          endpoint:
+              method: post
+              url: https://oauth.reddit.com/api/submit
+              headers: |
+                {"Authorization": "Bearer $+token", "User-Agent": "linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)"}
+              data: |
+                {"sr": "$+subreddit_name", "kind": "self", "title": "$+post_title", "text": "$+post_text"}
+      
+      - name: subscribe_subreddit
+        description: subscribes to a given subreddit
+        update_action: true
+        inputs:
+          - name: subreddit_name   # subreddit_name : steam
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://oauth.reddit.com/api/subscribe
+              headers: |
+                {"Authorization": "Bearer $+token", "User-Agent": "linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)"}
+              data: |
+                {"action": "sub", "action_source": "autosubscribe", "sr_name":"$+subreddit_name"}
+
+      - name: unsubscribe_subreddit
+        description: unsubscribes to a given subreddit
+        update_action: true
+        inputs:
+          - name: subreddit_name   # subreddit_name : steam
+            regex: "^*$"
+
+        commit:
+          endpoint:
+              method: post
+              url: https://oauth.reddit.com/api/subscribe
+              headers: |
+                {"Authorization": "Bearer $+token", "User-Agent": "linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)"}
+              data: |
+                {"action": "unsub", "action_source": "onboarding", "sr_name":"$+subreddit_name", "skip_initial_defaults": False}
+
+              # action
+              # one of (sub, unsub)
+
+              # action_source
+              # one of (onboarding, autosubscribe)
+
+              # skip_initial_defaults
+              # boolean value
+
+              # sr / sr_name
+              # A comma-separated list of subreddit fullnames (when using the "sr" parameter), or of subreddit names (when using the "sr_name" parameter).
+
   - name: github
     credentials:
       - name: token
