@@ -59,6 +59,14 @@
                 <button @click="logoutUser" class="logout-btn">Logout</button>
             </div>
             <div v-else class="main-container-bottom">
+                <div class="filler01"></div>
+                <span class="account-avatar-container">
+                    <!-- <img :src="getAvatarSrc" class="avatar-img"> -->
+                    <h2 class="user-avatar-ini">{{ userAvatar }}</h2>
+                </span>
+                <h2 class="email-txt"> {{ userEmail }} </h2>
+                <div class="filler02"></div>
+                <hr class="hr-style01">
                 <div class="profile-info-container">
                     <img src="@/assets/info.png" class="info-img" alt="info">
                     <h2 class="profile-info-txt">This is not an Area account. You cannot modify your account information here. </h2>
@@ -106,6 +114,7 @@ export default {
                 });
                 console.log(response);
                 this.editedUserName = this.userName;
+                window.location.reload();
             } catch (error) {
                 console.error(error);
             }
@@ -180,6 +189,9 @@ export default {
             this.getUserInformation();
         } else if (localStorage.getItem('AccountType') === 'Google') {
             this.isGoogleAccount = true;
+            this.userEmail = localStorage.getItem('GoogleEmail');
+            this.userAvatar = localStorage.getItem('GoogleUsername').charAt(0);
+            console.log('google email: ',this.userEmail);
         } else if (localStorage.getItem('AccountType') === 'Discord') {
             this.isDiscordAccount = true;
         }
@@ -271,6 +283,11 @@ export default {
     padding: 0;
     font-family: 'inter', sans-serif;
     font-weight: 400;
+    text-align: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .filler01 {
