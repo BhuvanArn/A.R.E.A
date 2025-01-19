@@ -19,7 +19,7 @@
     <div v-show="mobileNav" class="mobile-menu-container">
       <div class="user-info-container" :class="{ 'user-info-container-mobile': mobileNav }">
           <span @click="goToProfilePage" class="user-avatar-img-container">
-              <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
+            <h2 class="user-avatar-ini2">{{ userAvatar }}</h2>
           </span>
           <h2 class="username-txt" @click="goToProfilePage">{{ userName }}</h2>
       </div>
@@ -50,10 +50,10 @@ export default {
     },
 
     mounted() {
-/*       if (localStorage.getItem("token") === null) {
+      if (localStorage.getItem("token") === null) {
         this.$router.push('/login');
         return;
-      } */
+      }
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
@@ -300,7 +300,7 @@ export default {
 
   .mobile-menu-container {
     display: flex;
-    height: 14.5rem;
+    height: 13.5rem;
     align-items: center;
     flex-direction: column;
     border-bottom: 1px solid #000000;
