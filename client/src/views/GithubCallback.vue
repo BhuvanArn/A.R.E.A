@@ -2,6 +2,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
   name: 'GithubCallback',
@@ -17,7 +18,7 @@ export default {
     async getGithubToken() {
       try {
 
-        const token = localStorage.getItem('token');
+        const token = getCookie('token');
 
         const response = await this.$axios.post('/oauth/github/access_token', {
           code: this.code,

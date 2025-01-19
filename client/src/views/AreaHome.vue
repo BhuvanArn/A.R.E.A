@@ -68,6 +68,7 @@
 <script>
 import NavBar from '../components/MainNavBar.vue';
 import Footer from '../components/Footer.vue';
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: 'AreaHome',
@@ -107,9 +108,9 @@ export default {
     },
 
     onMounted() {
-        const expirationTime = localStorage.getItem('expirationTime');
+        const expirationTime = getCookie('expirationTime');
         if (token && expirationTime && currentTime >= expirationTime) {
-            localStorage.setItem('Status', 'LoggedOut');
+            setCookie('Status', 'LoggedOut', 1);
         }
     },
 

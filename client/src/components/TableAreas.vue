@@ -64,6 +64,7 @@
 <script>
 import { Icon } from "@iconify/vue";
 import CreateAreaModal from "./CreateAreaModal.vue";
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: "TableAreas",
@@ -102,7 +103,7 @@ export default {
             try {
                 const body = { "ActionId": area.actionId };
 
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
 
                 const res = await this.$axios.delete(`/area/delete_areas`, {
                     data: body,
@@ -120,7 +121,7 @@ export default {
 
         async getServiceNameWithId(serviceId) {
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
                 const res = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token
@@ -145,7 +146,7 @@ export default {
 
         async getAreas() {
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
                 const res = await this.$axios.get("/area/services/true", {
                     headers: {
                         'X-User-Token': token

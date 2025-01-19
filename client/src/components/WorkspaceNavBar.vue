@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
   name: "navigation",
@@ -49,22 +50,22 @@ export default {
     }
   },
 
-  mounted() {
-    if (localStorage.getItem("token") === null) {
-      this.$router.push('/login');
-      return;
-    }
-    window.addEventListener('resize', this.checkScreen);
-    window.addEventListener('resize', this.enforceMinWidth);
-    this.checkScreen();
-    this.enforceMinWidth();
-    if (localStorage.getItem('AccountType') === 'Area') {
-      this.getUserInformation();
-    } else if (localStorage.getItem('AccountType') === 'Google') {
-      this.userName = localStorage.getItem('GoogleUsername');
-      this.userAvatar = this.userName.charAt(0);
-    }
-  },
+    mounted() {
+       if (getCookie("token") === '') {
+        this.$router.push('/login');
+        return;
+      }
+      window.addEventListener('resize', this.checkScreen);
+      window.addEventListener('resize', this.enforceMinWidth);
+      this.checkScreen();
+      this.enforceMinWidth();
+      if (getCookie('AccountType') === 'Area') {
+        this.getUserInformation();
+      } else if (getCookie('AccountType') === 'Google') {
+        this.userName = getCookie('GoogleUsername');
+        this.userAvatar = this.userName.charAt(0);
+      }
+    },
 
   methods: {
     toggleMobileNav() {
@@ -93,26 +94,28 @@ export default {
       return input.split(';');
     },
 
-    async getUserInformation() {
-      try {
-        const response = await this.$axios.get(`/auth/userinformation`, {
-            headers: {
-                'X-User-Token': localStorage.getItem("token"),
-            },
-        });
-        if (response.status === 200) {
-          const result = this.splitString(response.data);
-          this.userName = result[1];
-          this.userAvatar = this.userName.charAt(0);
+      async getUserInformation() {
+        try {
+          const response = await this.$axios.get(`/auth/userinformation`, {
+              headers: {
+                  'X-User-Token': getCookie('token'),
+              },
+          });
+          if (response.status === 200) {
+            const result = this.splitString(response.data);
+            this.userName = result[1];
+            this.userAvatar = this.userName.charAt(0);
+          }
+        } catch (error) {
+          if (error.response.status === 400 || error.response.status === 401) {
+            removeCookie('token');
+            removeCookie('AccountType');
+            removeCookie('GoogleUsername');
+            this.$router.push('/login');
+          }
+          console.error(error);
         }
-      } catch (error) {
-        if (error.response.status === 400 || error.response.status === 401) {
-          localStorage.clear();
-          this.$router.push('/login');
-        }
-        console.error(error);
-      }
-    },
+      },
 
     navigateToServices(event) {
       event.preventDefault()

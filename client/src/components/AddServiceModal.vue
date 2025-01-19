@@ -111,6 +111,7 @@
 
 <script>
 import { Icon } from "@iconify/vue";
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
     name: "AddServiceModal",
@@ -176,7 +177,7 @@ export default {
         async activateService() {
 
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
 
                 var serviceToken = null;
 
@@ -329,7 +330,7 @@ export default {
                 });
 
                 const token = res.data;
-                const user_token = localStorage.getItem("token");
+                const user_token = getCookie('token');
 
                 // subscribe to the service
                 const subscribed_res = await this.$axios.post(`/area/subscribe_service`, {

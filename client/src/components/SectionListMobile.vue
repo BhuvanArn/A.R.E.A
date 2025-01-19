@@ -30,6 +30,7 @@
 <script>
 import AddServiceModal from './AddServiceModal.vue';
 import { Icon } from "@iconify/vue";
+import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 
 export default {
 
@@ -121,7 +122,7 @@ export default {
 
         async fetchServices() {
             try {
-                const token = localStorage.getItem("token");
+                const token = getCookie('token');
                 const res = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token,
