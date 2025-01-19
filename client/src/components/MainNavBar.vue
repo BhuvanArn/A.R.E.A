@@ -143,7 +143,7 @@ export default {
 
     navigateToPanel(event) {
       event.preventDefault()
-      window.location.href = this.$router.resolve({ name: 'services' }).href;
+      window.location.href = this.$router.resolve({ name: 'panel' }).href;
     },
 
     navigateToHome(event) {

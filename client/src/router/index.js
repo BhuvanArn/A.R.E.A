@@ -17,8 +17,8 @@ const routes = [
     component: () => import('@/views/Register.vue')
   },
   {
-    path: '/services',
-    name: 'services',
+    path: '/panel',
+    name: 'panel',
     component: () => import('@/views/ServicePage.vue')
   },
   {

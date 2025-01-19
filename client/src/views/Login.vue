@@ -117,7 +117,7 @@ export default {
                 localStorage.setItem('AccountType', 'Google');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
-                window.location.href = this.$router.resolve({ name: 'services' }).href;
+                window.location.href = this.$router.resolve({ name: 'panel' }).href;
             } catch (error) {
                 console.error(error);
             }
@@ -149,7 +149,7 @@ export default {
                 localStorage.setItem('AccountType', 'Area');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
-                window.location.href = this.$router.resolve({ name: 'services' }).href;
+                window.location.href = this.$router.resolve({ name: 'panel' }).href;
             } catch (error) {
                 console.error(error);
                 this.errorMessage = 'An error occurred';
