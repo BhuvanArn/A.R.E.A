@@ -13,6 +13,9 @@ env:
 jobs:
   check_health:
     runs-on: ubuntu-latest
+
+    if: ${{ github.event_name == 'push' }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -87,6 +90,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check_health
+
+    if: ${{ github.event_name == 'push' }}
 
     steps:
       - name: Checkout repository
