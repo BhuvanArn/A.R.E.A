@@ -20,7 +20,7 @@
                     <div class="filler03"></div>
                     <div class="user-name-container">
                         <img src="@/assets/user.png" class="img-style1" alt="username">
-                        <input type="text" class="input-style1" placeholder="Username" v-model="userName">
+                        <input @input="updateUsername" type="text" class="input-style1" placeholder="Username" v-model="userName">
                     </div>
                 </div>
                 <div class="filler03"></div>
@@ -81,6 +81,7 @@ export default {
             isDiscordAccount: false,
             userEmail: '',
             userName: '',
+            editedUserName: '',
             userAvatar: '',
             oldPwd: '',
             newPwd: '',
@@ -89,6 +90,28 @@ export default {
         }
     },
     methods: {
+
+        async updateUsername() {
+            try {
+                console.log(localStorage.getItem("token"));
+                if (this.userName === this.editedUserName) {
+                    return;
+                }
+                const response = await this.$axios.put('/auth/change-username', {
+                    Username: this.userName,
+                }, {
+                    headers: {
+                            'X-User-Token': localStorage.getItem("token"),
+                            'Content-Type': 'application/json',
+                        },
+                });
+                console.log(response);
+                this.editedUserName = this.userName;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
         activateChangePwdMenu() {
             this.changePwdMenu = true;
         },
@@ -108,6 +131,7 @@ export default {
                 const result = this.splitString(response.data);
                 this.userEmail = result[0];
                 this.userName = result[1];
+                this.editedUserName = this.userName;
                 this.userAvatar = this.userName.charAt(0);
             }
             } catch (error) {
