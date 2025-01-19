@@ -3,7 +3,7 @@
             <div class="main-container-top">
                 <h2 class="account-title-txt">Profile</h2>
                 <div class="filler01"></div>
-                <img src="@/assets/logo.png" class="logo-account">
+                <img src="@/assets/logo.png" class="logo-account" alt="logo">
             </div>
             <div v-if="isAreaAccount" class="main-container-bottom">
                 <div class="filler01"></div>
@@ -19,7 +19,7 @@
                     <h2 class="profile-title-txt-style">Username</h2>
                     <div class="filler03"></div>
                     <div class="user-name-container">
-                        <img src="@/assets/user.png" class="img-style1">
+                        <img src="@/assets/user.png" class="img-style1" alt="username">
                         <input type="text" class="input-style1" placeholder="Username" v-model="userName">
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <h2 class="profile-title-txt-style">Password</h2>
                     <div class="filler03"></div>
                     <div class="user-pwd-container">
-                        <img src="@/assets/key.png" class="img-style1">
+                        <img src="@/assets/key.png" class="img-style1" alt="password">
                         <button v-show="!changePwdMenu" @click="activateChangePwdMenu" class="change-pwd-btn">Change</button>
                         <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
                     </div>
@@ -60,7 +60,7 @@
             </div>
             <div v-else class="main-container-bottom">
                 <div class="profile-info-container">
-                    <img src="@/assets/info.png" class="info-img">
+                    <img src="@/assets/info.png" class="info-img" alt="info">
                     <h2 class="profile-info-txt">This is not an Area account. You cannot modify your account information here. </h2>
                 </div>
                 <button @click="logoutUser" class="logout-btn">Logout</button>

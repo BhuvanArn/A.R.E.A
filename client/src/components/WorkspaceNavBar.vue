@@ -11,7 +11,7 @@
         <div class="user-info-container" v-show="!mobile">
             <h2 class="username-txt">{{ userName }}</h2>
             <span @click="goToProfilePage" class="user-avatar-img-container">
-              <h3 class="user-avatar-ini">{{ userAvatar }}</h3>
+              <h2 class="user-avatar-ini2">{{ userAvatar }}</h2>
             </span>
         </div>
       </nav>
@@ -504,8 +504,7 @@ export default {
     background-color: #c6c9c4;
 }
 
-.user-avatar-ini {
-    font-size: 2rem;
+.user-avatar-ini2 {
     color: #313030;
     margin: 0;
     padding: 0;
