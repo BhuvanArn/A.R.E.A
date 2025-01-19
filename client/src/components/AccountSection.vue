@@ -79,8 +79,8 @@ export default {
             isAreaAccount: false,
             isGoogleAccount: false,
             isDiscordAccount: false,
-            userEmail: 'test@test.com',
-            userName: 'Pablo',
+            userEmail: '',
+            userName: '',
             userAvatar: '',
             oldPwd: '',
             newPwd: '',
@@ -89,12 +89,30 @@ export default {
         }
     },
     methods: {
-        getAvatarLetter() {
-            this.userAvatar = this.userName.charAt(0);
-        },
-
         activateChangePwdMenu() {
             this.changePwdMenu = true;
+        },
+
+        splitString(input) {
+            return input.split(';');
+        },
+
+        async getUserInformation() {
+            try {
+            const response = await this.$axios.get(`/auth/userinformation`, {
+                headers: {
+                    'X-User-Token': localStorage.getItem("token"),
+                },
+            });
+            if (response.status === 200) {
+                const result = this.splitString(response.data);
+                this.userEmail = result[0];
+                this.userName = result[1];
+                this.userAvatar = this.userName.charAt(0);
+            }
+            } catch (error) {
+                console.error(error);
+            }
         },
 
         logoutUser() {
@@ -128,7 +146,7 @@ export default {
     mounted() {
         if (localStorage.getItem('AccountType') === 'Area') {
             this.isAreaAccount = true;
-            this.getAvatarLetter();
+            this.getUserInformation();
         } else if (localStorage.getItem('AccountType') === 'Google') {
             this.isGoogleAccount = true;
         } else if (localStorage.getItem('AccountType') === 'Discord') {
@@ -161,7 +179,6 @@ export default {
     border-radius: 50%;
     background-color: #9fb7b9;
     border: 1px solid #969696;
-    margin-left: 1rem;
     overflow: hidden;
     cursor: pointer;
 }

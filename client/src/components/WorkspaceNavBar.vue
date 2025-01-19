@@ -9,9 +9,9 @@
         </div>
         <hr v-show="!mobile" class="vertical-hr">
         <div class="user-info-container" v-show="!mobile">
-            <h2 class="username-txt">{{ username }}</h2>
+            <h2 class="username-txt">{{ userName }}</h2>
             <span @click="goToProfilePage" class="user-avatar-img-container">
-                <!-- <img class="user-avatar-img" src="" alt="User avatar"> --> <!-- To replace with the correct user avatar gotten from the backend -->
+              <h3 class="user-avatar-ini">{{ userAvatar }}</h3>
             </span>
         </div>
       </nav>
@@ -44,15 +44,21 @@ export default {
         mobileNavButton: false,
         isLogged: false,
         isActiveMenu: false,
-        username: 'Pablo', // To replace with the correct username gotten from the backend
+        userName: '',
+        userAvatar: '',
       }
     },
 
     mounted() {
+/*       if (localStorage.getItem("token") === null) {
+        this.$router.push('/login');
+        return;
+      } */
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
       this.enforceMinWidth();
+      this.getUserInformation();
     },
 
     methods: {
@@ -75,6 +81,27 @@ export default {
           setTimeout(() => {
             this.mobileNavButton = false;
           }, 0);
+        }
+      },
+
+      splitString(input) {
+        return input.split(';');
+      },
+
+      async getUserInformation() {
+        try {
+          const response = await this.$axios.get(`/auth/userinformation`, {
+              headers: {
+                  'X-User-Token': localStorage.getItem("token"),
+              },
+          });
+          if (response.status === 200) {
+            const result = this.splitString(response.data);
+            this.userName = result[1];
+            this.userAvatar = this.userName.charAt(0);
+          }
+        } catch (error) {
+          console.error(error);
         }
       },
 
@@ -476,4 +503,15 @@ export default {
 .nvb-btn-style:active {
     background-color: #c6c9c4;
 }
+
+.user-avatar-ini {
+    font-size: 2rem;
+    color: #313030;
+    margin: 0;
+    padding: 0;
+    font-family: 'inter', sans-serif;
+    font-weight: 300;
+    cursor: pointer;
+}
+
 </style>
