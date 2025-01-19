@@ -48,6 +48,27 @@ services:
               data: |
                 {"content": "$+message", "flags": 0, "mobile_network_type": "unknown", "tts": false}
   
+  - name: reddit
+    credentials:
+      - name: token
+        regex: "^*$"
+    
+    actions:      
+      - name: new_post_in_subreddit
+        description: action when there is a new post in a subreddit
+        time: 5
+        inputs:
+          - name: subreddit_name   # subreddit_name : steam
+            regex: "^*$"
+
+        fetch:
+          strategy: reddit.strategy_new_post_in_subreddit
+          endpoint:
+            method: get
+            url: https://oauth.reddit.com/r/$+subreddit_name/new?limit=1
+            headers: |
+              {"Authorization": "Bearer $+token", "User-Agent": "linux:area_last_chance:v1.0.0 (by /u/PapiYoshi)"}
+    
   - name: github
     credentials:
       - name: token
