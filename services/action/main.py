@@ -203,7 +203,7 @@ class Watcher(object):
                 #print(item, action["triggerConfig"], flush=True)
                 #for var_name, var_value in {**loads(action["triggerConfig"]), **loads(item["auth"])}.items():
 
-                for var_name, var_value in {**loads(action["triggerConfig"]), **item["auth"]}.items():
+                for var_name, var_value in {**loads(action["triggerConfig"]), **loads(item["auth"])}.items():
                     _vars[var_name] = var_value
 
                 self.register_action(RegisteredAction(item["id"], action["id"], item["name"], action["name"], _vars))
