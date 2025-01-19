@@ -60,6 +60,9 @@ export default {
       this.enforceMinWidth();
       if (localStorage.getItem('AccountType') === 'Area') {
         this.getUserInformation();
+      } else if (localStorage.getItem('AccountType') === 'Google') {
+        this.userName = localStorage.getItem('GoogleUsername');
+        this.userAvatar = this.userName.charAt(0);
       }
     },
 
@@ -387,11 +390,12 @@ export default {
   }
 
   .filler01 {
-    width: 90%;
+    flex: 1 1 90%;
+    min-width: 0;
     height: 100%;
     background-color: transparent;
     border: transparent;
-  }
+}
 
   .nv-btn-container {
     display: flex;
@@ -488,6 +492,9 @@ export default {
     color: rgba(0, 0, 0, 0.7);
     margin-left: 1rem;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .username-txt:hover {
