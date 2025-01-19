@@ -42,6 +42,8 @@ ARG KEYSTORE_PASSWORD
 ARG KEY_ALIAS
 ARG KEY_PASSWORD
 
+RUN echo "$KEYSTORE_PASSWORD" && echo "$KEY_ALIAS" && echo "$KEY_PASSWORD" && sleep 50
+
 # Build APK
 RUN cd android && ./gradlew clean && ./gradlew assembleRelease
 
