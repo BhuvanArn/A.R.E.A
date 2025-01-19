@@ -60,15 +60,14 @@
                 <button @click="navigateToRegister" class="start-btn">Start free</button>
                 <div class="filler04"></div>
             </div>
-            <div class="bottom-container">
-
-            </div>
         </div>
     </body>
+    <Footer></Footer>
 </template>
 
 <script>
 import NavBar from '../components/MainNavBar.vue';
+import Footer from '../components/Footer.vue';
 
 export default {
     name: 'AreaHome',
@@ -81,6 +80,7 @@ export default {
 
     components: {
         NavBar,
+        Footer,
     },
 
     methods: {
@@ -441,7 +441,6 @@ body {
     height: auto;
     background-color: #9fb7b9;
     margin-top: 3rem;
-    margin-bottom: 3rem;
     min-height: 20rem;
 }
 

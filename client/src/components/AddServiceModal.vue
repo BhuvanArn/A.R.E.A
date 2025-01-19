@@ -13,16 +13,12 @@
                 </div>
                 <div v-else-if="services.length <= 3" class="carousel-container">
                     <div class="service-card" v-for="(service, idx) in services" :key="idx"
-                        @click="viewService(service)"
-                        :style="{ '--bg-color': getBrandColor(service.name), '--text-color': getComplementaryColor(getBrandColor(service.name)) }">
-                        <Iconify :icon="getServiceIcon(service.name)" :style="{ color: 'var(--text-color)' }" />
-                        <h4 :style="{ color: 'var(--text-color)' }">{{ service.name.slice(0, 1).toUpperCase() +
-                            service.name.slice(1) }}</h4>
+                        @click="viewService(service)" :style="{ '--bg-color': getBrandColor(service.name) }">
+                        <Iconify :icon="getServiceIcon(service.name)" />
+                        <h4>{{ service.name.slice(0, 1).toUpperCase() + service.name.slice(1) }}</h4>
                         <hr class="divider" />
-                        <p :style="{ color: 'var(--text-color)' }">{{ service.actions.length }} Action{{
-                            service.actions.length > 1 ? 's' : '' }}</p>
-                        <p :style="{ color: 'var(--text-color)' }">{{ service.reactions.length }} Reaction{{
-                            service.reactions.length > 1 ? 's' : '' }}</p>
+                        <p>{{ service.actions.length }} Action{{ service.actions.length > 1 ? 's' : '' }}</p>
+                        <p>{{ service.reactions.length }} Reaction{{ service.reactions.length > 1 ? 's' : '' }}</p>
                     </div>
                 </div>
                 <div v-else class="carousel-container">
@@ -246,6 +242,8 @@ export default {
                     return "#1db954";
                 case "dropbox":
                     return "#0061ff";
+                case "reddit":
+                    return "#ff4500";
                 default:
                     return "gray";
             }
@@ -469,6 +467,7 @@ export default {
     font-weight: bold;
     font-size: 1.2rem;
     background-color: var(--bg-color);
+    color: #fff;
 }
 
 .service-card:hover {
@@ -492,7 +491,7 @@ export default {
 
 .divider {
     width: 70%;
-    border: 1px solid var(--text-color);
+    border: 1px solid #fff;
     margin: 10px 0 5px 0;
 }
 
@@ -501,6 +500,36 @@ export default {
     border: none;
     font-size: 2rem;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 3rem;
+    /* for circular button hover */
+    height: 3rem;
+    /* for circular button hover */
+}
+
+.nav-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    width: 0;
+    height: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.nav-arrow:hover::before {
+    width: 100%;
+    height: 100%;
+}
+
+.nav-arrow svg {
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .service-overview {
