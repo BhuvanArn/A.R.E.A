@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:80"
+    volumes:
+      - shared_vol:/app/public/shared
     environment:
       - EXPOSE_PORT_SERVER=8080
     restart: on-failure
@@ -13,6 +15,26 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    depends_on:
+      - server
+      - client_mobile
+
+  client_mobile:
+    build:
+      context: ./client
+      dockerfile: apk.Dockerfile
+      args:
+        KEYSTORE_PASSWORD: ${KEYSTORE_PASSWORD}
+        KEY_ALIAS: ${KEY_ALIAS}
+        KEY_PASSWORD: ${KEY_PASSWORD}
+    volumes:
+      - shared_vol:/shared
+    environment:
+      - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD}
+      - KEY_ALIAS=${KEY_ALIAS}
+      - KEY_PASSWORD=${KEY_PASSWORD}
+    env_file:
+      - .env
 
   server:
     build:
@@ -167,3 +189,5 @@ volumes:
       type: 'none'
       o: 'bind'
       device: 'data/service_storage'
+
+  shared_vol:
