@@ -50,15 +50,17 @@ export default {
     },
 
     mounted() {
-/*       if (localStorage.getItem("token") === null) {
+      if (localStorage.getItem("token") === null) {
         this.$router.push('/login');
         return;
-      } */
+      }
       window.addEventListener('resize', this.checkScreen);
       window.addEventListener('resize', this.enforceMinWidth);
       this.checkScreen();
       this.enforceMinWidth();
-      this.getUserInformation();
+      if (localStorage.getItem('AccountType') === 'Area') {
+        this.getUserInformation();
+      }
     },
 
     methods: {
