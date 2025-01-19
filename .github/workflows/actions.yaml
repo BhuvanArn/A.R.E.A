@@ -56,7 +56,7 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
       - name: Wait for specific services to be healthy
-        run: docker compose wait docker compose wait server csharp_service client_web oauth_service service-about db
+        run: docker compose wait server csharp_service client_web oauth_service service-about db
         env:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
