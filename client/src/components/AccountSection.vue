@@ -30,13 +30,13 @@
                     <div class="user-pwd-container">
                         <img src="@/assets/key.png" class="img-style1" alt="password">
                         <button v-show="!changePwdMenu" @click="activateChangePwdMenu" class="change-pwd-btn">Change</button>
-                        <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="Old password" v-model="oldPwd">
+                        <input v-show="changePwdMenu" type="password" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
                     </div>
-                    <div v-show="changePwdMenu" class="filler02"></div>
+<!--                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
                         <input type="password" class="input-pwd-style1" placeholder="New password" v-model="newPwd">
-                    </div>
+                    </div> -->
                     <div v-show="changePwdMenu" class="filler02"></div>
                     <div v-show="changePwdMenu" class="user-pwd-container">
                         <div class="filler04"></div>
@@ -83,7 +83,6 @@ export default {
             userName: '',
             editedUserName: '',
             userAvatar: '',
-            oldPwd: '',
             newPwd: '',
             confirmNewPwd: '',
             errorMessage: ''
@@ -128,6 +127,7 @@ export default {
                 },
             });
             if (response.status === 200) {
+                console.log('response: ',response);
                 const result = this.splitString(response.data);
                 this.userEmail = result[0];
                 this.userName = result[1];
@@ -155,16 +155,23 @@ export default {
                 return;
             }
             this.errorMessage = '';
+            console.log('username before: ',this.userName);
             try {
-                const response = await this.$axios.post('/auth/reset-password', {
-                    Password: this.oldPwd,
-                    NewPassword: this.newPwd
+                const response = await this.$axios.put('/auth/change-password', {
+                    Password: this.newPwd,
+                    ConfirmPassword: this.confirmNewPwd,
+                }, {
+                    headers: {
+                            'X-User-Token': localStorage.getItem("token"),
+                            'Content-Type': 'application/json',
+                        },
                 });
                 this.changePwdMenu = false;
                 console.log(response);
             } catch (error) {
                 this.errorMessage = 'An error occurred. Please try again later.';
             }
+            console.log('username after: ',this.userName);
         }
     },
     mounted() {
