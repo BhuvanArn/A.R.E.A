@@ -125,7 +125,7 @@ export default {
         async fetchServices() {
             try {
                 const token = localStorage.getItem("token");
-                const res = await this.$axios.get(`/area`, {
+                const res = await this.$axios.get(`/area/services/false`, {
                     headers: {
                         'X-User-Token': token,
                     },
