@@ -59,8 +59,18 @@ jobs:
           POSTGRES_DB: ${{ steps.exportEnv.outputs.POSTGRES_DB }}
           POSTGRES_USER: ${{ steps.exportEnv.outputs.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ steps.exportEnv.outputs.POSTGRES_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ steps.exportEnv.outputs.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ steps.exportEnv.outputs.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ steps.exportEnv.outputs.KEY_PASSWORD }}
           EXPOSE_PORT_CLIENT: 8081
           EXPOSE_PORT_SERVER: 8080
+
+          SPOTIFY_CLIENT_ID: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ steps.exportEnv.outputs.SPOTIFY_CLIENT_SECRET }}
+          DROPBOX_CLIENT_ID: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_ID }}
+          DROPBOX_CLIENT_SECRET: ${{ steps.exportEnv.outputs.DROPBOX_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ steps.exportEnv.outputs.GITHUB_CLIENT_SECRET }}
 
       # Remove .env file for security reasons
       - name: remove .env file
