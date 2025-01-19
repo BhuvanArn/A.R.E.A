@@ -144,4 +144,23 @@ public class AuthController : ControllerBase
         
         return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
     }
+
+    [HttpPut("change-username")]
+    public async Task<IActionResult> ChangeUsername([FromBody] ChangeUsernameRequest request)
+    {
+        var userToken = GetUserTokenFromHeaders();
+
+        if (string.IsNullOrEmpty(userToken))
+        {
+            return Unauthorized("You are not connected.");
+        }
+
+        var response = await _eventBus.PublishAsync<ChangeUsernameEvent, (string, ResultType)>(new ChangeUsernameEvent
+        {
+            Username = request.Username,
+            JwtToken = userToken
+        });
+        
+        return response.Item2 == ResultType.Fail ? Unauthorized(response.Item1) : Ok(response.Item1);
+    }
 }
