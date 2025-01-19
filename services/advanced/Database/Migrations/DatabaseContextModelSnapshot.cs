@@ -148,6 +148,7 @@ namespace Database.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Auth")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")

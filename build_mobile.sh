@@ -30,5 +30,3 @@ echo -e "[${YELLOW}INFO${NC}] Syncing project with native platforms..."
 npx cap sync > /dev/null 2>&1
 
 echo -e "[${GREEN}SUCCESS${NC}] Setup complete."
-
-echo -e "[${YELLOW}INFO${NC}] To run the app on Android, open client/android/ folder in Android Studio and run the app."

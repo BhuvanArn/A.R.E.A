@@ -65,6 +65,11 @@ const routes = [
     component: () => import('../views/RedditCallback.vue'),
     props: (route) => ({ code: route.query.code })
   },
+  {
+    path: '/client.apk',
+    name: 'AreaApk',
+    component: () => import('../views/apk.vue')
+  },
 ]
 
 const router = createRouter({

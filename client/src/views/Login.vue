@@ -90,13 +90,11 @@ export default {
 				console.error('Google Identity Services not initialized');
 			    return;
 			}
-            console.log('client_id', this.client_id);
 			google.accounts.id.initialize({
 				client_id: this.client_id,
 				callback: this.handleCredentialResponse,
 			});
 			google.accounts.id.prompt()
-            localStorage.setItem('AccountType', 'Google');
 		},
 
         async handleCredentialResponse(response) {
@@ -105,13 +103,18 @@ export default {
                 return;
             }
             const credential = response.credential;
+            const decodedToken = JSON.parse(atob(credential.split('.')[1]));
+			const email = decodedToken.email;
+			const name = decodedToken.name;
             try {
                 const res = await this.$axios.post('/auth/google-login', {
                     Token: credential,
                 });
-
+                localStorage.setItem('GoogleUsername', name);
+                localStorage.setItem('GoogleEmail', email);
                 localStorage.setItem('token', res.data);
                 localStorage.setItem('Status', 'Logged In');
+                localStorage.setItem('AccountType', 'Google');
                 const expirationTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000); // 7d
                 localStorage.setItem('expirationTime', expirationTime);
                 window.location.href = this.$router.resolve({ name: 'services' }).href;
