@@ -88,6 +88,8 @@ export default {
                     return "#1db954";
                 case "dropbox":
                     return "#0061ff";
+                case "reddit":
+                    return "#ff4500";
                 default:
                     return "gray";
             }
