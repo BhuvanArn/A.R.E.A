@@ -59,6 +59,12 @@ const routes = [
     component: () => import('../views/GithubCallback.vue'),
     props: (route) => ({ code: route.query.code })
   },
+  {
+    path: '/oauth/reddit/callback',
+    name: 'reddit-callback',
+    component: () => import('../views/RedditCallback.vue'),
+    props: (route) => ({ code: route.query.code })
+  },
 ]
 
 const router = createRouter({
