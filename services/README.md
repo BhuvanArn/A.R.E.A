@@ -45,11 +45,11 @@ Most routes require a **Bearer Token** for authentication. Include the token in 
 | Route                  | Method | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | `/area`                | GET    | List all available areas.                       |
-| `/area/update_area`    | POST   | Update the name or state of an area.            |
+| `/area/update_area`    | PUT   | Update the name or state of an area.            |
 | `/area/delete_areas`   | DELETE | Delete specified areas.                         |
 | `/area/services/{state}` | GET  | List services based on the state (true/false).  |
 | `/area/subscribe_service` | POST| Subscribe to a service in an area.              |
-| `/area/unsubscribe_service` | POST| Unsubscribe from a service.                    |
+| `/area/unsubscribe_service` | DELETE | Unsubscribe from a service.                    |
 
 ---
 
