@@ -45,22 +45,22 @@ Most routes require a **Bearer Token** for authentication. Include the token in 
 | Route                  | Method | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | `/area`                | GET    | List all available areas.                       |
-| `/area/update_area`    | PUT   | Update the name or state of an area.            |
-| `/area/delete_areas`   | DELETE | Delete specified areas.                         |
+| `/area/update`    | PUT   | Update the name or state of an area.            |
+| `/area/delete`   | DELETE | Delete specified areas.                         |
 | `/area/services/{state}` | GET  | List services based on the state (true/false).  |
-| `/area/subscribe_service` | POST| Subscribe to a service in an area.              |
-| `/area/unsubscribe_service` | DELETE | Unsubscribe from a service.                    |
+| `/area/subscribe` | POST| Subscribe to a service in an area.              |
+| `/area/unsubscribe` | DELETE | Unsubscribe from a service.                    |
 
 ---
 
 ### Action and Reaction Routes
 | Route                      | Method | Description                                |
 |----------------------------|--------|--------------------------------------------|
-| `/area/addactions`         | POST   | Add a new action for a service.           |
-| `/area/update_action`      | PUT    | Update the trigger config of an action.   |
-| `/area/addreactions`       | POST   | Add a new reaction for a service.         |
-| `/area/update_reaction`    | PUT    | Update the execution config of a reaction.|
-| `/area/services/{serviceName}/actions_reactions` | GET | List actions and reactions for a service. |
+| `/area/action`         | POST   | Add a new action for a service.           |
+| `/area/action`      | PUT    | Update the trigger config of an action.   |
+| `/area/reaction`       | POST   | Add a new reaction for a service.         |
+| `/area/reaction`    | PUT    | Update the execution config of a reaction.|
+| `/area/services/{serviceName}/area` | GET | List actions and reactions for a service. |
 | `/area/services/{serviceName}/action` | GET | List actions for a specific service.      |
 | `/area/services/{serviceName}/reaction` | GET | List reactions for a specific service.    |
 
